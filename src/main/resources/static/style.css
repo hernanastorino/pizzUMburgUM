@@ -67,15 +67,30 @@ body {
 
 }
 
- .loader-text {
-     color: white;
-     font-size: 1.2em;
-     margin-top: 20px;
+ .loader-text h1 {
+     font-size: 2em;
+     margin-top: 40px;
      font-family: 'Angel Club', sans-serif;
      letter-spacing: 2px;
      text-shadow:0px 0px 12px rgba(64, 196, 255, 0.6);
 
  }
+ .loader-text {
+     position: absolute;
+     display: flex;
+     align-items: baseline;
+     gap: 8px;
+     font-size: 1.3rem;
+     color: white;
+     margin-top: 140px;
+     font-family: 'Angel Club', sans-serif;
+ }
+
+
+
+
+
+
 
 
  .top-left-button {

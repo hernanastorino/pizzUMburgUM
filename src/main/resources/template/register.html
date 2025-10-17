@@ -1,1 +1,326 @@
-<!-- Registro de Nueva Cuenta-->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrarse - pizzUM & burgUM</title>
+    <link rel="stylesheet" href="../static/fonts/style.css">
+    <style>
+        /* Reset y estilos del body con imagen de fondo */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #1B0D4E;
+            background-image: url('../static/images/borroso.jpg');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+            background-attachment: fixed;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        /* Contenedor con efecto de luz */
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            flex: 1;
+        }
+
+        .login-box {
+            position: relative;
+            background: rgba(27, 13, 78, 0.95);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+            z-index: 10;
+            border: 2px solid rgba(142, 45, 226, 0.3);
+        }
+
+        /* Wrapper para el efecto de línea animada */
+        .login-box::before {
+            content: "";
+            position: absolute;
+            inset: -2px;
+            border-radius: 20px;
+            padding: 2px;
+            background: conic-gradient(
+                    from var(--angle, 0deg),
+                    transparent 0%,
+                    transparent 5%,
+                    #8e2de2 10%,
+                    #40C4FF 15%,
+                    #fff 20%,
+                    #40C4FF 25%,
+                    #8e2de2 30%,
+                    transparent 35%,
+                    transparent 100%
+            );
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            z-index: -1;
+            animation: rotate 4s linear infinite;
+        }
+
+        @keyframes rotate {
+            100% {
+                --angle: 360deg;
+            }
+        }
+
+        @property --angle {
+            syntax: '<angle>';
+            initial-value: 0deg;
+            inherits: false;
+        }
+
+        .form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .header {
+            text-align: center;
+            font-size: 2em;
+            color: white;
+            font-family: 'Angel Club', sans-serif;
+            margin-bottom: 10px;
+            text-shadow: 0px 0px 12px rgba(64, 196, 255, 0.6);
+        }
+
+        .subtitle {
+            text-align: center;
+            font-size: 1.1em;
+            color: white;
+            font-family: Arial, sans-serif;
+            margin: 0 0 20px 0;
+            line-height: 1.4;
+        }
+
+        .input {
+            padding: 15px;
+            border: 2px solid rgba(142, 45, 226, 0.5);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 1em;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        .input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .input:focus {
+            border-color: #8e2de2;
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0px 0px 20px rgba(142, 45, 226, 0.5);
+        }
+
+        /* Contenedor para contraseña con ícono de mostrar/ocultar */
+        .password-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+
+        }
+
+        .password-container input {
+            flex: 1;
+
+        }
+
+        /* Ojo nativo del navegador en blanco */
+        .input[type="password"]::-ms-reveal {
+            filter: invert(1) brightness(2);
+        }
+
+        /* ignorar la advertencia */
+        .input[type="password"]::-webkit-credentials-auto-fill-button {
+            filter: invert(1) brightness(2);
+        }
+
+        /* Ícono del calendario en blanco */
+        .input[type="date"]::-webkit-calendar-picker-indicator {
+            filter: invert(1) brightness(1.5);
+            cursor: pointer;
+        }
+
+        .button {
+            padding: 15px;
+
+        }
+
+
+
+        .button {
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Angel Club', sans-serif;
+            margin-top: 10px;
+        }
+
+        .sign-in {
+            background: linear-gradient(to right, #8e2de2, #4a00e0);
+            color: white;
+            box-shadow:
+                    0px 0px 30px rgba(142, 45, 226, 0.6),
+                    0px 5px 15px rgba(74, 0, 224, 0.4);
+        }
+
+        .sign-in:hover {
+            box-shadow:
+                    0px 0px 40px rgba(142, 45, 226, 0.8),
+                    0px 5px 20px rgba(74, 0, 224, 0.6);
+            transform: translateY(-2px);
+        }
+
+        .sign-in:active {
+            transform: scale(0.98);
+        }
+
+
+        .footer {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.95em;
+            margin-top: 20px;
+            font-family: 'Angel Club', sans-serif;
+            font-weight: normal;
+            line-height: 1.6;
+        }
+
+        .link {
+            color: #40C4FF;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        .link:hover {
+            color: #8e2de2;
+            text-shadow: 0px 0px 10px rgba(142, 45, 226, 0.6);
+        }
+
+        /* Botón de volver */
+        .back-button {
+            position: fixed;
+            top: 30px;
+            left: 30px;
+            padding: 12px 24px;
+            background: linear-gradient(to right, #8e2de2, #4a00e0);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1em;
+            font-family: 'Angel Club', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0px 0px 20px rgba(142, 45, 226, 0.5);
+            z-index: 1000;
+        }
+
+        .back-button:hover {
+            box-shadow: 0px 0px 30px rgba(142, 45, 226, 0.8);
+            transform: translateY(-2px);
+        }
+
+        .back-button:active {
+            transform: scale(0.95);
+        }
+
+        /* Footer */
+        footer {
+            background-color: #1B0D4E;
+            color: white;
+            text-align: center;
+            padding: 3px 0;
+            font-size: 1em;
+            width: 100%;
+            margin-top: auto;
+            font-family: 'Angel Club', sans-serif;
+        }
+
+        footer p4 {
+            margin: 3px 0;
+            line-height: 1.4;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+<!-- Botón para volver al inicio -->
+<button class="back-button" onclick="window.location.href='index.html'">
+    ← Volver
+</button>
+
+<!-- Contenedor del formulario de registro -->
+<div class="container">
+    <div class="login-box">
+        <form class="form" action="/register-request" method="POST">
+            <span class="header">Registrate</span>
+            <p class="subtitle">¡Dale, registrate y probá lo bueno de verdad! 🍔🍕</p>
+
+            <input type="text" name="name" placeholder="Nombre" class="input" required />
+
+            <input type="email" name="email" placeholder="Email" class="input" required />
+
+            <input type="date" name="birthDate" placeholder="Fecha de Nacimiento" class="input" required />
+
+            <input type="tel" name="phoneNumber" placeholder="Número de Teléfono" class="input" required />
+
+            <input type="text" name="address" placeholder="Dirección" class="input" required />
+
+            <input type="text" name="cardNumber" placeholder="Número de Tarjeta" class="input" />
+
+            <div class="password-container">
+                <input type="password" name="password" placeholder="Contraseña" class="input" required />
+            </div>
+
+            <button type="submit" class="button sign-in">Registrarse</button>
+
+
+
+            <p class="footer">
+                ¿Ya tenés cuenta?
+                <a href="sesion.html" class="link">Iniciar Sesión</a>
+            </p>
+        </form>
+    </div>
+</div>
+
+<footer>
+    <div>
+        <p4>&copy; 2025 pizzUM & BurgUM Delivery</p4>
+    </div>
+    <div>
+        <p4>Laboratorio Tic I &copy; arTICode</p4>
+    </div>
+    <div>
+        <p4>Astorino Hernán, Angeloro Valentina, Hobbins William</p4>
+    </div>
+</footer>
+
+
+</body>
+</html>

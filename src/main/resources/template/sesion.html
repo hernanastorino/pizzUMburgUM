@@ -1,14 +1,309 @@
-<!--- Permite a los usuarios registrados entrar a su cuenta   ---->
-<!-- From Uiverse.io by Priyanshu02020 -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar Sesión - pizzUM & burgUM</title>
+    <link rel="stylesheet" href="../static/fonts/style.css">
+    <style>
+        /* Reset y estilos del body con imagen de fondo */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #1B0D4E;
+            background-image: url('../static/images/borroso.jpg');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+            background-attachment: fixed;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        /* Contenedor con efecto de luz */
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            flex: 1;
+        }
+
+        .login-box {
+            position: relative;
+            background: rgba(27, 13, 78, 0.95);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 450px;
+            width: 100%;
+            z-index: 10;
+            border: 2px solid rgba(142, 45, 226, 0.3);
+        }
+
+        /* Wrapper para el efecto de línea animada */
+        .login-box::before {
+            content: "";
+            position: absolute;
+            inset: -2px;
+            border-radius: 20px;
+            padding: 2px;
+            background: conic-gradient(
+                    from var(--angle, 0deg),
+                    transparent 0%,
+                    transparent 5%,
+                    #8e2de2 10%,
+                    #40C4FF 15%,
+                    #fff 20%,
+                    #40C4FF 25%,
+                    #8e2de2 30%,
+                    transparent 35%,
+                    transparent 100%
+            );
+            /* ignoren esta advertencia */
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            z-index: -1;
+            animation: rotate 4s linear infinite;
+        }
+
+        @keyframes rotate {
+            100% {
+                --angle: 360deg;
+            }
+        }
+
+        @property --angle {
+            syntax: '<angle>';
+            initial-value: 0deg;
+            inherits: false;
+        }
+
+        .form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+
+        .header {
+            text-align: center;
+            font-size: 2em;
+            color: white;
+            font-family: 'Angel Club', sans-serif;
+            margin-bottom: 10px;
+            text-shadow: 0px 0px 12px rgba(64, 196, 255, 0.6);
+        }
+
+        .subtitle {
+            text-align: center;
+            font-size: 1.1em;
+            color: white;
+            font-family: Arial, sans-serif;
+            margin: 0 0 20px 0;
+            line-height: 1.4;
+        }
+
+        .input {
+            padding: 15px;
+            border: 2px solid rgba(142, 45, 226, 0.5);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 1em;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        .input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .input:focus {
+            border-color: #8e2de2;
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0px 0px 20px rgba(142, 45, 226, 0.5);
+        }
+
+        /* Ojo del navegador en blanco */
+        .input[type="password"]::-ms-reveal {
+            filter: invert(1) brightness(2);
+        }
+
+        .input[type="password"]::-webkit-credentials-auto-fill-button {
+            filter: invert(1) brightness(2);
+        }
+
+
+        .button {
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Angel Club', sans-serif;
+        }
+
+        .sign-in {
+            background: linear-gradient(to right, #8e2de2, #4a00e0);
+            color: white;
+            box-shadow:
+                    0px 0px 30px rgba(142, 45, 226, 0.6),
+                    0px 5px 15px rgba(74, 0, 224, 0.4);
+        }
+
+        .sign-in:hover {
+            box-shadow:
+                    0px 0px 40px rgba(142, 45, 226, 0.8),
+                    0px 5px 20px rgba(74, 0, 224, 0.6);
+            transform: translateY(-2px);
+        }
+
+        .sign-in:active {
+            transform: scale(0.98);
+        }
+
+        .google-sign-in {
+            background: white;
+            color: #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .google-sign-in:hover {
+            box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .icon {
+            width: 24px;
+            height: 24px;
+        }
+
+        .span.two {
+            font-family: Arial, sans-serif;
+        }
+
+        .footer {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.95em;
+            margin-top: 20px;
+            font-family: 'Angel Club', sans-serif;
+            font-weight: normal;
+            line-height: 1.6;
+        }
+        .link {
+            color: #40C4FF;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .link:hover {
+            color: #8e2de2;
+            text-shadow: 0px 0px 10px rgba(142, 45, 226, 0.6);
+        }
+
+        /* Botón de volver */
+        .back-button {
+            position: fixed;
+            top: 30px;
+            left: 30px;
+            padding: 12px 24px;
+            background: linear-gradient(to right, #8e2de2, #4a00e0);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1em;
+            font-family: 'Angel Club', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0px 0px 20px rgba(142, 45, 226, 0.5);
+            z-index: 1000;
+        }
+
+        .back-button:hover {
+            box-shadow: 0px 0px 30px rgba(142, 45, 226, 0.8);
+            transform: translateY(-2px);
+        }
+
+        .back-button:active {
+            transform: scale(0.95);
+        }
+
+
+
+        /* Footer */
+        footer {
+            background-color: #1B0D4E;
+            color: white;
+            text-align: center;
+            padding: 3px 0;
+            font-size: 1em;
+            width: 100%;
+            margin-top: auto;
+        }
+
+        footer p4 {
+            margin: 3px 0;
+            line-height: 1.4;
+            display: block;
+        }
+
+
+        .forgot {
+            text-align: right;
+            margin-top: 5px;
+            margin-bottom: 10px;
+            font-family: 'Angel Club', sans-serif;
+
+        }
+
+        .forgot a {
+            color: #40C4FF;
+            text-decoration: none;
+            font-size: 0.9em;
+            transition: all 0.3s ease;
+        }
+
+        .forgot a:hover {
+            color: #8e2de2;
+            text-shadow: 0px 0px 10px rgba(142, 45, 226, 0.6);
+        }
+    </style>
+</head>
+<body>
+<!-- Botón para volver al inicio -->
+<button class="back-button" onclick="window.location.href='index.html'">
+    ← Volver
+</button>
+
+<!-- Contenedor del formulario de login -->
 <div class="container">
     <div class="login-box">
         <form class="form">
-            <div class="logo"></div>
-            <span class="header">Welcome Back!</span>
-            <input type="email" placeholder="Email" class="input" />
-            <input type="password" placeholder="Password" class="input" />
-            <button type="submit" class="button sign-in">Sign In</button>
-            <button class="button google-sign-in">
+            <span class="header">Inicia sesión</span>
+            <p class="subtitle">¡El antojo te trajo de vuelta 🍔🍕!</p>
+            <input type="email" placeholder="Email" class="input" required />
+            <input type="password" placeholder="Contraseña" class="input" required />
+            <div class="forgot">
+                <a href="#">¿Olvidaste tu contraseña?</a>
+            </div>
+            <button type="submit" class="button sign-in">Ingresar</button>
+            <button type="button" class="button google-sign-in">
                 <svg
                         class="icon"
                         viewBox="-3 0 262 262"
@@ -41,15 +336,30 @@
                         ></path>
                     </g>
                 </svg>
-                <span class="span two"> Sign in with Google </span>
+                <span class="span two">Sign in with Google</span>
             </button>
 
-            <p class="footer">
-                Don't have an account?
-                <a href="" class="link">Sign up, it's free!</a>
+            <h1 class="footer">
+                ¿Aún no tenés cuenta?
+                <a href="register.html" class="link">Registrarse</a>
+                <div> ¡No esperes más para probar nuestras pizzas y burgers! </div>
                 <br />
-                <a href="" class="link">Forgot password?</a>
-            </p>
+                <!-- <a href="#" class="link">olvidaste tu password?</a> -->
+            </h1>
         </form>
     </div>
 </div>
+
+<footer>
+    <div>
+        <p4>&copy; 2025 pizzUM & BurgUM Delivery</p4>
+    </div>
+    <div>
+        <p4>Laboratorio Tic I &copy; arTICode</p4>
+    </div>
+    <div>
+        <p4>Astorino Hernán, Angeloro Valentina, Hobbins William</p4>
+    </div>
+</footer>
+</body>
+</html>
