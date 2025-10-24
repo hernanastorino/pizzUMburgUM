@@ -4,25 +4,22 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "Topping")
+@Table(name = "OrderRelation")
 @Getter
 @Setter
-@Builder
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 
-public class Topping {
+public class OrderRelation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(name = "nombre")
-    private String nombre;
-
-    @Column(name = "precio")
-    private Double precio;
-
     @ManyToOne
     @JoinColumn(name = "Creation_ID", nullable = false)
-    private Creation Creation;
+    private Creation creation;
+
+    @ManyToOne
+    @JoinColumn(name = "Side_ID", nullable = false)
 }
