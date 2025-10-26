@@ -1,10 +1,11 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title> pizzUM & burgUM</title>
-    <link rel="stylesheet" href="../src/main/resources/static/style.css">
+    <link rel="stylesheet" href="/style.css">
+
     <style>
         /* Loader styles */
         #loader-container {
@@ -73,14 +74,14 @@
 
 <!-- Contenido principal -->
 <div class="top-left-button">
-    <button class="sesion-button" onclick="window.location.href='sesion.html'">
-        <span> Iniciar Sesion</span>
+    <button class="sesion-button" onclick="window.location.href='/sesion'">
+        <span> Iniciar Sesión</span>
     </button>
 </div>
 
 <div class="top-right-button">
-    <button class="register-button" onclick="window.location.href='register.html'">
-        <span>  Registarse
+    <button class="register-button" onclick="window.location.href='/register'">
+        <span>  Registrarse
         </span>
     </button>
 </div>

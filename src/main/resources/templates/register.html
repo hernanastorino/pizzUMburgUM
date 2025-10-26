@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registrarse - pizzUM & burgUM</title>
-    <link rel="stylesheet" href="../static/fonts/style.css">
+    <link rel="stylesheet" href="/style.css">
     <style>
         /* Reset y estilos del body con imagen de fondo */
         * {
@@ -15,7 +15,7 @@
 
         body {
             background-color: #1B0D4E;
-            background-image: url('../static/images/borroso.jpg');
+            background-image: url('/images/borroso.jpg');
             background-size: cover;
             background-repeat: no-repeat;
             background-position: center;
@@ -270,7 +270,7 @@
 </head>
 <body>
 <!-- Botón para volver al inicio -->
-<button class="back-button" onclick="window.location.href='index.html'">
+<button class="back-button" onclick="window.location.href='/'">
     ← Volver
 </button>
 
@@ -283,19 +283,23 @@
 
             <input type="text" name="name" placeholder="Nombre" class="input" required />
 
+            <input type="text" name="lastname" placeholder="Apellido" class="input" required />
+
             <input type="email" name="email" placeholder="Email" class="input" required />
-
-            <input type="date" name="birthDate" placeholder="Fecha de Nacimiento" class="input" required />
-
-            <input type="tel" name="phoneNumber" placeholder="Número de Teléfono" class="input" required />
-
-            <input type="text" name="address" placeholder="Dirección" class="input" required />
-
-            <input type="text" name="cardNumber" placeholder="Número de Tarjeta" class="input" />
 
             <div class="password-container">
                 <input type="password" name="password" placeholder="Contraseña" class="input" required />
             </div>
+
+
+            <input type="date" name="birthDate" placeholder="Fecha de Nacimiento" class="input" required />
+
+            <input type="text" name="document" placeholder="Documento" class="input" required />
+
+            <input type="text" name="address" placeholder="Direccion" class="input" required />
+
+            <input type="text" name="cardNumber" placeholder="Numero de Tarjeta" class="input" required />
+
 
             <button type="submit" class="button sign-in">Registrarse</button>
 
@@ -303,7 +307,7 @@
 
             <p class="footer">
                 ¿Ya tenés cuenta?
-                <a href="sesion.html" class="link">Iniciar Sesión</a>
+                <a href="/sesion" class="link">Iniciar Sesión</a>
             </p>
         </form>
     </div>
@@ -320,7 +324,6 @@
         <p4>Astorino Hernán, Angeloro Valentina, Hobbins William</p4>
     </div>
 </footer>
-
 
 </body>
 </html>
