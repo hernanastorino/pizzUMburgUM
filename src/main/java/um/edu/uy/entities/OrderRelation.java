@@ -22,4 +22,5 @@ public class OrderRelation {
 
     @ManyToOne
     @JoinColumn(name = "Side_ID", nullable = false)
+    private Side side;
 }

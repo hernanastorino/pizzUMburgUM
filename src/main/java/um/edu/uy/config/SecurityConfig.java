@@ -1,4 +1,4 @@
-package um.edu.uy.services;
+package um.edu.uy.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,7 +18,6 @@ public class SecurityConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        // ALWAYS hash passwords
         return new BCryptPasswordEncoder();
     }
 

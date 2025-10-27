@@ -1,5 +1,5 @@
 package um.edu.uy.dto;
 
-// Using a Java Record for a simple, immutable DTO
+// record is inmutable y sirve exactamente para el DTO
 public record RegisterRequestDTO(String email, String password) {
 }

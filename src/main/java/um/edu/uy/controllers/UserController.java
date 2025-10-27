@@ -46,14 +46,7 @@ public class UserController {
         }
     }
 
-    // You would add more endpoints here as needed, for example:
+    @PostMapping("/register")
+    public ResponseEntity<?> createUser(@RequestBody )
 
-    /*
-    @PutMapping("/me/address")
-    @PreAuthorize("hasRole('CLIENT')") // Only clients can update their address
-    public ResponseEntity<?> updateMyAddress(@RequestBody AddressDTO address, Authentication auth) {
-        // ... logic to update address for user auth.getName() ...
-        return ResponseEntity.ok().build();
-    }
-    */
 }

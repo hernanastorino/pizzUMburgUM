@@ -16,11 +16,4 @@ public class AdminController {
         return "Welcome, Admin!";
     }
 
-    // Example for adding a product
-    @PostMapping("/products")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> createProduct(@RequestBody ProductRequest request) {
-        // ... logic to create a product ...
-        return new ResponseEntity<>("Product created", HttpStatus.CREATED);
-    }
 }

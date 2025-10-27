@@ -3,11 +3,11 @@ package um.edu.uy.services;
 // src/main/java/um/edu/uy/services/UserService.java
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import um.edu.uy.Role;
-import um.edu.uy.User;
-import um.edu.uy.UserRepository;
 import um.edu.uy.dto.RegisterRequestDTO; // We can reuse this DTO
 import um.edu.uy.dto.UserDTO; // A new DTO for sending user data
+import um.edu.uy.entities.Role;
+import um.edu.uy.entities.User;
+import um.edu.uy.repositories.UserRepository;
 
 @Service
 public class UserService {
@@ -32,7 +32,7 @@ public class UserService {
         User adminUser = new User();
         adminUser.setEmail(request.email());
         adminUser.setPassword(passwordEncoder.encode(request.password()));
-        adminUser.setRole(Role.ROLE_ADMIN); // Set role directly to ADMIN
+        adminUser.setRole(Role.adminRole); // Set role directly to ADMIN
 
         User savedUser = userRepository.save(adminUser);
 
