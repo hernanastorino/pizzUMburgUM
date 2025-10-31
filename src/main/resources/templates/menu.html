@@ -1,0 +1,633 @@
+<!-- Aca se presenta el menu-->
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> pizzUM & BurgUm Menu</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Josefin Sans', sans-serif;
+            background-color: #1B0D4E;
+            background-image: url('../static/images/borroso.jpg');
+            background-size: cover;
+            background-attachment: scroll;
+            background-repeat: no-repeat;
+            background-position: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+
+        /* Navigation */
+        .menu {
+            background-color: #fff;
+            padding: 20px 50px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 40px;
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: #555;
+            font-size: 16px;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        nav ul li a.active,
+        nav ul li a:hover {
+            color:  #8e2de2;
+        }
+
+        #check,
+        .checkbtn {
+            display: none;
+        }
+
+
+        .category li {
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: 500;
+            color: #666;
+            transition: color 0.3s;
+        }
+
+        /* All, Pizza, burger */
+        .category li.active,
+        .category li:hover {
+            color: #1B0D4E;
+        }
+
+
+        /* Botones de categoría */
+        .category-buttons {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 40px;
+            margin: 0;
+            padding: 20px 40px;
+            max-width: 100%;
+        }
+
+        /* Animación de luz */
+        @property --angle {
+            syntax: '<angle>';
+            initial-value: 0deg;
+            inherits: false;
+        }
+
+        @keyframes rotate {
+            100% {
+                --angle: 360deg;
+            }
+        }
+
+        /*Boton pizza */
+        .category-btn-pizza {
+            position: relative;
+            cursor: pointer;
+            max-width: 10000px;
+            min-height: 250px;
+            padding: 50px 80px;
+            min-width: 500px;
+            font-size: 48px;
+            font-family: 'Angel Club', sans-serif;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            border-radius: 0.5em;
+            border: none;
+            background-image: url('../static/images/pizzaMenu3.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            color: white;
+            overflow: visible;
+            transition: 0.3s;
+            z-index: 1;
+        }
+
+        .category-btn-pizza::before {
+            content: "";
+            position: absolute;
+            inset: -2px;
+            border-radius: 0.5em;
+            padding: 2px;
+            background: conic-gradient(
+                    from var(--angle, 0deg),
+                    transparent 0%,
+                    transparent 5%,
+                    #8e2de2 10%,
+                    #40C4FF 15%,
+                    #fff 20%,
+                    #40C4FF 25%,
+                    #8e2de2 30%,
+                    transparent 35%,
+                    transparent 100%
+            );
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            z-index: -1;
+            animation: rotate 4s linear infinite;
+        }
+
+        .category-btn-pizza::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.2);
+            transition: background 0.3s ease;
+            z-index: 0;
+            border-radius: 0.5em;
+        }
+
+
+        .category-btn-pizza:hover::after {
+            background: rgba(0, 0, 0, 0.35);
+        }
+
+        .category-btn-pizza:hover {
+            box-shadow:
+                    0px 0px 25px rgba(255, 255, 255, 0.8),
+                    0px 0px 40px rgba(255, 255, 255, 0.6),
+                    0px 0px 60px rgba(142, 45, 226, 0.5),
+                    inset 0px 0px 15px rgba(255, 255, 255, 0.3);
+        }
+
+        .category-btn-pizza:hover span {
+            font-size: 56px;
+        }
+        .category-btn-pizza:active {
+            transform: scale(1.05);
+        }
+
+        .category-btn-pizza span {
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Boton Burger */
+        .category-btn-burger {
+            position: relative;
+            cursor: pointer;
+            max-width: 10000px;
+            min-height: 250px;
+            padding: 50px 80px;
+            min-width: 500px;
+            font-size: 48px;
+            font-family: 'Angel Club', sans-serif;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            border-radius: 0.5em;
+            border: none;
+            background-image: url('../static/images/burgerMenu.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            color: white;
+            overflow: visible;
+            transition: 0.3s;
+            z-index: 1;
+        }
+
+        .category-btn-burger::before {
+            content: "";
+            position: absolute;
+            inset: -2px;
+            border-radius: 0.5em;
+            padding: 2px;
+            background: conic-gradient(
+                    from var(--angle, 0deg),
+                    transparent 0%,
+                    transparent 5%,
+                    #8e2de2 10%,
+                    #40C4FF 15%,
+                    #fff 20%,
+                    #40C4FF 25%,
+                    #8e2de2 30%,
+                    transparent 35%,
+                    transparent 100%
+            );
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            z-index: -1;
+            animation: rotate 4s linear infinite;
+        }
+
+        .category-btn-burger::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.2);
+            transition: background 0.3s ease;
+            z-index: 0;
+            border-radius: 0.5em;
+        }
+
+
+        .category-btn-burger:hover::after {
+            background: rgba(0, 0, 0, 0.35);
+        }
+
+        .category-btn-burger:hover {
+            box-shadow:
+                    0px 0px 25px rgba(255, 255, 255, 0.8),
+                    0px 0px 40px rgba(255, 255, 255, 0.6),
+                    0px 0px 60px rgba(142, 45, 226, 0.5),
+                    inset 0px 0px 15px rgba(255, 255, 255, 0.3);
+        }
+
+        .category-btn-burger:hover span {
+            font-size: 56px;
+        }
+        .category-btn-burger:active {
+            transform: scale(1.05);
+        }
+
+        .category-btn-burger span {
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Botones secundarios (más delgados) */
+        .secondary-buttons {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 40px;
+            margin: 20px 0;
+            padding: 0 40px;
+            max-width: 100%;
+        }
+
+        .secondary-btn-papas {
+            position: relative;
+            cursor: pointer;
+            max-width: 10000px;
+            min-height: 160px;
+            padding: 50px 80px;
+            min-width: 500px;
+            font-size: 32px;
+            font-family: 'Angel Club', sans-serif;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            border-radius: 0.5em;
+            border: none;
+            background-image: url('../static/images/papasMenu3.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            color: white;
+            overflow: visible;
+            transition: 0.3s;
+            z-index: 1;
+        }
+
+        .secondary-btn-papas::before {
+            content: "";
+            position: absolute;
+            inset: -2px;
+            border-radius: 0.5em;
+            padding: 2px;
+            background: conic-gradient(
+                    from var(--angle, 0deg),
+                    transparent 0%,
+                    transparent 5%,
+                    #8e2de2 10%,
+                    #40C4FF 15%,
+                    #fff 20%,
+                    #40C4FF 25%,
+                    #8e2de2 30%,
+                    transparent 35%,
+                    transparent 100%
+            );
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            z-index: -1;
+            animation: rotate 4s linear infinite;
+        }
+
+        .secondary-btn-papas::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            transition: background 0.3s ease;
+            z-index: 0;
+            border-radius: 0.5em;
+        }
+
+
+        .secondary-btn-papas:hover::after {
+            background: rgba(0, 0, 0, 0.55);
+        }
+
+        .secondary-btn-papas:hover {
+            box-shadow:
+                    0px 0px 25px rgba(255, 255, 255, 0.8),
+                    0px 0px 40px rgba(255, 255, 255, 0.6),
+                    0px 0px 60px rgba(142, 45, 226, 0.5),
+                    inset 0px 0px 15px rgba(255, 255, 255, 0.3);
+        }
+
+        .secondary-btn-papas:hover span {
+            font-size: 38px;
+        }
+        .secondary-btn-papas:active {
+            transform: scale(1.05);
+        }
+
+        .secondary-btn-papas span {
+            position: relative;
+            z-index: 10;
+        }
+
+        .secondary-btn-bebidas {
+            position: relative;
+            cursor: pointer;
+            max-width: 10000px;
+            min-height: 160px;
+            padding: 50px 80px;
+            min-width: 500px;
+            font-size: 32px;
+            font-family: 'Angel Club', sans-serif;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            border-radius: 0.5em;
+            border: none;
+            background-image: url('../static/images/bebidasMenu2.jpg');
+            background-position: center;
+            background-size: cover;
+            background-repeat: no-repeat;
+            color: white;
+            overflow: visible;
+            transition: 0.3s;
+            z-index: 1;
+        }
+
+        .secondary-btn-bebidas::before {
+            content: "";
+            position: absolute;
+            inset: -2px;
+            border-radius: 0.5em;
+            padding: 2px;
+            background: conic-gradient(
+                    from var(--angle, 0deg),
+                    transparent 0%,
+                    transparent 5%,
+                    #8e2de2 10%,
+                    #40C4FF 15%,
+                    #fff 20%,
+                    #40C4FF 25%,
+                    #8e2de2 30%,
+                    transparent 35%,
+                    transparent 100%
+            );
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            z-index: -1;
+            animation: rotate 4s linear infinite;
+        }
+
+        .secondary-btn-bebidas::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            transition: background 0.3s ease;
+            z-index: 0;
+            border-radius: 0.5em;
+        }
+
+
+        .secondary-btn-bebidas:hover::after {
+            background: rgba(0, 0, 0, 0.55);
+        }
+
+        .secondary-btn-bebidas:hover {
+            box-shadow:
+                    0px 0px 25px rgba(255, 255, 255, 0.8),
+                    0px 0px 40px rgba(255, 255, 255, 0.6),
+                    0px 0px 60px rgba(142, 45, 226, 0.5),
+                    inset 0px 0px 15px rgba(255, 255, 255, 0.3);
+        }
+
+        .secondary-btn-bebidas:hover span {
+            font-size: 38px;
+        }
+        .secondary-btn-bebidas:active {
+            transform: scale(1.05);
+        }
+
+        .secondary-btn-bebidas span {
+            position: relative;
+            z-index: 10;
+        }
+
+        .menu-title{
+            text-align: center;
+            font-family: 'Angel Club', sans-serif;
+            /*background: linear-gradient(to right, #ff9800, #ffc107);*/
+            background: white;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 40px;
+            margin: 0;
+            padding: 30px 40px 10px 40px;
+            /*text-shadow: 0px 0px 20px rgba(255, 140, 66, 1),
+            0px 0px 40px rgba(255, 140, 66, 0.9),
+            0px 0px 60px rgba(255, 140, 66, 0.7),
+            0px 0px 80px rgba(255, 140, 66, 0.5);
+            font-size: 2.2em;*/
+        }
+
+        /* Botón de volver */
+        .back-button {
+            position: fixed;
+            top: 90px;
+            left: 30px;
+            padding: 12px 24px;
+            background: linear-gradient(to right, #8e2de2, #4a00e0);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1em;
+            font-family: 'Angel Club', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0px 0px 20px rgba(142, 45, 226, 0.5);
+            z-index: 1000;
+        }
+
+        .back-button:hover {
+            box-shadow: 0px 0px 30px rgba(142, 45, 226, 0.8);
+            transform: translateY(-2px);
+        }
+
+        .back-button:active {
+            transform: scale(0.95);
+        }
+
+        footer {
+            background-color: #1B0D4E ;
+            color: white;
+            text-align: center;
+            padding: 3px 0;
+            font-size: 1em;
+            width: 100%;
+            margin-top: 40px;
+        }
+
+        footer p4 {
+            margin: 3px 0;
+            line-height: 1.4;
+            display: block;
+        }
+
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .checkbtn {
+                display: block;
+                font-size: 30px;
+                cursor: pointer;
+            }
+
+            nav ul {
+                position: fixed;
+                width: 250px;
+                height: 100vh;
+                background: #fff;
+                top: 80px;
+                left: -100%;
+                flex-direction: column;
+                transition: all 0.5s;
+                padding-top: 50px;
+                text-align: center;
+            }
+
+            #check:checked ~ ul {
+                left: 0;
+            }
+
+            .menu {
+                padding: 20px;
+            }
+
+            .category-buttons,
+            .secondary-buttons {
+                flex-direction: column;
+                gap: 20px;
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+<!-- Botón para volver al inicio -->
+<button class="back-button" onclick="window.location.href='/'">
+    ← Volver
+</button>
+
+
+
+<!-- Tres rayitas -->
+<div class="menu">
+    <nav>
+        <input type="checkbox" id="check">
+        <label for="check" class="checkbtn">☰</label>
+        <label class="logo">PizzUM & BurgUM</label>
+        <ul>
+            <li><a href="#" class="active">Inicio</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#menu">Menu</a></li>
+            <li><a href="#reviews">Favoritos</a></li>
+        </ul>
+    </nav>
+</div>
+
+<!-- Restaurant Menu -->
+<div id="menu">
+    <!--<h1 class="menu-title">¿Qué vas a pedir hoy?</h1>-->
+    <h1 class="menu-title">¿Qué te tienta hoy?</h1>
+
+    <ul class="category">
+    </ul>
+</div>
+
+<!-- Botones de Categoría Principales -->
+<div class="category-buttons">
+    <button class="category-btn-pizza"><span> Pizza</span></button>
+    <button class="category-btn-burger"><span> Burger</span></button>
+</div>
+
+<!-- Botones Secundarios (más delgados) -->
+<div class="secondary-buttons">
+    <button class="secondary-btn-papas"><span> Acompañamiento</span></button>
+    <button class="secondary-btn-bebidas"><span> Bebida</span></button>
+</div>
+
+<!-- Espaciador para empujar el footer hacia abajo -->
+<div class="content-spacer"></div>
+
+<footer>
+    <div>
+        <p4> &copy; 2025 PizzUM & BurgUM D</p4>
+    </div>
+    <div>
+        <p4> Laboratorio Tic I &copy; arTICode </p4>
+    </div>
+    <div>
+        <p4> Astorino Hernán, Angeloro Valentina, Hobbins William</p4>
+    </div>
+</footer>
+
+
+</body>
+</html>
