@@ -10,11 +10,11 @@ import java.util.Collection;
 import java.util.List;
 
 @Data
-@Builder // Lets you build objects easily
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "User") // Renamed to avoid conflicts with 'user' SQL keyword
+@Table(name = "User") // no cambiar a "user" por conflicto con sql
 public class User implements UserDetails {
 
     @Id

@@ -13,24 +13,26 @@ import java.util.Set;
 
 @Entity
 @Table(name = "Pizza")
-@DiscriminatorValue("PIZZA") // Valor que se guarda en la columna "tipo_creacion"
+@DiscriminatorValue("PIZZA") // Valor que se guarda en la columna "creation_type"
 @Getter
 @Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-
 public class Pizza extends Creation {
     private String size;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "dough_id", referencedColumnName = "doughId")
+    private Dough dough;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cheese_type_id", referencedColumnName = "cheeseId")
-    private Cheese cheese; // La relación "realiza"
+    private Cheese cheese; // La relación "lleva_queso"
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sauce_type_id", referencedColumnName = "sauceId")
-    private Sauce sauce; // La relación "realiza"
+    private Sauce sauce; // La relación "lleva_salsa"
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
