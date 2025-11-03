@@ -23,6 +23,10 @@ import java.util.Set;
 public class Burger extends Creation {
 
     //MISSING LINKS TO BREAD, CONDIMENT AND MEAT
+    //@ManyToOne a TipoCarne, TipoPan
+    //@ManyToMany a Aderezo, Topping
+
+    private int meatQuantity;
 
     @OneToMany(mappedBy = "burger", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Sauce> sauces = new ArrayList<>();
@@ -40,14 +44,4 @@ public class Burger extends Creation {
         topping.getPizzas().add(this);
     }
 }
-/*
-@Entity
-@Table(name = "hamburguesa")
-@DiscriminatorValue("HAMBURGUESA") // Valor que se guarda en la columna "tipo_creacion"
-public class Hamburguesa extends Creacion {
 
-    private int cantCarnes;
-
-    // Aquí van las relaciones @ManyToOne a TipoCarne, TipoPan
-    // y @ManyToMany a Aderezo, Topping
-}
