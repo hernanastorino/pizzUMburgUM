@@ -2,6 +2,7 @@ package um.edu.uy.product.creation;
 
 import jakarta.persistence.*;
 import lombok.*;
+import um.edu.uy.product.creation.burger.Burger;
 import um.edu.uy.product.creation.pizza.Pizza;
 
 import java.util.HashSet;
@@ -34,5 +35,5 @@ public class Topping {
     private Set<Pizza> pizzas = new HashSet<>();
 
     @ManyToMany(mappedBy = "toppings")
-    private Set<Hamburguesa> hamburguesas = new HashSet<>();
+    private Set<Burger> burgers = new HashSet<>();
 }

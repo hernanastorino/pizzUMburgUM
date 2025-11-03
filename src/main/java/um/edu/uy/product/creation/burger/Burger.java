@@ -4,7 +4,9 @@ import jakarta.persistence.*;
 import lombok.*;
 import um.edu.uy.product.creation.Creation;
 import um.edu.uy.product.creation.Topping;
-import um.edu.uy.product.creation.pizza.options.Sauce;
+import um.edu.uy.product.creation.burger.options.Bread;
+import um.edu.uy.product.creation.burger.options.Condiment;
+import um.edu.uy.product.creation.burger.options.Meat;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -21,15 +23,19 @@ import java.util.Set;
 @NoArgsConstructor
 
 public class Burger extends Creation {
-
-    //MISSING LINKS TO BREAD, CONDIMENT AND MEAT
-    //@ManyToOne a TipoCarne, TipoPan
-    //@ManyToMany a Aderezo, Topping
-
     private int meatQuantity;
 
-    @OneToMany(mappedBy = "burger", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Sauce> sauces = new ArrayList<>();
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "condiment_id", referencedColumnName = "condimentId")
+    private Condiment condiment; // La relación "lleva_aderezo"
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "bread_id", referencedColumnName = "breadId")
+    private Bread bread; // La relación "lleva_pan"
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "meat_id", referencedColumnName = "meatId")
+    private Meat meat; // La relación "lleva_carne"
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
@@ -41,7 +47,7 @@ public class Burger extends Creation {
 
     public void addTopping(Topping topping) {
         this.toppings.add(topping);
-        topping.getPizzas().add(this);
+        topping.getBurgers().add(this);
     }
 }
 
