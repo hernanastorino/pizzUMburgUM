@@ -38,15 +38,25 @@ public class PublicController {
         return "test";
     }
 
+
     @PostMapping("/login")
     public String processLogin() {
+
         return "redirect:/menu";
+    }
+
+
+    @GetMapping("/login")
+    public String login() {
+        return "sesion";
     }
 
     @GetMapping("/masa-pizza")
     public String masaPizza() {
         return "masa-pizza";
     }
+
+
 
 
 }
