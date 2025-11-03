@@ -5,7 +5,7 @@ import lombok.*;
 import um.edu.uy.product.creation.burger.Burger;
 
 @Entity
-@Table(name = "Bread")
+@Table(name = "Condiment")
 @Getter
 @Setter
 @Builder
