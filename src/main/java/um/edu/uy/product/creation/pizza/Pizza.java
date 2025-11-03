@@ -24,7 +24,7 @@ public class Pizza extends Creation {
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "dough_id", referencedColumnName = "doughId")
-    private Dough dough;
+    private Dough dough; // La relación "lleva_masa"
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cheese_type_id", referencedColumnName = "cheeseId")

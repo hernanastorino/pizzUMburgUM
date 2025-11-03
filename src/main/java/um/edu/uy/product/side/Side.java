@@ -2,6 +2,8 @@ package um.edu.uy.product.side;
 
 import jakarta.persistence.*;
 import lombok.*;
+import um.edu.uy.product.creation.Creation;
+
 
 @Entity
 @Table(name = "Side")
@@ -14,12 +16,21 @@ import lombok.*;
 public class Side {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "SideId")
-    private long id;
+    private long sideId;
 
-    @Column(name = "SideName")
+    @Column(nullable = false)
     private String name;
 
-    @Column(name = "SidePrice")
+
     private int price;
+
+    @ManyToOne
+    @JoinColumn(name = "creation_id")
+    private Creation creation;
+
 }
+/*
+tenemos:
+relaciones generales (falta hacer/ confirmar algunas)
+
+ */

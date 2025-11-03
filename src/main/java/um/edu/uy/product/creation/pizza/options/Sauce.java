@@ -5,7 +5,6 @@ import lombok.*;
 import um.edu.uy.product.creation.burger.Burger;
 import um.edu.uy.product.creation.pizza.Pizza;
 
-import java.util.Collection;
 
 @Entity
 @Table(name = "Sauce")
