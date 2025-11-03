@@ -20,7 +20,7 @@ public class CreationInOrder {
     // 2. Define la relación con Pedido
     @ManyToOne(fetch = FetchType.LAZY) // LAZY es mejor para performance
     @MapsId("orderId") // 3. Mapea la parte "pedidoId" de nuestra EmbeddedId...
-    @JoinColumn(name = "order_id") // ...a esta relación/columna.
+    @JoinColumn(name = "order_id") // a esta relación/columna.
     private Order order;  //debe coincidir en ORDER con el mappedBy
 
     // 4. Define la relación con Creacion
@@ -33,6 +33,4 @@ public class CreationInOrder {
     @Column(name = "creation_quantity", nullable = false)
     private int quantity;
 
-    // --- Constructores, Getters/Setters ---
-    // (Omitidos por brevedad)
 }

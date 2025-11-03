@@ -30,7 +30,11 @@ public class Side {
 
 }
 /*
-tenemos:
+falta:
 relaciones generales (falta hacer/ confirmar algunas)
+finalizacion de MER -> JAVA
+autenticacion integrada con web (redireccionamiento)
+JSON WEB TOKENNNNNNN (LA PARCA)
+
 
  */
