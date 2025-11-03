@@ -2,6 +2,8 @@ package um.edu.uy;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class PublicController {
@@ -26,9 +28,24 @@ public class PublicController {
         return "register";
     }
 
+    @GetMapping("/menu")
+    public String menu() {
+        return "menu";
+    }
+
     @GetMapping("/testpage")
     public String testPage() {
         return "test";
+    }
+
+    @PostMapping("/login")
+    public String processLogin() {
+        return "redirect:/menu";
+    }
+
+    @GetMapping("/masa-pizza")
+    public String masaPizza() {
+        return "masa-pizza";
     }
 
 

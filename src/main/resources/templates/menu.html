@@ -15,7 +15,7 @@
         body {
             font-family: 'Josefin Sans', sans-serif;
             background-color: #1B0D4E;
-            background-image: url('../static/images/borroso.jpg');
+            background-image: url('/images/borroso.jpg');
             background-size: cover;
             background-attachment: scroll;
             background-repeat: no-repeat;
@@ -122,7 +122,7 @@
             letter-spacing: 0.05em;
             border-radius: 0.5em;
             border: none;
-            background-image: url('../static/images/pizzaMenu3.jpg');
+            background-image: url('/images/pizzaMenu3.jpg');
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
@@ -209,7 +209,7 @@
             letter-spacing: 0.05em;
             border-radius: 0.5em;
             border: none;
-            background-image: url('../static/images/burgerMenu.jpg');
+            background-image: url('/images/burgerMenu.jpg');
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
@@ -306,7 +306,7 @@
             letter-spacing: 0.05em;
             border-radius: 0.5em;
             border: none;
-            background-image: url('../static/images/papasMenu3.jpg');
+            background-image: url('/images/papasMenu3.jpg');
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
@@ -392,7 +392,7 @@
             letter-spacing: 0.05em;
             border-radius: 0.5em;
             border: none;
-            background-image: url('../static/images/bebidasMenu2.jpg');
+            background-image: url('/images/bebidasMenu2.jpg');
             background-position: center;
             background-size: cover;
             background-repeat: no-repeat;
@@ -603,14 +603,14 @@
 
 <!-- Botones de Categoría Principales -->
 <div class="category-buttons">
-    <button class="category-btn-pizza"><span> Pizza</span></button>
-    <button class="category-btn-burger"><span> Burger</span></button>
+    <button class="category-btn-pizza" onclick="window.location.href='/masa-pizza'"><span> Pizza</span></button>
+    <button class="category-btn-burger" onclick="window.location.href='/burger'"><span> Burger</span></button>
 </div>
 
 <!-- Botones Secundarios (más delgados) -->
 <div class="secondary-buttons">
-    <button class="secondary-btn-papas"><span> Acompañamiento</span></button>
-    <button class="secondary-btn-bebidas"><span> Bebida</span></button>
+    <button class="secondary-btn-papas" onclick="window.location.href='/acompanamiento'"><span> Acompañamiento</span></button>
+    <button class="secondary-btn-bebidas" onclick="window.location.href='/bebidas'"><span> Bebida</span></button>
 </div>
 
 <!-- Espaciador para empujar el footer hacia abajo -->

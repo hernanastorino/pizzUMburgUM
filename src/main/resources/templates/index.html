@@ -140,7 +140,7 @@
         <a
                 data-social="instagram"
                 aria-label="Instagram"
-                
+
         >
             <div class="filled"></div>
             <svg
@@ -182,15 +182,25 @@
     window.addEventListener('load', function() {
         const loader = document.getElementById('loader-container');
 
-        // Esperar 1.5 segundos adicionales antes de ocultar el loader
-        setTimeout(function() {
-            loader.classList.add('fade-out');
+        // Verificar si ya visitamos la página (usando sessionStorage)
+        const hasVisited = sessionStorage.getItem('hasVisitedIndex');
 
-            // Remover el loader del DOM después de la animación
+        if (hasVisited) {
+            // Si ya visitamos, ocultar el loader inmediatamente
+            loader.style.display = 'none';
+        } else {
+            // Primera visita: mostrar el loader por 1.5 segundos
+            sessionStorage.setItem('hasVisitedIndex', 'true');
+
             setTimeout(function() {
-                loader.style.display = 'none';
-            }, 500);
-        }, 1500);
+                loader.classList.add('fade-out');
+
+                // Remover el loader del DOM después de la animación
+                setTimeout(function() {
+                    loader.style.display = 'none';
+                }, 500);
+            }, 1500);
+        }
     });
 </script>
 </body>

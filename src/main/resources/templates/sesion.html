@@ -242,33 +242,108 @@
 
 
 
-        .forgot a {
-            color: #40C4FF;
-            text-decoration: none;
-            font-size: 0.9em;
-            transition: all 0.3s ease;
+        /* Loader styles para sesion */
+        #loader-container-sesion {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #1B0D4E;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            transition: opacity 0.5s ease-out;
         }
 
-        .forgot a:hover {
-            color: #8e2de2;
-            text-shadow: 0px 0px 10px rgba(142, 45, 226, 0.6);
+        #loader-container-sesion.fade-out {
+            opacity: 0;
+            pointer-events: none;
         }
+
+        .spinner-sesion {
+            background-image: linear-gradient(rgb(186, 66, 255) 35%, rgb(0, 225, 255));
+            width: 100px;
+            height: 100px;
+            animation: spinning82341 1.7s linear infinite;
+            text-align: center;
+            border-radius: 50px;
+            filter: blur(1px);
+            box-shadow: 0px -5px 20px 0px rgb(186, 66, 255), 0px 5px 20px 0px rgb(0, 225, 255);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .spinner1-sesion {
+            background-color: rgb(36, 36, 36);
+            width: 100px;
+            height: 100px;
+            border-radius: 50px;
+            filter: blur(10px);
+        }
+
+        @keyframes spinning82341 {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .loader-text-sesion {
+            position: absolute;
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+            font-size: 1.3rem;
+            color: white;
+            margin-top: 140px;
+            font-family: 'Angel Club', sans-serif;
+        }
+
+        .loader-text-sesion h1 {
+            font-size: 2em;
+            margin-top: 40px;
+            font-family: 'Angel Club', sans-serif;
+            letter-spacing: 2px;
+            text-shadow: 0px 0px 12px rgba(64, 196, 255, 0.6);
+        }
+
+
     </style>
+
+    <script>
+        // Siempre ocultar el loader en la página de sesión
+        (function() {
+            var style = document.createElement('style');
+            style.innerHTML = '#loader-container-sesion { display: none !important; }';
+            document.head.appendChild(style);
+        })();
+    </script>
 </head>
 <body>
+
+<!-- Loader de sesion -->
+<div id="loader-container-sesion">
+    <div class="spinner-sesion">
+        <div class="spinner1-sesion"></div>
+    </div>
+    <div class="loader-text-sesion">by <h1><span style="color: #0080FF;">ar</span><span style="color: #40C4FF;">TIC</span><span style="color: #0080FF;">ode</span></h1></div>
+</div>
+
 <!-- Botón para volver al inicio -->
-<button class="back-button" onclick="window.location.href='/'">
+<button class="back-button" onclick="window.location.href='/?fromBack=true'">
     ← Volver
 </button>
 
 <!-- Contenedor del formulario de login -->
 <div class="container">
     <div class="login-box">
-        <form class="form">
+        <form class="form" action="/login" method="post">
             <span class="header">Inicia sesión</span>
             <p class="subtitle">¡El antojo te trajo de vuelta 🍔🍕!</p>
-            <input type="email" placeholder="Email" class="input" required />
-            <input type="password" placeholder="Contraseña" class="input" required />
+            <input type="email" name="email" placeholder="Email" class="input" required />
+            <input type="password" name="password" placeholder="Contraseña" class="input" required />
             <button type="submit" class="button sign-in">Ingresar</button>
 
             <h1 class="footer">
@@ -293,5 +368,26 @@
         <p4>Astorino Hernán, Angeloro Valentina, Hobbins William</p4>
     </div>
 </footer>
+
+<script>
+    // Script principal del loader de sesion
+    window.addEventListener('load', function() {
+        const loader = document.getElementById('loader-container-sesion');
+
+        // Si el loader ya está oculto (por el script del head), no hacer nada
+        if (loader.style.display === 'none' || window.getComputedStyle(loader).display === 'none') {
+            return;
+        }
+
+        // Si el loader está visible (solo cuando vienes del botón Volver)
+        // Mostrar loader por 1.5 segundos
+        setTimeout(function() {
+            loader.classList.add('fade-out');
+            setTimeout(function() {
+                loader.style.display = 'none';
+            }, 500);
+        }, 1500);
+    });
+</script>
 </body>
 </html>
