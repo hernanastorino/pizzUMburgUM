@@ -56,6 +56,11 @@ public class PublicController {
         return "masa-pizza";
     }
 
+    @PostMapping("/register-request")
+    public String registerUser() {
+        return "redirect:/menu";
+    }
+
 
 
 
