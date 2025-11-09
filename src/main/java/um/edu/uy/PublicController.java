@@ -15,7 +15,7 @@ public class PublicController {
 
     @GetMapping("/index")
     public String index() {
-        return "index";
+        return "home";
     }
 
     @GetMapping("/sesion")

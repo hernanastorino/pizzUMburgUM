@@ -24,13 +24,20 @@
             margin: 0;
             overflow-x: hidden;
             position: sticky;
+            padding-top: 70px;
         }
 
         /* Navigation */
         .menu {
             background-color: #fff;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
             padding: 20px 50px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            font-family: 'Angel Club', sans-serif;
         }
 
         nav {
@@ -399,15 +406,22 @@
 
             nav ul {
                 position: fixed;
-                width: 250px;
-                height: 100vh;
-                background: #fff;
+                width: 280px;
+                height: calc(100vh - 70px);
+                background: rgba(255, 255, 255, 0.85);
                 top: 80px;
+                max-width: 300px;
+                padding-top: 40px;
+                padding-bottom: 40px;
+                display: flex;
                 left: -100%;
                 flex-direction: column;
                 transition: all 0.5s;
-                padding-top: 50px;
                 text-align: center;
+                border-top-right-radius: 20px;
+                border-bottom-right-radius: 20px;
+                z-index: 4000;
+                overflow-y: auto;
             }
 
             #check:checked ~ ul {
@@ -446,7 +460,7 @@
 <div class="menu">
     <nav>
         <input type="checkbox" id="check">
-        <label for="check" class="checkbtn">≡</label>
+        <label for="check" class="checkbtn">☰</label>
         <label class="logo">PizzUM & BurgUM</label>
         <ul>
             <li><a href="#" class="active">Inicio</a></li>
