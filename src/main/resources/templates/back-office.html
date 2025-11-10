@@ -12,11 +12,11 @@
         }
 
         body {
-            font-family: 'Josefin Sans', sans-serif;
+            font-family: 'Angel Club', sans-serif;
             background-color: #1B0D4E;
-            background-image: url('/images/borroso.jpg');
+            background-image: url('../static/images/borroso.jpg');
             background-size: cover;
-            background-attachment: scroll;
+            background-attachment: fixed;
             background-repeat: no-repeat;
             background-position: center;
             min-height: 100vh;
@@ -120,16 +120,60 @@
         }
 
         /* Categoría (Acordeón) */
+        /* Animación de luz */
+        @property --angle {
+            syntax: '<angle>';
+            initial-value: 0deg;
+            inherits: false;
+        }
+
+        @keyframes rotate {
+            100% {
+                --angle: 360deg;
+            }
+        }
+
+        /* Categoría (Acordeón) */
         .category-item {
+            position: relative;
             background: linear-gradient(90deg, #1B0D4E 0%, #3d0085 50%, #1B0D4E 100%);
             border-radius: 15px;
-            overflow: hidden;
+            overflow: visible;
             box-shadow:
                     0px 0px 10px rgba(74, 0, 224, 0.25),
                     0px 0px 20px rgba(142, 45, 226, 0.2);
             transition: all 0.3s ease;
+            z-index: 1;
         }
 
+        .category-item::before {
+            content: "";
+            position: absolute;
+            inset: -2px;
+            border-radius: 15px;
+            padding: 2px;
+            background: conic-gradient(
+                    from var(--angle, 0deg),
+                    transparent 0%,
+                    transparent 60%,
+                    rgba(142, 45, 226, 0.5) 65%,
+                    rgba(64, 196, 255, 0.6) 72%,
+                    rgba(255, 255, 255, 0.7) 79%,
+                    rgba(64, 196, 255, 0.6) 86%,
+                    rgba(142, 45, 226, 0.5) 93%,
+                    transparent 100%
+            );
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            z-index: -1;
+            animation: rotate 4s linear infinite;
+        }
+
+        .category-item > * {
+            position: relative;
+            z-index: 1;
+        }
         /* Header de categoría (botón desplegable) */
         .category-header {
             display: flex;
@@ -183,7 +227,7 @@
             height: 50px;
             background: linear-gradient(135deg, #8e2de2, #4a00e0);
             color: white;
-            border: 2px solid white;
+            border: 1px solid #8e2de2;
             border-radius: 10px;
             font-size: 28px;
             font-weight: bold;
@@ -264,11 +308,6 @@
             color: white;
         }
 
-        .subcategory-price {
-            font-size: 18px;
-            color: #a8dadc;
-            font-weight: 500;
-        }
 
         .subcategory-right {
             display: flex;
@@ -301,10 +340,12 @@
             transform: scale(0.9);
         }
 
+
+
         .subcategory-add-option {
             background: linear-gradient(135deg, #8e2de2, #4a00e0);
             color: white;
-            border: 2px solid white;
+            border: 2px solid #8e2de2;
             border-radius: 8px;
             width: 40px;
             height: 40px;
@@ -364,8 +405,8 @@
             padding: 15px 20px;
             border-radius: 8px;
             display: flex;
-            justify-content: space-between;
             align-items: center;
+            gap: 15px;
             cursor: pointer;
             transition: all 0.3s ease;
             border: 2px solid transparent;
@@ -387,6 +428,10 @@
             font-weight: 500;
         }
 
+        .option-item {
+            display: flex;
+            justify-content: space-between;
+        }
         .option-item > div {
             display: flex;
             gap: 15px;
@@ -612,23 +657,23 @@
                             <div class="subcategory-inner">
                                 <div class="options-list">
                                     <div class="option-item">
-                                        <span class="option-name">Pequeña</span>
+                                        <span class="option-name">Chica 20cm</span>
                                         <div>
-                                            <span class="option-price">$200</span>
+                                            <span class="option-price">$15</span>
                                             <span class="option-remove">✕</span>
                                         </div>
                                     </div>
                                     <div class="option-item">
-                                        <span class="option-name">Mediana</span>
+                                        <span class="option-name">Mediana 28cm</span>
                                         <div>
-                                            <span class="option-price">$300</span>
+                                            <span class="option-price">$15</span>
                                             <span class="option-remove">✕</span>
                                         </div>
                                     </div>
                                     <div class="option-item">
-                                        <span class="option-name">Grande</span>
+                                        <span class="option-name">Grande 36cm</span>
                                         <div>
-                                            <span class="option-price">$400</span>
+                                            <span class="option-price">$15</span>
                                             <span class="option-remove">✕</span>
                                         </div>
                                     </div>
