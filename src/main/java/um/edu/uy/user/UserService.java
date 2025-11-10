@@ -1,10 +1,9 @@
+// src/main/java/um/edu/uy/user/UserService.java
 package um.edu.uy.user;
 
-// src/main/java/um/edu/uy/services/UserService.java
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import um.edu.uy.security.AuthController;
-
+import um.edu.uy.security.AuthController; // Assuming this DTO is here
 
 @Service
 public class UserService {
@@ -18,8 +17,28 @@ public class UserService {
     }
 
     /**
-     * Creates a new user, specifically an Admin.
-     * This logic is protected and only callable by other Admins.
+     * Registers a new CLIENT user.
+     * This is a public-facing action.
+     */
+    public UserDTO registerClient(AuthController.RegisterRequest request) {
+        if (userRepository.findByEmail(request.email()).isPresent()) {
+            throw new RuntimeException("Email is already taken!");
+        }
+
+        User clientUser = new User();
+        clientUser.setEmail(request.email());
+        clientUser.setPassword(passwordEncoder.encode(request.password()));
+        clientUser.setRole(Role.clientRole); // [cite: 25]
+
+        User savedUser = userRepository.save(clientUser);
+
+        // Return a DTO
+        return new UserDTO(savedUser.getEmail(), savedUser.getRole().name());
+    }
+
+    /**
+     * Creates a new ADMIN user.
+     * This logic is protected and only callable by other Admins. [cite: 48]
      */
     public UserDTO createAdminUser(AuthController.RegisterRequest request) {
         if (userRepository.findByEmail(request.email()).isPresent()) {
@@ -29,12 +48,12 @@ public class UserService {
         User adminUser = new User();
         adminUser.setEmail(request.email());
         adminUser.setPassword(passwordEncoder.encode(request.password()));
-        adminUser.setRole(Role.adminRole); // Set role directly to ADMIN
+        adminUser.setRole(Role.adminRole); // [cite: 24]
 
         User savedUser = userRepository.save(adminUser);
 
-        // Return a DTO, not the full entity
-        return new UserDTO(savedUser.getEmail(), savedUser.getRole().name());
+        // Return a DTO
+        return new UserDTO(adminUser.getEmail(), adminUser.getRole().name());
     }
 
     /**
