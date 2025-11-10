@@ -1,4 +1,4 @@
-package um.edu.uy.user.relations;
+package um.edu.uy.product.creation.relations;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -31,6 +31,6 @@ public class CreationInOrder {
 
     // 6. ¡El atributo extra!
     @Column(name = "creation_quantity", nullable = false)
-    private int quantity;
+    private int CreationQuantity;
 
 }

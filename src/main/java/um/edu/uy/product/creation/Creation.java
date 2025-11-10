@@ -2,8 +2,9 @@ package um.edu.uy.product.creation;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 import um.edu.uy.user.User;
-import um.edu.uy.user.relations.CreationInOrder;
+import um.edu.uy.product.creation.relations.CreationInOrder;
 
 import java.util.Set;
 import java.util.HashSet;
@@ -11,10 +12,10 @@ import java.util.HashSet;
 @Entity
 @Table(name = "Creation")
 @Inheritance(strategy = InheritanceType.JOINED) // Estrategia de herencia: una tabla por clase
-@DiscriminatorColumn(name = "creation_type") // Columna que dice si es "PIZZA" o "HAMBURGUESA"
+@DiscriminatorColumn(name = "CREATION_TYPE") // Columna que dice si es "PIZZA" o "HAMBURGUESA"
 @Getter
 @Setter
-@Builder
+@SuperBuilder //esto es para que el builder tenga en cuenta la herencia
 @AllArgsConstructor
 @NoArgsConstructor
 public abstract class Creation { // Abstracta, porque una creación SIEMPRE es Pizza o Hamburguesa
@@ -29,7 +30,7 @@ public abstract class Creation { // Abstracta, porque una creación SIEMPRE es P
     private Double subtotal;
     private boolean isFavorite;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id") // La relación "crea"
     private User user;
 

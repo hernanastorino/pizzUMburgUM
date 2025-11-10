@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "Beverage")
+@Table(name = "Beverage") //solo para cambiar nombre de clase en base de datos
 @Getter
 @Setter
 @Builder
@@ -14,12 +14,11 @@ import lombok.*;
 public class Beverage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "BeverageId")
-    private long id;
+    @Column(name = "beverage_id")
+    private Long beverageId;
 
-    @Column(name = "BeverageName")
+    @Column(nullable = false)
     private String name;
 
-    @Column(name = "BeveragePrice")
-    private int price;
+    private Double price;
 }

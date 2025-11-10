@@ -14,12 +14,12 @@ import um.edu.uy.product.creation.burger.Burger;
 public class Bread {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long breadId;
+    private Long breadId;
 
     @Column(nullable = false)
     private String name;
 
-    private int price;
+    private Double price;
 
     @OneToOne(mappedBy = "breadId")
     private Burger burger; // La relación "lleva_pan"

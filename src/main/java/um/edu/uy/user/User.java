@@ -7,28 +7,35 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "User") // no cambiar a "user" por conflicto con sql
+@Table(name = "app_user") // no cambiar a User por conflicto con sql
+@Inheritance(strategy = InheritanceType.JOINED)
+@DiscriminatorColumn(name = "TIPO_USUARIO")
 public class User implements UserDetails {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
 
-    @Column(unique = true) // Your AuthController checks this!
+    @Column(unique = true,nullable = false) // Your AuthController checks this!
     private String email;
 
+    @Column(nullable = false)
     private String password;
     private String name;
     private String surname;
+    private String phone;
 
     @Enumerated(EnumType.STRING) // This tells JPA to store the role as a String
+    @Column(nullable = false)
     private Role role;
 
     // --- UserDetails Methods ---

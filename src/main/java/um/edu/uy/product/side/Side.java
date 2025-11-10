@@ -16,13 +16,12 @@ import um.edu.uy.product.creation.Creation;
 public class Side {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long sideId;
+    private Long sideId;
 
     @Column(nullable = false)
     private String name;
 
-
-    private int price;
+    private Double price;
 
     @ManyToOne
     @JoinColumn(name = "creation_id")

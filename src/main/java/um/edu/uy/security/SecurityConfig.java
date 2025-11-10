@@ -26,7 +26,6 @@ import um.edu.uy.user.UserRepository;
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthFilter;
-    private final UserRepository userRepository;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -54,11 +53,19 @@ public class SecurityConfig {
 
                         // Secure Admin routes
                         // [cite: 48, 49, 50, 51]
-                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/api/products/**").hasAuthority("adminRole")
+                        .requestMatchers("/api/admin/**").hasAuthority("adminRole")
+                        .requestMatchers("/api/pedidos/state/**").hasAuthority("adminRole")
+                        .requestMatchers("/api/pedidos/date/**").hasAuthority("adminRole")
+                        .requestMatchers("/api/ws/**").hasAuthority("adminRole")
 
                         // Secure Client routes
                         // [cite: 42, 43, 44, 45, 46]
-                        .requestMatchers("/api/client/**").hasRole("CLIENT")
+                        .requestMatchers("/api/client/**").hasAuthority("clientRole")
+                        .requestMatchers("/api/creations/**").hasAuthority("clientRole")
+                        .requestMatchers("/api/orders/my-orders/**").hasAuthority("clientRole")
+                        .requestMatchers("/api/payment-methods/**").hasAuthority("clientRole")
+                        .requestMatchers("/api/adresses/**").hasAuthority("clientRole")
 
                         // All other requests must be authenticated
                         .anyRequest().authenticated()
@@ -71,13 +78,6 @@ public class SecurityConfig {
 
 
         return http.build();
-    }
-
-    @Bean
-    public UserDetailsService userDetailsService() {
-        // This is how Spring will load a user from your database
-        return username -> userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
 
     @Bean
@@ -94,9 +94,9 @@ public class SecurityConfig {
 
     // This bean is used by the AuthenticationManager to process authentication
     @Bean
-    public AuthenticationProvider authenticationProvider() {
+    public AuthenticationProvider authenticationProvider(UserDetailsService userDetailsService) {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-        authProvider.setUserDetailsService(userDetailsService());
+        authProvider.setUserDetailsService(userDetailsService);
         authProvider.setPasswordEncoder(passwordEncoder());
         return authProvider;
     }

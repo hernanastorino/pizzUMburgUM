@@ -35,7 +35,7 @@ public class AuthController {
         this.authenticationManager = authenticationManager;
     }
 
-    // A simple DTO (Data Transfer Object) for the request body
+    // A simple DTO for the request body
     public static record RegisterRequest(String email, String password) {}
     public record LoginRequest(String email, String password) {}
     public record AuthResponse(String token) {}

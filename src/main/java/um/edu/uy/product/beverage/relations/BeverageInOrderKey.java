@@ -1,4 +1,4 @@
-package um.edu.uy.user.relations;
+package um.edu.uy.product.beverage.relations;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
@@ -13,16 +13,14 @@ import java.util.Objects;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CreationInOrderKey implements Serializable {
+public class BeverageInOrderKey implements Serializable {
 
     @Column(name = "order_id")
     private Long orderId;
 
-    @Column(name = "creation_id")
-    private Long creationId;
+    @Column(name = "beverage_id")
+    private Long beverageId;
 
-    // --- Constructores, Getters/Setters ---
-    // (Omitidos por brevedad)
 
     // ¡MUY IMPORTANTE! JPA necesita equals() y hashCode()
     // para gestionar claves compuestas.
@@ -30,13 +28,13 @@ public class CreationInOrderKey implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        CreationInOrderKey that = (CreationInOrderKey) o;
+        BeverageInOrderKey that = (BeverageInOrderKey) o;
         return Objects.equals(orderId, that.orderId) &&
-                Objects.equals(creationId, that.creationId);
+                Objects.equals(beverageId, that.beverageId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(orderId, creationId);
+        return Objects.hash(orderId, beverageId);
     }
 }

@@ -14,14 +14,14 @@ import um.edu.uy.product.creation.burger.Burger;
 public class Condiment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long condimentId;
+    private Long condimentId;
 
     @Column(nullable = false)
     private String name;
 
-    private int price;
+    private Double price;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "condiment_id", referencedColumnName = "condimentId")
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "burger_id", referencedColumnName = "burgerId")
     private Burger burger; // La relación "lleva_aderezo"
 }

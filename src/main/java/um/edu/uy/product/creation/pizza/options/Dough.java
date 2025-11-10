@@ -14,12 +14,12 @@ import um.edu.uy.product.creation.pizza.Pizza;
 public class Dough {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long doughId;
+    private Long doughId;
 
     @Column(nullable = false)
     private String name;
 
-    private int price;
+    private Double price;
 
     @OneToOne(mappedBy = "doughId")
     private Pizza pizza; // La relación "lleva_dough"

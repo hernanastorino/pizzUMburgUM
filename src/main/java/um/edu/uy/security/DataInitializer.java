@@ -20,12 +20,15 @@ public class DataInitializer implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         if (userRepository.findByRole(Role.adminRole).isEmpty()) {
-            User admin = new User();
-            admin.setName("admin");
-            admin.setPassword(passwordEncoder.encode("12345"));
-            admin.setRole(Role.adminRole);
+            User admin = User.builder()
+                    .name("Admin")
+                    .surname("pizzumburgum")
+                    .email("admin@pizzum.com")
+                    .password(passwordEncoder.encode("1234"))
+                    .role(Role.adminRole)
+                    .build();
             userRepository.save(admin);
-            System.out.println("Created first admin user!");
+            System.out.println("user created");
         }
     }
 }

@@ -2,6 +2,7 @@ package um.edu.uy.product.creation.pizza;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 import um.edu.uy.product.creation.Creation;
 import um.edu.uy.product.creation.Topping;
 import um.edu.uy.product.creation.pizza.options.Cheese;
@@ -16,25 +17,31 @@ import java.util.Set;
 @DiscriminatorValue("PIZZA") // Valor que se guarda en la columna "creation_type"
 @Getter
 @Setter
-@Builder
+@SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
 public class Pizza extends Creation {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long pizzaId;
+
     private String size;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "dough_id", referencedColumnName = "doughId")
     private Dough dough; // La relación "lleva_masa"
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "cheese_type_id", referencedColumnName = "cheeseId")
     private Cheese cheese; // La relación "lleva_queso"
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "sauce_type_id", referencedColumnName = "sauceId")
     private Sauce sauce; // La relación "lleva_salsa"
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @Builder.Default
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "Pizza_Topping", // Nombre de la tabla intermedia
             joinColumns = @JoinColumn(name = "pizza_id", referencedColumnName = "pizzaId"), // FK a esta entidad (Pizza)

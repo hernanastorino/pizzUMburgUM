@@ -17,12 +17,12 @@ import um.edu.uy.product.creation.pizza.Pizza;
 public class Sauce {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long sauceId;
+    private Long sauceId;
 
     @Column(nullable = false)
     private String name;
 
-    private int price;
+    private Double price;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sauce_id", referencedColumnName = "sauceId")

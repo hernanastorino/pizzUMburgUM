@@ -14,14 +14,14 @@ import um.edu.uy.product.creation.pizza.Pizza;
 public class Cheese {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long cheeseId;
+    private Long cheeseId;
 
     @Column(nullable = false)
     private String name;
 
-    private int price;
+    private Double price;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "cheese_id", referencedColumnName = "cheeseId")
     private Pizza pizza; // La relación "lleva_queso"
 }

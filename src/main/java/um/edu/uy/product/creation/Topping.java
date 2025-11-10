@@ -19,17 +19,13 @@ import java.util.Set;
 public class Topping {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long toppingId;
+    private Long toppingId;
 
     @Column(nullable = false, unique = true)
     private String name;
 
     @Column(nullable = false)
     private Double price;
-
-    @ManyToOne
-    @JoinColumn(name = "creation_id", nullable = false)
-    private Creation creation;
 
     @ManyToMany(mappedBy = "toppings")
     private Set<Pizza> pizzas = new HashSet<>();
