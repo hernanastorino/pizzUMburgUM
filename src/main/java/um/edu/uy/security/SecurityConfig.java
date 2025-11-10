@@ -1,103 +1,86 @@
+// src/main/java/um/edu/uy/security/SecurityConfig.java
 package um.edu.uy.security;
 
-import lombok.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import um.edu.uy.user.UserRepository;
+
+import um.edu.uy.user.CustomUserDetailsService; // Import your service
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity // Allows for @PreAuthorize annotations
-@RequiredArgsConstructor // Injects the final fields
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthFilter;
+    private final CustomUserDetailsService userDetailsService;
+
+    public SecurityConfig(JwtAuthenticationFilter jwtAuthFilter, CustomUserDetailsService userDetailsService) {
+        this.jwtAuthFilter = jwtAuthFilter;
+        this.userDetailsService = userDetailsService;
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                // 1. Disable CSRF, as we are not using Cookies/Sessions
-                .csrf(csrf -> csrf.disable())
+                // Disable CSRF (common for stateless REST APIs)
+                .csrf(AbstractHttpConfigurer::disable)
 
-                // 2. Enable CORS (Cross-Origin Resource Sharing)
-                // This is necessary for your React app (localhost:3000)
-                // to talk to your Spring app (localhost:8080)
-                .cors(cors -> cors.configure(http)) // Will use a default Bean
-
-                // 3. Set session management to STATELESS
-                // We are using a token (JWT), not a session
-                .sessionManagement(session ->
-                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                )
-
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-
-                // 4. Define the URL security rules
-                .authorizeHttpRequests(auth -> auth
-                        // Allow public access to registration and login
+                // Define authorization rules
+                .authorizeHttpRequests(authz -> authz
+                        // Public endpoints for auth
                         .requestMatchers("/api/auth/**").permitAll()
 
-                        // Secure Admin routes
-                        // [cite: 48, 49, 50, 51]
-                        .requestMatchers("/api/products/**").hasAuthority("adminRole")
-                        .requestMatchers("/api/admin/**").hasAuthority("adminRole")
-                        .requestMatchers("/api/pedidos/state/**").hasAuthority("adminRole")
-                        .requestMatchers("/api/pedidos/date/**").hasAuthority("adminRole")
-                        .requestMatchers("/api/ws/**").hasAuthority("adminRole")
+                        // Admin-only endpoints (based on project doc)
+                        [cite_start].requestMatchers("/api/admin/**", "/api/products/**").hasRole("ADMIN") [cite: 24, 47, 49]
 
-                        // Secure Client routes
-                        // [cite: 42, 43, 44, 45, 46]
-                        .requestMatchers("/api/client/**").hasAuthority("clientRole")
-                        .requestMatchers("/api/creations/**").hasAuthority("clientRole")
-                        .requestMatchers("/api/orders/my-orders/**").hasAuthority("clientRole")
-                        .requestMatchers("/api/payment-methods/**").hasAuthority("clientRole")
-                        .requestMatchers("/api/adresses/**").hasAuthority("clientRole")
+        // Client-only endpoints
+                [cite_start].requestMatchers("/api/orders/**", "/api/creations/**").hasRole("CLIENT") [cite: 25, 42, 43, 44, 45, 46]
 
-                        // All other requests must be authenticated
-                        .anyRequest().authenticated()
-                );
+        // All other requests must be authenticated
+                .anyRequest().authenticated()
+            )
 
-        // This is a placeholder. We will replace this with our
-        // JWT filter in the next step.
-        // http.httpBasic(Customizer.withDefaults());
-        // Add our JWT filter *before* the standard username/password filter
+        // Configure session management to be stateless (for JWT)
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
+                // Tell Spring to use the AuthProvider we defined
+                .authenticationProvider(authenticationProvider())
+
+                // Add our custom JWT filter before the standard auth filter
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder() {
-        // The standard password hasher
-        return new BCryptPasswordEncoder();
+    public AuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+        // Tell the provider how to find users
+        authProvider.setUserDetailsService(userDetailsService);
+        // Tell the provider how to hash/check passwords
+        authProvider.setPasswordEncoder(passwordEncoder());
+        return authProvider;
     }
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
-        // A bean Spring uses to manage the authentication process
         return config.getAuthenticationManager();
     }
 
-    // This bean is used by the AuthenticationManager to process authentication
     @Bean
-    public AuthenticationProvider authenticationProvider(UserDetailsService userDetailsService) {
-        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-        authProvider.setUserDetailsService(userDetailsService);
-        authProvider.setPasswordEncoder(passwordEncoder());
-        return authProvider;
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 }
