@@ -1,13 +1,12 @@
-import React from 'react';
-import LoginForm from './LoginForm'; // Importamos nuestro nuevo componente
 import './App.css';
 
 function App() {
     return (
         <div className="App">
             <header className="App-header">
-                <h1>PizzUM & BurgUM</h1>
-                <LoginForm /> {/* ¡Aquí mostramos el formulario! */}
+                <h1>HOLA, MUNDO.</h1>
+                <p>Si ves esto, React está funcionando.</p>
+                <p>El logo desapareció.</p>
             </header>
         </div>
     );
