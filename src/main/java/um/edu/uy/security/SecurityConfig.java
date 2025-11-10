@@ -67,6 +67,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/payment-methods/**").hasAuthority("clientRole")
                         .requestMatchers("/api/adresses/**").hasAuthority("clientRole")
 
+
                         // All other requests must be authenticated
                         .anyRequest().authenticated()
                 );

@@ -28,7 +28,7 @@ public abstract class Creation { // Abstracta, porque una creación SIEMPRE es P
     private String name;
 
     @Column(nullable = false)
-    private Double subtotal;
+    private Double price;
 
     @Column(nullable = false)
     private boolean isFavorite;

@@ -32,6 +32,15 @@ public class BeverageInOrder {
 
     // 6. ¡El atributo extra!
     @Column(name = "beverage_quantity", nullable = false)
-    private int beverageQuantity;
+    private Integer beverageQuantity;
 
+    @Column(name = "beverage_subtotal", nullable = false)
+    private Double beverageSubtotal;
+
+    @PrePersist
+    public void calculateSubtotal() {
+        if (beverage != null && beverageQuantity != null) {
+            this.beverageSubtotal = beverage.getPrice() * beverageQuantity;
+        }
+    }
 }

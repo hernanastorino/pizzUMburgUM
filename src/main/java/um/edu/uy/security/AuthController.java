@@ -12,9 +12,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import um.edu.uy.order.Order;
+import um.edu.uy.order.OrderResponse;
 import um.edu.uy.user.Role;
 import um.edu.uy.user.User;
 import um.edu.uy.user.UserRepository;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -77,6 +82,4 @@ public class AuthController {
         // Return the token
         return ResponseEntity.ok(new AuthResponse(token));
     }
-
-
 }

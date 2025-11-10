@@ -17,10 +17,17 @@ public class Address {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long addressId;
 
+    @Column(nullable = false, unique = true)
     private String name;
+
+    @Column(nullable = false)
     private String street;
+
     private String indications;
+
+    @Column(nullable = false)
     private String doorNumber;
+
     private String aptNumber;
 
     @ManyToOne(fetch = FetchType.EAGER)
