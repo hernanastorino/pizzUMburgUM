@@ -26,6 +26,7 @@ public class Pizza extends Creation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long pizzaId;
 
+    @Column(nullable = false)
     private String size;
 
     @OneToOne(fetch = FetchType.LAZY)

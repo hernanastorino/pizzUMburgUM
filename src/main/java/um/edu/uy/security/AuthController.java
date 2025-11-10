@@ -36,7 +36,7 @@ public class AuthController {
     }
 
     // A simple DTO for the request body
-    public static record RegisterRequest(String email, String password) {}
+    public record RegisterRequest(String email, String password) {}
     public record LoginRequest(String email, String password) {}
     public record AuthResponse(String token) {}
 
@@ -57,7 +57,6 @@ public class AuthController {
         return new ResponseEntity<>("User registered successfully", HttpStatus.CREATED);
     }
 
-    // NEW /login ENDPOINT
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request) {
         // This line tries to authenticate the user.
@@ -78,4 +77,6 @@ public class AuthController {
         // Return the token
         return ResponseEntity.ok(new AuthResponse(token));
     }
+
+
 }

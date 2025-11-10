@@ -30,9 +30,13 @@ public class Order {
     @JoinColumn(name = "user_id", referencedColumnName = "userId")
     private User client; // La relación "realiza"
 
+    @Column(nullable = false)
     private String state;
 
+    @Column(nullable = false)
     private Double total;
+
+    @Column(nullable = false)
     private LocalDateTime date; // Es bueno guardar la fecha del pedido
 
     // Relación "se_envia"

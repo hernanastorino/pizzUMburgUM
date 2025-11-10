@@ -19,6 +19,7 @@ public class Dough {
     @Column(nullable = false)
     private String name;
 
+    @Column(nullable = false)
     private Double price;
 
     @OneToOne(mappedBy = "doughId")

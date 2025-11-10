@@ -27,7 +27,10 @@ public abstract class Creation { // Abstracta, porque una creación SIEMPRE es P
     @Column(nullable = false)
     private String name;
 
+    @Column(nullable = false)
     private Double subtotal;
+
+    @Column(nullable = false)
     private boolean isFavorite;
 
     @ManyToOne(fetch = FetchType.EAGER)

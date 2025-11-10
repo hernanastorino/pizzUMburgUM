@@ -27,6 +27,7 @@ public class Burger extends Creation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long burgerId;
 
+    @Column(nullable = false)
     private int meatQuantity;
 
     @ManyToOne(fetch = FetchType.EAGER)

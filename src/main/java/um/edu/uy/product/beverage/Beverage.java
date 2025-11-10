@@ -20,5 +20,6 @@ public class Beverage {
     @Column(nullable = false)
     private String name;
 
+    @Column(nullable = false)
     private Double price;
 }
