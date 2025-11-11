@@ -1,0 +1,174 @@
+/*
+ * This is the CSS module for Register.jsx
+ * It is almost identical to Login.module.css
+ */
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+    flex: 1;
+}
+
+.loginBox {
+    position: relative;
+    background: rgba(27, 13, 78, 0.95);
+    backdrop-filter: blur(15px);
+    border-radius: 20px;
+    padding: 40px;
+    max-width: 500px;
+    width: 100%;
+    z-index: 10;
+    border: 2px solid rgba(142, 45, 226, 0.3);
+}
+
+.loginBox::before {
+    content: "";
+    position: absolute;
+    inset: -2px;
+    border-radius: 20px;
+    padding: 2px;
+    background: conic-gradient(
+            from var(--angle, 0deg),
+            transparent 0%,
+            transparent 5%,
+            #8e2de2 10%,
+            #40C4FF 15%,
+            #fff 20%,
+            #40C4FF 25%,
+            #8e2de2 30%,
+            transparent 35%,
+    transparent 100%
+    );
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    z-index: -1;
+    animation: rotate 4s linear infinite;
+}
+
+/* @keyframes and @property are in global.css */
+
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.header {
+    text-align: center;
+    font-size: 2em;
+    color: white;
+    font-family: 'Angel Club', sans-serif;
+    margin-bottom: 10px;
+    text-shadow: 0px 0px 12px rgba(64, 196, 255, 0.6);
+}
+
+.subtitle {
+    text-align: center;
+    font-size: 1.1em;
+    color: white;
+    font-family: Arial, sans-serif;
+    margin: 0 0 20px 0;
+    line-height: 1.4;
+}
+
+.input {
+    padding: 15px;
+    border: 2px solid rgba(142, 45, 226, 0.5);
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    font-size: 1em;
+    transition: all 0.3s ease;
+    outline: none;
+}
+
+.input::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.input:focus {
+    border-color: #8e2de2;
+    background: rgba(255, 255, 255, 0.15);
+    box-shadow: 0px 0px 20px rgba(142, 45, 226, 0.5);
+}
+
+.passwordContainer {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.passwordContainer input {
+    flex: 1;
+}
+
+.input[type="password"]::-ms-reveal {
+    filter: invert(1) brightness(2);
+}
+
+.input[type="password"]::-webkit-credentials-auto-fill-button {
+    filter: invert(1) brightness(2);
+}
+
+.input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(1) brightness(1.5);
+    cursor: pointer;
+}
+
+.button {
+    padding: 15px;
+    border: none;
+    border-radius: 10px;
+    font-size: 1.1em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Angel Club', sans-serif;
+    margin-top: 10px;
+}
+
+.signIn {
+    background: linear-gradient(to right, #8e2de2, #4a00e0);
+    color: white;
+    box-shadow:
+            0px 0px 30px rgba(142, 45, 226, 0.6),
+            0px 5px 15px rgba(74, 0, 224, 0.4);
+}
+
+.signIn:hover {
+    box-shadow:
+            0px 0px 40px rgba(142, 45, 226, 0.8),
+            0px 5px 20px rgba(74, 0, 224, 0.6);
+    transform: translateY(-2px);
+}
+
+.signIn:active {
+    transform: scale(0.98);
+}
+
+
+.footer {
+    text-align: center;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.95em;
+    margin-top: 20px;
+    font-family: 'Angel Club', sans-serif;
+    font-weight: normal;
+    line-height: 1.6;
+}
+
+.link {
+    color: #40C4FF;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    font-weight: bold;
+    font-size: 1.1em;
+}
+
+.link:hover {
+    color: #8e2de2;
+    text-shadow: 0px 0px 10px rgba(142, 45, 226, 0.6);
+}

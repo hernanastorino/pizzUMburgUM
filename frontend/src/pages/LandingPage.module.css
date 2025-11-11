@@ -1,0 +1,170 @@
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #1B0D4E;
+  color: white;
+  font-family: "Poppins", sans-serif;
+}
+
+.landing-container {
+  flex: 1;
+  position: relative;
+}
+
+/* Loader */
+#loader-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #1B0D4E;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+  transition: opacity 0.5s ease-out;
+}
+
+#loader-container.fade-out {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.spinner {
+  background-image: linear-gradient(rgb(186, 66, 255) 35%, rgb(0, 225, 255));
+  width: 100px;
+  height: 100px;
+  animation: spinning82341 1.7s linear infinite;
+  text-align: center;
+  border-radius: 50px;
+  filter: blur(1px);
+  box-shadow: 0px -5px 20px 0px rgb(186, 66, 255),
+    0px 5px 20px 0px rgb(0, 225, 255);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.spinner1 {
+  background-color: rgb(36, 36, 36);
+  width: 100px;
+  height: 100px;
+  border-radius: 50px;
+  filter: blur(10px);
+}
+
+@keyframes spinning82341 {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Loader Text */
+.loader-text {
+  margin-top: 20px;
+  text-align: center;
+  font-size: 16px;
+}
+
+/* Top buttons */
+.top-left-button,
+.top-right-button {
+  position: absolute;
+  top: 20px;
+}
+
+.top-left-button {
+  left: 20px;
+}
+
+.top-right-button {
+  right: 20px;
+}
+
+.sesion-button,
+.register-button {
+  background-color: transparent;
+  border: 2px solid #40C4FF;
+  color: #40C4FF;
+  padding: 10px 20px;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 14px;
+}
+
+.sesion-button:hover,
+.register-button:hover {
+  background-color: #40C4FF;
+  color: #1B0D4E;
+}
+
+/* Social icons */
+.example-2 {
+  position: fixed;
+  bottom: 100px;
+  left: 20px;
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.icon-content {
+  position: relative;
+  cursor: pointer;
+}
+
+.icon-content a {
+  text-decoration: none;
+  color: white;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.icon-content .filled {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: linear-gradient(45deg, #0080FF, #40C4FF);
+  z-index: -1;
+  transform: scale(0);
+  transition: transform 0.3s ease;
+}
+
+.icon-content:hover .filled {
+  transform: scale(1);
+}
+
+.tooltip {
+  position: absolute;
+  left: 50px;
+  background: #40C4FF;
+  color: #1B0D4E;
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: 12px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.icon-content:hover .tooltip {
+  opacity: 1;
+}
+
+/* Spacer + Footer */
+.content-spacer {
+  flex-grow: 1;
+}
+
