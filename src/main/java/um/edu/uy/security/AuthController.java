@@ -1,81 +1,69 @@
+// src/main/java/um/edu/uy/security/AuthController.java
 package um.edu.uy.security;
 
-
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import um.edu.uy.user.Role;
-import um.edu.uy.user.User;
-import um.edu.uy.user.UserRepository;
+
+import um.edu.uy.security.dto.AuthResponse;
+import um.edu.uy.security.dto.LoginRequest;
+import um.edu.uy.security.dto.RegisterRequest;
+import um.edu.uy.user.CustomUserDetailsService;
+import um.edu.uy.user.UserService;
+import um.edu.uy.user.UserDTO;
 
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
 
-    private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
-    private final JwtService jwtService; // Add these
-    private final AuthenticationManager authenticationManager; // Add these
+    private final UserService userService;
+    private final JwtService jwtService;
+    private final AuthenticationManager authenticationManager;
+    private final CustomUserDetailsService userDetailsService;
 
-    public AuthController(UserRepository userRepository,
-                          PasswordEncoder passwordEncoder,
-                          JwtService jwtService,
-                          AuthenticationManager authenticationManager) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
+    public AuthController(UserService userService, JwtService jwtService, AuthenticationManager authenticationManager, CustomUserDetailsService userDetailsService) {
+        this.userService = userService;
         this.jwtService = jwtService;
         this.authenticationManager = authenticationManager;
+        this.userDetailsService = userDetailsService;
     }
 
-    // A simple DTO for the request body
-    public static record RegisterRequest(String email, String password) {}
-    public record LoginRequest(String email, String password) {}
-    public record AuthResponse(String token) {}
-
+    /**
+     * Handles new CLIENT registrations.
+     */
     @PostMapping("/register")
-    public ResponseEntity<?> registerUser(@RequestBody RegisterRequest request) {
-        if (userRepository.findByEmail(request.email()).isPresent()) {
-            return new ResponseEntity<>("Email is already taken!", HttpStatus.BAD_REQUEST);
-        }
-
-        User client = new User();
-        client.setEmail(request.email());
-        client.setPassword(passwordEncoder.encode(request.password()));
-        // New users are *always* clients, without privileges
-        client.setRole(Role.clientRole);
-
-        userRepository.save(client);
-
-        return new ResponseEntity<>("User registered successfully", HttpStatus.CREATED);
+    public ResponseEntity<UserDTO> register(@RequestBody RegisterRequest request) {
+        // The userService sets the role to ROLE_CLIENT by default
+        UserDTO userDto = userService.registerClient(request);
+        return ResponseEntity.ok(userDto);
     }
 
-    // NEW /login ENDPOINT
+    /**
+     * Handles login for ALL users (Clients and Admins).
+     */
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request) {
-        // This line tries to authenticate the user.
-        // If credentials are bad, it throws an exception.
-        Authentication authentication = authenticationManager.authenticate(
+        // 1. Authenticate the user
+        // This will use your CustomUserDetailsService and PasswordEncoder
+        authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.email(),
                         request.password()
                 )
         );
 
-        // If authentication is successful, get the user
-        UserDetails user = (UserDetails) authentication.getPrincipal();
+        // 2. If authentication is successful, fetch user details
+        final UserDetails userDetails = userDetailsService.loadUserByUsername(request.email());
 
-        // Generate a token
-        String token = jwtService.generateToken(user);
+        // 3. Generate a JWT token
+        final String token = jwtService.generateToken(userDetails);
 
-        // Return the token
+        // 4. Send the token back to the React client
         return ResponseEntity.ok(new AuthResponse(token));
     }
 }

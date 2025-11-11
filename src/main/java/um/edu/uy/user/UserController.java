@@ -5,7 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-import um.edu.uy.security.AuthController;
+import um.edu.uy.security.dto.RegisterRequest;
 
 @RestController
 @RequestMapping("/api/users")
@@ -35,7 +35,7 @@ public class UserController {
      */
     @PostMapping("/admin")
     @PreAuthorize("hasRole('ADMIN')") // Only Admins can access this
-    public ResponseEntity<?> createAdmin(@RequestBody AuthController.RegisterRequest request) {
+    public ResponseEntity<?> createAdmin(@RequestBody RegisterRequest request) {
         try {
             UserDTO newAdmin = userService.createAdminUser(request);
             return new ResponseEntity<>(newAdmin, HttpStatus.CREATED);

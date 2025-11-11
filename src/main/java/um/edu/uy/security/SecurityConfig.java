@@ -11,7 +11,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -43,17 +42,17 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/**").permitAll()
 
                         // Admin-only endpoints (based on project doc)
-                        [cite_start].requestMatchers("/api/admin/**", "/api/products/**").hasRole("ADMIN") [cite: 24, 47, 49]
+                        .requestMatchers("/api/admin/**", "/api/products/**").hasRole("ADMIN")
 
-        // Client-only endpoints
-                [cite_start].requestMatchers("/api/orders/**", "/api/creations/**").hasRole("CLIENT") [cite: 25, 42, 43, 44, 45, 46]
+                        // Client-only endpoints
+                        .requestMatchers("/api/orders/**", "/api/creations/**").hasRole("CLIENT")
 
-        // All other requests must be authenticated
-                .anyRequest().authenticated()
-            )
+                        // All other requests must be authenticated
+                        .anyRequest().authenticated()
+                )
 
-        // Configure session management to be stateless (for JWT)
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                // Configure session management to be stateless (for JWT)
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
                 // Tell Spring to use the AuthProvider we defined
                 .authenticationProvider(authenticationProvider())

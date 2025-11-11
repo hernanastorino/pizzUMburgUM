@@ -4,6 +4,7 @@ package um.edu.uy.user;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import um.edu.uy.security.AuthController; // Assuming this DTO is here
+import um.edu.uy.security.dto.RegisterRequest;
 
 @Service
 public class UserService {
@@ -20,7 +21,7 @@ public class UserService {
      * Registers a new CLIENT user.
      * This is a public-facing action.
      */
-    public UserDTO registerClient(AuthController.RegisterRequest request) {
+    public UserDTO registerClient(RegisterRequest request) {
         if (userRepository.findByEmail(request.email()).isPresent()) {
             throw new RuntimeException("Email is already taken!");
         }
@@ -40,7 +41,7 @@ public class UserService {
      * Creates a new ADMIN user.
      * This logic is protected and only callable by other Admins. [cite: 48]
      */
-    public UserDTO createAdminUser(AuthController.RegisterRequest request) {
+    public UserDTO createAdminUser(RegisterRequest request) {
         if (userRepository.findByEmail(request.email()).isPresent()) {
             throw new RuntimeException("Email is already taken!");
         }
