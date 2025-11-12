@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @SpringBootApplication
 @EnableJpaRepositories(basePackages = "um.edu.uy.user")
-@EntityScan(basePackages = "um.edu.uy.user")
+@EntityScan(basePackages = "um.edu.uy.user") //esto deberia ya estar especificado pero por las dudas
 public class PizzUmBurgUmApplication {
 
 	public static void main(String[] args) {
