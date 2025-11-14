@@ -31,6 +31,16 @@ public class SideInOrder {
 
     // 6. ¡El atributo extra!
     @Column(name = "side_quantity", nullable = false)
-    private int sideQuantity;
+    private Integer sideQuantity;
+
+    @Column(name = "side_subtotal", nullable = false)
+    private Double sideSubtotal;
+
+    @PrePersist
+    public void calculateSubtotal() {
+        if (side != null && sideQuantity != null) {
+            this.sideSubtotal = side.getPrice() * sideQuantity;
+        }
+    }
 
 }

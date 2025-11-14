@@ -27,11 +27,20 @@ public class BeverageInOrder {
     // 4. Define la relación con bebida
     @ManyToOne(fetch = FetchType.EAGER)
     @MapsId("beverageId") // 5. Mapea la parte "beverageId" de nuestra EmbeddedId...
-    @JoinColumn(name = "beverage_id") // ...a esta relación/columna.
+    @JoinColumn(name = "beverage_id") // ... a esta relación/columna.
     private Beverage beverage;
 
     // 6. ¡El atributo extra!
     @Column(name = "beverage_quantity", nullable = false)
-    private int beverageQuantity;
+    private Integer beverageQuantity;
 
+    @Column(name = "beverage_subtotal", nullable = false)
+    private Double beverageSubtotal;
+
+    @PrePersist
+    public void calculateSubtotal() {
+        if (beverage != null && beverageQuantity != null) {
+            this.beverageSubtotal = beverage.getPrice() * beverageQuantity;
+        }
+    }
 }
