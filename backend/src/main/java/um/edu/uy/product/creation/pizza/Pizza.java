@@ -22,9 +22,9 @@ import java.util.Set;
 @NoArgsConstructor
 public class Pizza extends Creation {
 
-    @Id
+    /*@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long pizzaId;
+    private Long pizzaId;*/
 
     private String size;
 

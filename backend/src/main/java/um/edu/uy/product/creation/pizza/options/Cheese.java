@@ -24,4 +24,6 @@ public class Cheese {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "cheese_id", referencedColumnName = "cheeseId")
     private Pizza pizza; // La relación "lleva_queso"
+
+    private boolean isAvailable;
 }

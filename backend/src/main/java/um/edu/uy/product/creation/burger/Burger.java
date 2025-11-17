@@ -23,9 +23,9 @@ import java.util.Set;
 
 public class Burger extends Creation {
 
-    @Id
+    /*@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long burgerId;
+    private Long burgerId;*/
 
     private int meatQuantity;
 

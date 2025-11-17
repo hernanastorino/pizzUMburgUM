@@ -27,13 +27,5 @@ public class Side {
     @JoinColumn(name = "creation_id")
     private Creation creation;
 
+    private boolean isAvailable;
 }
-/*
-falta:
-relaciones generales (falta hacer/ confirmar algunas)
-finalizacion de MER -> JAVA
-autenticacion integrada con web (redireccionamiento)
-JSON WEB TOKENNNNNNN (LA PARCA)
-
-
- */

@@ -23,4 +23,6 @@ public class Dough {
 
     @OneToOne(mappedBy = "doughId")
     private Pizza pizza; // La relación "lleva_dough"
+
+    private boolean isAvailable;
 }
