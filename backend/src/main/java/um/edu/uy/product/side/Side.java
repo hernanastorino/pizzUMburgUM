@@ -26,4 +26,6 @@ public class Side {
     @ManyToOne
     @JoinColumn(name = "creation_id")
     private Creation creation;
+
+    private boolean isAvailable;
 }

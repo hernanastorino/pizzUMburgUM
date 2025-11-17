@@ -31,6 +31,15 @@ public class CreationInOrder {
 
     // 6. ¡El atributo extra!
     @Column(name = "creation_quantity", nullable = false)
-    private int CreationQuantity;
+    private Integer CreationQuantity;
 
+    @Column(name = "creation_subtotal", nullable = false)
+    private Double creationSubtotal;
+
+    @PrePersist
+    public void calculateSubtotal() {
+        if (creation != null && creationSubtotal != null) {
+            this.creationSubtotal = creation.getSubtotal() * creationSubtotal;
+        }
+    }
 }

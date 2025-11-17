@@ -22,4 +22,6 @@ public class Beverage {
 
     @Column(nullable = false)
     private Double price;
+
+    private boolean isAvailable;
 }

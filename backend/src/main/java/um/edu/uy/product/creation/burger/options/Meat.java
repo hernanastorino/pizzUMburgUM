@@ -24,4 +24,6 @@ public class Meat {
 
     @OneToOne(mappedBy = "meatId")
     private Burger burger; // La relación "lleva_carne"
+
+    private boolean isAvailable;
 }
