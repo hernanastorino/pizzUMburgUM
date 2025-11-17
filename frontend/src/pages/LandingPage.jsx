@@ -88,18 +88,6 @@ const LandingPage = () => {
 
       {/* Spacer + Footer */}
       <div className="content-spacer"></div>
-
-      <footer>
-        <div>
-          <p>© 2025 PizzUM & BurgUM</p>
-        </div>
-        <div>
-          <p>Laboratorio Tic I © arTICode</p>
-        </div>
-        <div>
-          <p>Astorino Hernán, Angeloro Valentina, Hobbins William</p>
-        </div>
-      </footer>
     </div>
   );
 };
