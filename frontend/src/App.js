@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 // Pages
@@ -11,47 +11,56 @@ import Backoffice from './pages/Backoffice';
 // Components
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
-import ProtectedRoute from './components/ProtectedRoute'; // Import the new component
+import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
-
-    useEffect(() => {
-        const loader = document.getElementById('loader-container');
-        if (loader) {
-            loader.classList.add('fade-out');
-            setTimeout(() => {
-                loader.style.display = 'none';
-            }, 500);
-        }
-    }, []);
-
     return (
         <BrowserRouter>
-            <Navbar/>
             <Routes>
+                {/* Landing Page - SIN Navbar ni Footer */}
                 <Route path="/" element={<LandingPage />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/register" element={<Register />} />
+                
+                {/* Páginas con Navbar y Footer */}
+                <Route path="/login" element={
+                    <>
+                        <Navbar />
+                        <Login />
+                        <Footer />
+                    </>
+                } />
+                
+                <Route path="/register" element={
+                    <>
+                        <Navbar />
+                        <Register />
+                        <Footer />
+                    </>
+                } />
 
                 {/* --- ADMIN ROUTES --- */}
-                {/* Only 'adminRole' can enter here */}
                 <Route element={<ProtectedRoute allowedRoles={['adminRole']} />}>
-                    <Route path="/backoffice" element={<Backoffice />} />
+                    <Route path="/backoffice" element={
+                        <>
+                            <Navbar />
+                            <Backoffice />
+                            <Footer />
+                        </>
+                    } />
                 </Route>
 
                 {/* --- CLIENT ROUTES --- */}
-                {/* Only 'clientRole' can enter here */}
                 <Route element={<ProtectedRoute allowedRoles={['clientRole']} />}>
-                    <Route path="/menu" element={<Menu />} />
-                    {/* Add orders, etc. */}
+                    <Route path="/menu" element={
+                        <>
+                            <Navbar />
+                            <Menu />
+                            <Footer />
+                        </>
+                    } />
                 </Route>
-
             </Routes>
-            <Footer/>
         </BrowserRouter>
     );
 }
 
 export default App;
-
-//comentario
