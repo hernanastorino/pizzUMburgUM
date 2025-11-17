@@ -48,8 +48,7 @@ public class AuthController {
      */
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request) {
-        // 1. Authenticate the user
-        // This will use your CustomUserDetailsService and PasswordEncoder
+        // 1. Authenticate
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.email(),
@@ -57,13 +56,16 @@ public class AuthController {
                 )
         );
 
-        // 2. If authentication is successful, fetch user details
+        // 2. Fetch user details
         final UserDetails userDetails = userDetailsService.loadUserByUsername(request.email());
 
-        // 3. Generate a JWT token
+        // 3. Generate JWT
         final String token = jwtService.generateToken(userDetails);
 
-        // 4. Send the token back to the React client
-        return ResponseEntity.ok(new AuthResponse(token));
+        // 4. Get the Role (e.g., "ROLE_ADMIN" or "ROLE_CLIENT")
+        String role = userDetails.getAuthorities().iterator().next().getAuthority();
+
+        // 5. Send token AND role
+        return ResponseEntity.ok(new AuthResponse(token, role));
     }
 }
