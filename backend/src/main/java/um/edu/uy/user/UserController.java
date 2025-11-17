@@ -17,24 +17,19 @@ public class UserController {
         this.userService = userService;
     }
 
-    /**
-     * An endpoint for any authenticated user to get their *own* profile information.
-     * It uses the 'Authentication' principal object injected by Spring Security.
-     */
     @GetMapping("/me")
-    @PreAuthorize("isAuthenticated()") // Any logged-in user can access this
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<UserDTO> getMyProfile(Authentication authentication) {
-        // 'authentication.getName()' will return the username (which is the email)
         UserDTO user = userService.findUserByEmail(authentication.getName());
         return ResponseEntity.ok(user);
     }
 
     /**
-     * An endpoint for an Admin to create another Admin user.
-     * This fulfills the requirement.
+     * Endpoint for an Admin to create another Admin.
+     * FIXED: Changed hasRole('ADMIN') to hasAuthority('adminRole')
      */
     @PostMapping("/admin")
-    @PreAuthorize("hasRole('ADMIN')") // Only Admins can access this
+    @PreAuthorize("hasAuthority('adminRole')")
     public ResponseEntity<?> createAdmin(@RequestBody RegisterRequest request) {
         try {
             UserDTO newAdmin = userService.createAdminUser(request);
@@ -43,5 +38,4 @@ public class UserController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
-
 }

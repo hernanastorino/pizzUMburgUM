@@ -10,13 +10,14 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer; // Import added
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import um.edu.uy.user.CustomUserDetailsService; // Import your service
+import um.edu.uy.user.CustomUserDetailsService;
 
 @Configuration
 @EnableWebSecurity
@@ -41,14 +42,22 @@ public class SecurityConfig {
                         // Public endpoints for auth
                         .requestMatchers("/api/auth/**").permitAll()
 
-                        // Admin-only endpoints (based on project doc)
-                        .requestMatchers("/api/admin/**", "/api/products/**").hasRole("ADMIN")
+                        // Allow H2 Console access
+                        .requestMatchers("/h2-console/**").permitAll()
+
+                        // Admin-only endpoints
+                        .requestMatchers("/api/admin/**", "/api/products/**").hasRole("adminRole")
 
                         // Client-only endpoints
-                        .requestMatchers("/api/orders/**", "/api/creations/**").hasRole("CLIENT")
+                        .requestMatchers("/api/orders/**", "/api/creations/**").hasRole("clientRole")
 
                         // All other requests must be authenticated
                         .anyRequest().authenticated()
+                )
+
+                // Allow frames for H2 Console to render (Fixes the "download file" issue)
+                .headers(headers -> headers
+                        .frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin)
                 )
 
                 // Configure session management to be stateless (for JWT)
@@ -66,9 +75,7 @@ public class SecurityConfig {
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-        // Tell the provider how to find users
         authProvider.setUserDetailsService(userDetailsService);
-        // Tell the provider how to hash/check passwords
         authProvider.setPasswordEncoder(passwordEncoder());
         return authProvider;
     }

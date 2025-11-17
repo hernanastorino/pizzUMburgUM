@@ -23,7 +23,13 @@ public class DataInitializer {
                 adminUser.setPassword(passwordEncoder.encode("1234!")); // Set a strong password
                 adminUser.setRole(Role.adminRole);
 
+                User clientUser = new User();
+                clientUser.setEmail("client@pizzum.com"); // Set your client email
+                clientUser.setPassword(passwordEncoder.encode("1234!")); // Set a strong password
+                clientUser.setRole(Role.clientRole);
+
                 userRepository.save(adminUser);
+                userRepository.save(clientUser);
                 System.out.println("user created");
             }
         };

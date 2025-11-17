@@ -1,9 +1,7 @@
-// src/main/java/um/edu/uy/user/UserService.java
 package um.edu.uy.user;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import um.edu.uy.security.AuthController; // Assuming this DTO is here
 import um.edu.uy.security.dto.RegisterRequest;
 
 @Service
@@ -19,7 +17,6 @@ public class UserService {
 
     /**
      * Registers a new CLIENT user.
-     * This is a public-facing action.
      */
     public UserDTO registerClient(RegisterRequest request) {
         if (userRepository.findByEmail(request.email()).isPresent()) {
@@ -29,17 +26,25 @@ public class UserService {
         User clientUser = new User();
         clientUser.setEmail(request.email());
         clientUser.setPassword(passwordEncoder.encode(request.password()));
-        clientUser.setRole(Role.clientRole); // [cite: 25]
+
+        // --- NEW: Save Name and Surname ---
+        clientUser.setName(request.name());
+        clientUser.setSurname(request.surname());
+
+        clientUser.setRole(Role.clientRole);
 
         User savedUser = userRepository.save(clientUser);
 
-        // Return a DTO
-        return new UserDTO(savedUser.getEmail(), savedUser.getRole().name());
+        return new UserDTO(
+                savedUser.getEmail(),
+                savedUser.getRole().name(),
+                savedUser.getName(),
+                savedUser.getSurname()
+        );
     }
 
     /**
      * Creates a new ADMIN user.
-     * This logic is protected and only callable by other Admins. [cite: 48]
      */
     public UserDTO createAdminUser(RegisterRequest request) {
         if (userRepository.findByEmail(request.email()).isPresent()) {
@@ -49,21 +54,35 @@ public class UserService {
         User adminUser = new User();
         adminUser.setEmail(request.email());
         adminUser.setPassword(passwordEncoder.encode(request.password()));
-        adminUser.setRole(Role.adminRole); // [cite: 24]
+
+        // --- NEW: Save Name and Surname ---
+        adminUser.setName(request.name());
+        adminUser.setSurname(request.surname());
+
+        adminUser.setRole(Role.adminRole);
 
         User savedUser = userRepository.save(adminUser);
 
-        // Return a DTO
-        return new UserDTO(adminUser.getEmail(), adminUser.getRole().name());
+        return new UserDTO(
+                savedUser.getEmail(),
+                savedUser.getRole().name(),
+                savedUser.getName(),
+                savedUser.getSurname()
+        );
     }
 
     /**
-     * Finds a user by their email and returns a safe DTO.
+     * Finds a user by their email.
      */
     public UserDTO findUserByEmail(String email) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        return new UserDTO(user.getEmail(), user.getRole().name());
+        return new UserDTO(
+                user.getEmail(),
+                user.getRole().name(),
+                user.getName(),
+                user.getSurname()
+        );
     }
 }
