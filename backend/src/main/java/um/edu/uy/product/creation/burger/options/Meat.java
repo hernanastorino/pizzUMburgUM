@@ -22,6 +22,4 @@ public class Meat {
 
     private Double price;
 
-    @OneToOne(mappedBy = "meatId")
-    private Burger burger; // La relación "lleva_carne"
 }

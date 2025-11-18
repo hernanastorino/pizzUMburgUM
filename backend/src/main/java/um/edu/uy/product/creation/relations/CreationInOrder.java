@@ -14,23 +14,22 @@ import um.edu.uy.order.Order;
 @NoArgsConstructor
 public class CreationInOrder {
 
-    @EmbeddedId // 1. Usa la clave compuesta que acabamos de definir
+    @EmbeddedId
     private CreationInOrderKey id;
 
-    // 2. Define la relación con Pedido
-    @ManyToOne(fetch = FetchType.LAZY) // LAZY es mejor para performance
-    @MapsId("orderId") // 3. Mapea la parte "pedidoId" de nuestra EmbeddedId...
-    @JoinColumn(name = "order_id") // a esta relación/columna.
-    private Order order;  //debe coincidir en ORDER con el mappedBy
+    // Define la relación con Pedido
+    @ManyToOne(fetch = FetchType.EAGER)
+    @MapsId("orderId") //
+    @JoinColumn(name = "order_id")
+    private Order order;
 
-    // 4. Define la relación con Creacion
-    @ManyToOne(fetch = FetchType.LAZY)
-    @MapsId("creationId") // 5. Mapea la parte "creacionId" de nuestra EmbeddedId...
-    @JoinColumn(name = "creation_id") // ...a esta relación/columna.
+    // Define la relación con Creacion
+    @ManyToOne(fetch = FetchType.EAGER)
+    @MapsId("creationId") //
+    @JoinColumn(name = "creation_id")
     private Creation creation;
 
-    // 6. ¡El atributo extra!
     @Column(name = "creation_quantity", nullable = false)
-    private int CreationQuantity;
+    private int creationQuantity;
 
 }

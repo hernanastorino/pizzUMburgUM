@@ -7,7 +7,7 @@ import lombok.*;
 import java.io.Serializable;
 import java.util.Objects;
 
-@Embeddable // Indica a JPA que esta clase se "incrustará" en otra entidad
+@Embeddable
 @Getter
 @Setter
 @Builder
@@ -21,11 +21,6 @@ public class CreationInOrderKey implements Serializable {
     @Column(name = "creation_id")
     private Long creationId;
 
-    // --- Constructores, Getters/Setters ---
-    // (Omitidos por brevedad)
-
-    // ¡MUY IMPORTANTE! JPA necesita equals() y hashCode()
-    // para gestionar claves compuestas.
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
