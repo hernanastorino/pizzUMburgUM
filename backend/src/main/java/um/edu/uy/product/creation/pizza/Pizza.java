@@ -20,6 +20,7 @@ import java.util.Set;
 @SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
+@PrimaryKeyJoinColumn(name = "creationId")
 public class Pizza extends Creation {
 
     /*@Id
@@ -28,7 +29,7 @@ public class Pizza extends Creation {
 
     private String size;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "dough_id", referencedColumnName = "doughId")
     private Dough dough; // La relación "lleva_masa"
 
@@ -44,7 +45,7 @@ public class Pizza extends Creation {
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "Pizza_Topping", // Nombre de la tabla intermedia
-            joinColumns = @JoinColumn(name = "pizza_id", referencedColumnName = "pizzaId"), // FK a esta entidad (Pizza)
+            joinColumns = @JoinColumn(name = "pizza_id", referencedColumnName = "creationId"), // FK a esta entidad (Pizza)
             inverseJoinColumns = @JoinColumn(name = "topping_id") // FK a la otra entidad (Topping)
     )
     private Set<Topping> toppings = new HashSet<>();

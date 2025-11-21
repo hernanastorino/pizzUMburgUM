@@ -3,7 +3,11 @@ package um.edu.uy.order;
 import jakarta.persistence.*;
 import lombok.*;
 import um.edu.uy.product.beverage.relations.BeverageInOrder;
+import um.edu.uy.product.beverage.relations.BeverageInOrderKey;
+import um.edu.uy.product.creation.relations.CreationInOrderKey;
+import um.edu.uy.product.side.Side;
 import um.edu.uy.product.side.relations.SideInOrder;
+import um.edu.uy.product.side.relations.SideInOrderKey;
 import um.edu.uy.user.client.data.Address;
 import um.edu.uy.user.client.data.PaymentMethod;
 import um.edu.uy.product.creation.relations.CreationInOrder;
@@ -39,26 +43,21 @@ public class Order {
     @Column(nullable = false)
     private LocalDateTime date; // Es bueno guardar la fecha del pedido
 
-    // Relación "se_envia"
     @ManyToOne
     @JoinColumn(name = "address_id", nullable = false)
-    private Address address;
+    private Address address; // Relación "se_envia"
 
-    // Relación "es_pago"
     @ManyToOne
     @JoinColumn(name = "payment_method_id", nullable = false)
-    private PaymentMethod paymentMethod;
+    private PaymentMethod paymentMethod; // Relación "es_pago"
 
-    // ¡AQUÍ ESTÁ LA MAGIA!
-    // Un Pedido tiene una lista de "líneas de pedido de creación"
     @OneToMany(
-            mappedBy = "order", // "pedido" es el nombre del campo en PedidoCreacion
-            cascade = CascadeType.ALL, // Si borro un Pedido, se borran sus líneas
-            orphanRemoval = true // Si quito una línea de esta lista, se borra de la DB
+            mappedBy = "order",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
     )
     private Set<CreationInOrder> itemsCreation = new HashSet<>();
 
-    // Harías lo mismo para las otras líneas de pedido
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<BeverageInOrder> itemsBeverage = new HashSet<>();
 

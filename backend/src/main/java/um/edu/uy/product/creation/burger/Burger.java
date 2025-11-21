@@ -21,6 +21,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 
+@PrimaryKeyJoinColumn(name = "creationId")
 public class Burger extends Creation {
 
     /*@Id
@@ -33,19 +34,19 @@ public class Burger extends Creation {
     @JoinColumn(name = "condiment_id", referencedColumnName = "condimentId")
     private Condiment condiment; // La relación "lleva_aderezo"
 
-    @OneToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "bread_id", referencedColumnName = "breadId")
     private Bread bread; // La relación "lleva_pan"
 
-    @OneToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "meat_id", referencedColumnName = "meatId")
     private Meat meat; // La relación "lleva_carne"
 
     @Builder.Default
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
-            name = "Topping_Pizza", // Nombre de la tabla intermedia
-            joinColumns = @JoinColumn(name = "pizza_id"), // FK a esta entidad (Pizza)
+            name = "Topping_Burger", // Nombre de la tabla intermedia
+            joinColumns = @JoinColumn(name = "burger_id", referencedColumnName = "creationId"), // FK a esta entidad (Pizza)
             inverseJoinColumns = @JoinColumn(name = "topping_id") // FK a la otra entidad (Topping)
     )
     private Set<Topping> toppings = new HashSet<>();

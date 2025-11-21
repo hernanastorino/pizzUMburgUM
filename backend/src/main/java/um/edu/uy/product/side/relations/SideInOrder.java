@@ -14,22 +14,21 @@ import um.edu.uy.product.side.Side;
 @NoArgsConstructor
 public class SideInOrder {
 
-    @EmbeddedId // 1. Usa la clave compuesta que acabamos de definir
+    @EmbeddedId
     private SideInOrderKey id;
 
-    // 2. Define la relación con Pedido
-    @ManyToOne(fetch = FetchType.EAGER) // LAZY es mejor para performance
-    @MapsId("orderId") // 3. Mapea la parte "pedidoId" de nuestra EmbeddedId...
-    @JoinColumn(name = "order_id") // a esta relación/columna.
-    private Order order;  //debe coincidir en ORDER con el mappedBy
-
-    // 4. Define la relación con bebida
+    // Define la relación con Pedido
     @ManyToOne(fetch = FetchType.EAGER)
-    @MapsId("sideId") // 5. Mapea la parte "beverageId" de nuestra EmbeddedId...
-    @JoinColumn(name = "side_id") // ...a esta relación/columna.
+    @MapsId("orderId")
+    @JoinColumn(name = "order_id")
+    private Order order;
+
+    // Define la relación con bebida
+    @ManyToOne(fetch = FetchType.EAGER)
+    @MapsId("sideId")
+    @JoinColumn(name = "side_id")
     private Side side;
 
-    // 6. ¡El atributo extra!
     @Column(name = "side_quantity", nullable = false)
     private Integer sideQuantity;
 
