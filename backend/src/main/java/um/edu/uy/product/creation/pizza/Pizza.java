@@ -54,6 +54,30 @@ public class Pizza extends Creation {
         topping.getPizzas().add(this);
     }
 
+    @Override
+    public double getUnitPrice() {
+        double total = 0.0;
+
+        if (this.dough != null) {
+            total += this.dough.getPrice();
+        }
+
+        if (this.cheese != null) {
+            total += this.cheese.getPrice();
+        }
+
+        if (this.sauce != null) {
+            total += this.sauce.getPrice();
+        }
+
+        if (this.toppings != null && !this.toppings.isEmpty()) {
+            total += this.toppings.stream()
+                    .mapToDouble(Topping::getPrice)
+                    .sum();
+        }
+        return total;
+    }
+
 
 }
 

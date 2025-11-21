@@ -6,4 +6,5 @@ import um.edu.uy.product.creation.burger.options.Condiment;
 
 @Repository
 public interface CondimentRepository extends JpaRepository<Condiment, Long> {
+    boolean existsByName(String name);
 }

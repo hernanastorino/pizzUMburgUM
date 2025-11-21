@@ -27,7 +27,7 @@ public abstract class Creation { // Abstracta, porque una creación SIEMPRE es P
     @Column(nullable = false)
     private String name;
 
-    private Double subtotal;
+    //private Double subtotal; no lo usamos asi porque tiene que ser calculado
     private boolean isFavorite;
 
     @ManyToOne(fetch = FetchType.EAGER)
@@ -42,4 +42,6 @@ public abstract class Creation { // Abstracta, porque una creación SIEMPRE es P
             orphanRemoval = false
     )
     private Set<CreationInOrder> itemsPedido = new HashSet<>();
+
+    public abstract double getUnitPrice();
 }

@@ -71,7 +71,7 @@ public class OrderService {
     }
 
     @Transactional
-    public Order addBeverage(Order order, Side side, int quantity) {
+    public Order addSide(Order order, Side side, int quantity) {
         SideInOrderKey key = new SideInOrderKey(order.getId(), side.getSideId());
 
         Optional<SideInOrder> existingOption = order.getItemsSide().stream()
@@ -112,7 +112,7 @@ public class OrderService {
 
         if (existingOption.isPresent()) {
             CreationInOrder existingCreation = existingOption.get();
-            existingCreation.setCreationQuantity(quantity);
+            existingCreation.setCreationQuantity(existingCreation.getCreationQuantity() + quantity);
         } else {
             CreationInOrder line = CreationInOrder.builder()
                     .id(key).order(order).creation(creation).CreationQuantity(quantity).build();
@@ -137,7 +137,7 @@ public class OrderService {
         double total = 0;
 
         total += order.getItemsCreation().stream()
-                .mapToDouble(item -> item.getCreation().getSubtotal() * item.getCreationQuantity()).sum();
+                .mapToDouble(item -> item.getCreation().getUnitPrice() * item.getCreationQuantity()).sum();
 
         total += order.getItemsBeverage().stream()
                 .mapToDouble(item -> item.getBeverage().getPrice() * item.getBeverageQuantity()).sum();

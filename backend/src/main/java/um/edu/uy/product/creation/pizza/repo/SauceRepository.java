@@ -6,4 +6,5 @@ import um.edu.uy.product.creation.pizza.options.Sauce;
 
 @Repository
 public interface SauceRepository extends JpaRepository<Sauce, Long> {
+    boolean existsByName(String name);
 }

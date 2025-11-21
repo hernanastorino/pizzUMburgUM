@@ -6,4 +6,5 @@ import um.edu.uy.product.creation.burger.options.Meat;
 
 @Repository
 public interface MeatRepository extends JpaRepository<Meat, Long> {
+    boolean existsByName(String name);
 }

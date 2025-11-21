@@ -54,5 +54,30 @@ public class Burger extends Creation {
         this.toppings.add(topping);
         topping.getBurgers().add(this);
     }
+
+    @Override
+    public double getUnitPrice() {
+        double total = 0.0;
+
+        if (this.bread != null) {
+            total += this.bread.getPrice();
+        }
+
+        if (this.meat != null) {
+            total += this.meat.getPrice() * this.meatQuantity;
+        }
+
+        if (this.condiment != null) {
+            total += this.condiment.getPrice();
+        }
+
+        if (this.toppings != null && !this.toppings.isEmpty()) {
+            total += this.toppings.stream()
+                    .mapToDouble(Topping::getPrice)
+                    .sum();
+        }
+
+        return total;
+    }
 }
 
