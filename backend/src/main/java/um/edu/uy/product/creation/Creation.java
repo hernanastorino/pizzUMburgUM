@@ -42,4 +42,6 @@ public abstract class Creation { // Abstracta, porque una creación SIEMPRE es P
             orphanRemoval = false
     )
     private Set<CreationInOrder> itemsPedido = new HashSet<>();
+
+    private boolean isAvailable;
 }

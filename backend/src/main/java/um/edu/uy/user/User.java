@@ -5,6 +5,8 @@ import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import um.edu.uy.product.creation.Creation;
+import um.edu.uy.user.favorite.FavoriteCreation;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -37,6 +39,9 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING) // This tells JPA to store the role as a String
     @Column(nullable = false)
     private Role role;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<FavoriteCreation> favoriteCreations = new HashSet<>();
 
     // --- UserDetails Methods ---
     // These methods are required by Spring Security
