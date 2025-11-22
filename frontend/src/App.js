@@ -8,6 +8,7 @@ import Login from './pages/Login';
 import LandingPage from './pages/LandingPage';
 import Backoffice from './pages/Backoffice';
 
+
 // Components
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
