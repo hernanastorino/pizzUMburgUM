@@ -20,7 +20,7 @@ public record BurgerResponse(
         this (
                 burger.getCreationId(),
                 burger.getName(),
-                burger.getSubtotal(),
+                burger.getUnitPrice(),
                 burger.getMeatQuantity(),
                 burger.getCondiment() != null ? burger.getCondiment().getCondimentId() : null,
                 burger.getBread() != null ? burger.getBread().getBreadId() : null,

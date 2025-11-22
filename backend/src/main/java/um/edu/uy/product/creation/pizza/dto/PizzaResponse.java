@@ -20,7 +20,7 @@ public record PizzaResponse(
         this (
                 pizza.getCreationId(),
                 pizza.getName(),
-                pizza.getSubtotal(),
+                pizza.getUnitPrice(),
                 pizza.getSize(),
                 pizza.getDough() != null ? pizza.getDough().getDoughId() : null,
                 pizza.getCheese() != null ? pizza.getCheese().getCheeseId() : null,

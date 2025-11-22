@@ -12,7 +12,10 @@ import um.edu.uy.product.creation.relations.CreationInOrderKey;
 import um.edu.uy.product.side.Side;
 import um.edu.uy.product.side.relations.SideInOrder;
 import um.edu.uy.product.side.relations.SideInOrderKey;
+import um.edu.uy.user.User;
+import um.edu.uy.user.UserRepository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,6 +24,7 @@ import java.util.Optional;
 public class OrderService {
 
     private final OrderRepository orderRepository;
+    private final UserRepository userRepository;
 
     public Order getOrderById(Long id) {
         return orderRepository.findById(id)
@@ -49,10 +53,17 @@ public class OrderService {
 
         if (existingOption.isPresent()) {
             BeverageInOrder existingBeverage = existingOption.get();
-            existingBeverage.setBeverageQuantity(existingBeverage.getBeverageQuantity() + quantity);
+            int newQuantity = existingBeverage.getBeverageQuantity() + quantity;
+            existingBeverage.setBeverageQuantity(newQuantity);
+            existingBeverage.setBeverageSubtotal(beverage.getPrice() * newQuantity);
         } else {
             BeverageInOrder line = BeverageInOrder.builder()
-                    .id(key).order(order).beverage(beverage).beverageQuantity(quantity).build();
+                    .id(key)
+                    .order(order)
+                    .beverage(beverage)
+                    .beverageQuantity(quantity)
+                    .beverageSubtotal(beverage.getPrice() * quantity)
+                    .build();
 
             order.getItemsBeverage().add(line);
         }
@@ -80,10 +91,17 @@ public class OrderService {
 
         if (existingOption.isPresent()) {
             SideInOrder existingSide = existingOption.get();
-            existingSide.setSideQuantity(existingSide.getSideQuantity() + quantity);
+            int newQuantity = existingSide.getSideQuantity() + quantity;
+            existingSide.setSideQuantity(newQuantity);
+            existingSide.setSideSubtotal(side.getPrice() * newQuantity);
         } else {
             SideInOrder line = SideInOrder.builder()
-                    .id(key).order(order).side(side).sideQuantity(quantity).build();
+                    .id(key)
+                    .order(order)
+                    .side(side)
+                    .sideQuantity(quantity)
+                    .sideSubtotal(side.getPrice() * quantity)
+                    .build();
 
             order.getItemsSide().add(line);
         }
@@ -112,10 +130,18 @@ public class OrderService {
 
         if (existingOption.isPresent()) {
             CreationInOrder existingCreation = existingOption.get();
-            existingCreation.setCreationQuantity(existingCreation.getCreationQuantity() + quantity);
+            int newQuantity = existingCreation.getCreationQuantity() + quantity;
+            existingCreation.setCreationQuantity(newQuantity);
+            existingCreation.setCreationSubtotal(creation.getUnitPrice() * newQuantity);
+
         } else {
             CreationInOrder line = CreationInOrder.builder()
-                    .id(key).order(order).creation(creation).CreationQuantity(quantity).build();
+                    .id(key)
+                    .order(order)
+                    .creation(creation)
+                    .CreationQuantity(quantity)
+                    .creationSubtotal(creation.getUnitPrice() * quantity)
+                    .build();
 
             order.getItemsCreation().add(line);
         }
@@ -133,18 +159,72 @@ public class OrderService {
         return orderRepository.save(order);
     }
 
-    private void recalculateTotal(Order order) {
+    public void recalculateTotal(Order order) {
         double total = 0;
 
-        total += order.getItemsCreation().stream()
-                .mapToDouble(item -> item.getCreation().getUnitPrice() * item.getCreationQuantity()).sum();
+        if (order.getItemsCreation() != null) {
+            total += order.getItemsCreation().stream()
+                    .mapToDouble(item -> item.getCreation().getUnitPrice() * item.getCreationQuantity()).sum();
+        }
 
-        total += order.getItemsBeverage().stream()
-                .mapToDouble(item -> item.getBeverage().getPrice() * item.getBeverageQuantity()).sum();
+        if (order.getItemsBeverage() != null) {
+            total += order.getItemsBeverage().stream()
+                    .mapToDouble(item -> item.getBeverage().getPrice() * item.getBeverageQuantity()).sum();
+        }
 
-        total += order.getItemsSide().stream()
-                .mapToDouble(item -> item.getSide().getPrice() * item.getSideQuantity()).sum();
+        if (order.getItemsSide() != null) {
+            total += order.getItemsSide().stream()
+                    .mapToDouble(item -> item.getSide().getPrice() * item.getSideQuantity()).sum();
+        }
 
         order.setTotal(total);
+    }
+
+    public Order createOrderForUser(Long userId) {
+        // verificar si ya tiene una pendiente
+        Optional<Order> pending = orderRepository.findByClient_UserIdAndState(userId, "PENDING");
+        if (pending.isPresent()) return pending.get();
+
+        User user = userRepository.findById(userId).orElseThrow();
+        Order newOrder = Order.builder()
+                .client(user)
+                .state("PENDING")
+                .total(0.0)
+                .date(LocalDateTime.now()) // Fecha de creación
+                .build();
+        return orderRepository.save(newOrder);
+    }
+
+    public Order confirmOrder(Long orderId, Long addressId, Long paymentId) {
+        Order order = getOrderById(orderId);if (!"PENDING".equals(order.getState())) throw new RuntimeException("Orden no está pendiente");
+
+        // Setear datos finales
+        // (Asumo que buscás address y payment en sus repos antes de pasar acá o los buscás acá)
+        // order.setAddress(...);
+        // order.setPaymentMethod(...);
+
+        order.setState("CONFIRMED");
+        order.setDate(LocalDateTime.now()); // fecha de confirmacion real
+        return orderRepository.save(order);
+    }
+
+    // avanzar estado manual para la demo
+    public Order advanceState(Long orderId) {
+        Order order = getOrderById(orderId);
+        String current = order.getState();
+        String next = switch (current) {
+            case "CONFIRMED" -> "PREPARING";
+            case "PREPARING" -> "SENT";
+            case "SENT" -> "DELIVERED";
+            default -> current;
+        };
+        order.setState(next);
+        return orderRepository.save(order);
+    }
+
+    public void cancelOrder(Long orderId) {
+        Order order = getOrderById(orderId);
+        order.setState("CANCELLED");
+        orderRepository.save(order);
     }
 }

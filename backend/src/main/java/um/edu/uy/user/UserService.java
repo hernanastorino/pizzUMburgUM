@@ -3,6 +3,9 @@ package um.edu.uy.user;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import um.edu.uy.security.dto.RegisterRequest;
+import um.edu.uy.user.dto.PasswordChangeDto;
+import um.edu.uy.user.dto.UserDTO;
+import um.edu.uy.user.dto.UserProfileDto;
 
 @Service
 public class UserService {
@@ -15,9 +18,6 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    /**
-     * Registers a new CLIENT user.
-     */
     public UserDTO registerClient(RegisterRequest request) {
         if (userRepository.findByEmail(request.email()).isPresent()) {
             throw new RuntimeException("Email is already taken!");
@@ -27,7 +27,6 @@ public class UserService {
         clientUser.setEmail(request.email());
         clientUser.setPassword(passwordEncoder.encode(request.password()));
 
-        // --- NEW: Save Name and Surname ---
         clientUser.setName(request.name());
         clientUser.setSurname(request.surname());
 
@@ -43,9 +42,6 @@ public class UserService {
         );
     }
 
-    /**
-     * Creates a new ADMIN user.
-     */
     public UserDTO createAdminUser(RegisterRequest request) {
         if (userRepository.findByEmail(request.email()).isPresent()) {
             throw new RuntimeException("Email is already taken!");
@@ -55,7 +51,6 @@ public class UserService {
         adminUser.setEmail(request.email());
         adminUser.setPassword(passwordEncoder.encode(request.password()));
 
-        // --- NEW: Save Name and Surname ---
         adminUser.setName(request.name());
         adminUser.setSurname(request.surname());
 
@@ -71,9 +66,6 @@ public class UserService {
         );
     }
 
-    /**
-     * Finds a user by their email.
-     */
     public UserDTO findUserByEmail(String email) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -84,5 +76,22 @@ public class UserService {
                 user.getName(),
                 user.getSurname()
         );
+    }
+
+    public User updateUserProfile(Long userId, UserProfileDto dto) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        if (dto.getEmail() != null) user.setEmail(dto.getEmail());
+        return userRepository.save(user);
+    }
+
+    public void changePassword(Long userId, PasswordChangeDto dto) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        // se valida el pass actual (usando el encoder inyectado)
+        if (!passwordEncoder.matches(dto.getCurrentPassword(), user.getPassword())) {
+            throw new RuntimeException("La contraseña actual es incorrecta");
+        }
+        user.setPassword(passwordEncoder.encode(dto.getNewPassword()));
+        userRepository.save(user);
     }
 }

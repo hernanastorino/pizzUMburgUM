@@ -6,6 +6,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import um.edu.uy.security.dto.RegisterRequest;
+import um.edu.uy.user.dto.PasswordChangeDto;
+import um.edu.uy.user.dto.UserDTO;
+import um.edu.uy.user.dto.UserProfileDto;
 
 @RestController
 @RequestMapping("/api/users")
@@ -24,10 +27,6 @@ public class UserController {
         return ResponseEntity.ok(user);
     }
 
-    /**
-     * Endpoint for an Admin to create another Admin.
-     * FIXED: Changed hasRole('ADMIN') to hasAuthority('adminRole')
-     */
     @PostMapping("/admin")
     @PreAuthorize("hasAuthority('adminRole')")
     public ResponseEntity<?> createAdmin(@RequestBody RegisterRequest request) {
@@ -37,5 +36,17 @@ public class UserController {
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
+    }
+
+    // En UserController.java
+    @PutMapping("/{id}/profile")
+    public ResponseEntity<User> updateProfile(@PathVariable Long id, @RequestBody UserProfileDto dto) {
+        return ResponseEntity.ok(userService.updateUserProfile(id, dto));
+    }
+
+    @PostMapping("/{id}/password")
+    public ResponseEntity<?> changePassword(@PathVariable Long id, @RequestBody PasswordChangeDto dto) {
+        userService.changePassword(id, dto);
+        return ResponseEntity.ok("Contraseña actualizada correctamente");
     }
 }

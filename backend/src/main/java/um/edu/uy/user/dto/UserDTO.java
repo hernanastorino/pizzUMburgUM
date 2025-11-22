@@ -1,4 +1,4 @@
-package um.edu.uy.user;
+package um.edu.uy.user.dto;
 
 public record UserDTO(
         String email,

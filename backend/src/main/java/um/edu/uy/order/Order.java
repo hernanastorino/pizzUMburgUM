@@ -3,13 +3,9 @@ package um.edu.uy.order;
 import jakarta.persistence.*;
 import lombok.*;
 import um.edu.uy.product.beverage.relations.BeverageInOrder;
-import um.edu.uy.product.beverage.relations.BeverageInOrderKey;
-import um.edu.uy.product.creation.relations.CreationInOrderKey;
-import um.edu.uy.product.side.Side;
 import um.edu.uy.product.side.relations.SideInOrder;
-import um.edu.uy.product.side.relations.SideInOrderKey;
-import um.edu.uy.user.client.data.Address;
-import um.edu.uy.user.client.data.PaymentMethod;
+import um.edu.uy.user.client.data.adress.Address;
+import um.edu.uy.user.client.data.payment.method.PaymentMethod;
 import um.edu.uy.product.creation.relations.CreationInOrder;
 import um.edu.uy.user.User;
 
@@ -18,7 +14,7 @@ import java.util.HashSet;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "Order")
+@Table(name = "App_Order")
 @Getter
 @Setter
 @Builder

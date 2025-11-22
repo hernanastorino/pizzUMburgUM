@@ -92,7 +92,7 @@
 .top-left-button {
   position: fixed;
   top: 60%;
-  left: 25%;
+  left: 42%;
   transform: translate(-50%, -50%);
   z-index: 2000;
 }
@@ -100,7 +100,7 @@
 .top-right-button {
   position: fixed;
   top: 60%;
-  right: 25%;
+  right: 42%;
   transform: translate(50%, -50%);
   z-index: 2000;
 }

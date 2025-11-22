@@ -16,16 +16,16 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "app_user") // no cambiar a User por conflicto con sql
+@Table(name = "APP_USER") // no cambiar a User por conflicto con sql
 @Inheritance(strategy = InheritanceType.JOINED)
-@DiscriminatorColumn(name = "TIPO_USUARIO")
+@DiscriminatorColumn(name = "USER_TYPE")
 public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
 
-    @Column(unique = true,nullable = false) // Your AuthController checks this!
+    @Column(unique = true,nullable = false)
     private String email;
 
     @Column(nullable = false)
@@ -43,7 +43,6 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        // This tells Spring what "authority" or "role" the user has
         return List.of(new SimpleGrantedAuthority(role.name()));
     }
 
@@ -57,7 +56,6 @@ public class User implements UserDetails {
         return email;
     }
 
-    // You can set these to true for simplicity for now
     @Override
     public boolean isAccountNonExpired() {
         return true;

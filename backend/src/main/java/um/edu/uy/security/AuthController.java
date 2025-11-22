@@ -15,7 +15,7 @@ import um.edu.uy.security.dto.LoginRequest;
 import um.edu.uy.security.dto.RegisterRequest;
 import um.edu.uy.user.CustomUserDetailsService;
 import um.edu.uy.user.UserService;
-import um.edu.uy.user.UserDTO;
+import um.edu.uy.user.dto.UserDTO;
 
 @RestController
 @RequestMapping("/api/auth")

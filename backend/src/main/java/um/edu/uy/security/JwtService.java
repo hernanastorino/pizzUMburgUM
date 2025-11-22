@@ -43,7 +43,6 @@ public class JwtService {
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + jwtExpiration))
-                // 3. The 0.11.5 API needs the Key and the Algorithm
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
@@ -62,16 +61,12 @@ public class JwtService {
     }
 
     private Claims extractAllClaims(String token) {
-        // 4. THIS IS THE KEY CHANGE
-        // We use .parser() instead of .parserBuilder()
-        // And .setSigningKey() instead of .verifyWith()
         return Jwts.parser()
                 .setSigningKey(getSignInKey())
                 .parseClaimsJws(token)
                 .getBody();
     }
 
-    // 5. Return type is Key, not SecretKey
     private Key getSignInKey() {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         return Keys.hmacShaKeyFor(keyBytes);

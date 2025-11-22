@@ -21,9 +21,5 @@ public class Condiment {
 
     private Double price;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "burger_id", referencedColumnName = "burgerId")
-    private Burger burger; // La relación "lleva_aderezo"
-
     private boolean isAvailable;
 }

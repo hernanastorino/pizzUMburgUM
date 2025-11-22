@@ -23,9 +23,5 @@ public class Side {
 
     private Double price;
 
-    @ManyToOne
-    @JoinColumn(name = "creation_id")
-    private Creation creation;
-
     private boolean isAvailable;
 }

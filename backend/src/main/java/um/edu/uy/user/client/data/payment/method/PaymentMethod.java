@@ -1,4 +1,4 @@
-package um.edu.uy.user.client.data;
+package um.edu.uy.user.client.data.payment.method;
 
 import jakarta.persistence.*;
 import lombok.*;

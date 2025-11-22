@@ -45,7 +45,7 @@ public class Pizza extends Creation {
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "Pizza_Topping", // Nombre de la tabla intermedia
-            joinColumns = @JoinColumn(name = "pizza_id", referencedColumnName = "creationId"), // FK a esta entidad (Pizza)
+            joinColumns = @JoinColumn(name = "creation_id", referencedColumnName = "creationId"), // FK a esta entidad (Pizza)
             inverseJoinColumns = @JoinColumn(name = "topping_id") // FK a la otra entidad (Topping)
     )
     private Set<Topping> toppings = new HashSet<>();

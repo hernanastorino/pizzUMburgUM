@@ -21,8 +21,5 @@ public class Dough {
 
     private Double price;
 
-    @OneToOne(mappedBy = "doughId")
-    private Pizza pizza; // La relación "lleva_dough"
-
     private boolean isAvailable;
 }

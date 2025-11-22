@@ -1,4 +1,4 @@
-package um.edu.uy.user.client.data;
+package um.edu.uy.user.client.data.adress;
 
 import jakarta.persistence.*;
 import lombok.*;

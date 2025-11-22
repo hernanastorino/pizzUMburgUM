@@ -38,7 +38,7 @@ public class CreationInOrder {
     @PrePersist
     public void calculateSubtotal() {
         if (creation != null && creationSubtotal != null) {
-            this.creationSubtotal = creation.getSubtotal() * creationSubtotal;
+            this.creationSubtotal = creation.getUnitPrice() * creationSubtotal;
         }
     }
 }
