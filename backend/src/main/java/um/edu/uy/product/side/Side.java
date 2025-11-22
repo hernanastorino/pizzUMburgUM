@@ -23,17 +23,4 @@ public class Side {
 
     private Double price;
 
-    @ManyToOne
-    @JoinColumn(name = "creation_id")
-    private Creation creation;
-
 }
-/*
-falta:
-relaciones generales (falta hacer/ confirmar algunas)
-finalizacion de MER -> JAVA
-autenticacion integrada con web (redireccionamiento)
-JSON WEB TOKENNNNNNN (LA PARCA)
-
-
- */

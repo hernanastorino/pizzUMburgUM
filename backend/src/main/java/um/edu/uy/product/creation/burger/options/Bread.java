@@ -20,7 +20,4 @@ public class Bread {
     private String name;
 
     private Double price;
-
-    @OneToOne(mappedBy = "breadId")
-    private Burger burger; // La relación "lleva_pan"
 }

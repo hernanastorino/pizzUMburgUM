@@ -24,7 +24,4 @@ public class Sauce {
 
     private Double price;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "sauce_id", referencedColumnName = "sauceId")
-    private Pizza pizza; // La relación "lleva_salsa"
 }
