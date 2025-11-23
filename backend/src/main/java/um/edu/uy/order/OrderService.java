@@ -229,7 +229,7 @@ public class OrderService {
             throw new RuntimeException("El método de pago no pertenece al usuario");
         }
 
-        // 5. SETEAR TODO (Vinculación final)
+        // 5. SETEAR ALL
         order.setAddress(address);
         order.setPaymentMethod(payment);
 
