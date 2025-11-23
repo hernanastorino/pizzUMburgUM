@@ -7,6 +7,8 @@ import Register from './pages/Register';
 import Login from './pages/Login';
 import LandingPage from './pages/LandingPage';
 import Backoffice from './pages/Backoffice';
+import Favoritos from './pages/Favoritos';
+import Perfil from './pages/Perfil';  // ← AGREGADO
 
 // Components
 import Navbar from './components/Navbar';
@@ -54,6 +56,23 @@ function App() {
                         <>
                             <Navbar />
                             <Menu />
+                            <Footer />
+                        </>
+                    } />
+                    
+                    <Route path="/favoritos" element={
+                        <>
+                            <Navbar />
+                            <Favoritos />
+                            <Footer />
+                        </>
+                    } />
+
+                    {/* ← RUTA PERFIL AGREGADA */}
+                    <Route path="/perfil" element={
+                        <>
+                            <Navbar />
+                            <Perfil />
                             <Footer />
                         </>
                     } />
