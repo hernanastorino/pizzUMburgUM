@@ -6,7 +6,7 @@
 
 body {
     font-family: 'Josefin Sans', sans-serif;
-    background-image: url('/images/borroso.jpg');
+    background-image: url('../assets/images/borroso.jpg');
     background-color: #1B0D4E;
     background-size: cover;
     background-attachment: scroll;

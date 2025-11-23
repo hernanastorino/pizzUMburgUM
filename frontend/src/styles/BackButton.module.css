@@ -1,7 +1,7 @@
 /* Styles for the 'Volver' button */
 .backButton {
     position: fixed;
-    top: 30px;
+    top: 90px;
     left: 30px;
     padding: 12px 24px;
     background: linear-gradient(to right, #8e2de2, #4a00e0);
