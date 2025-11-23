@@ -6,5 +6,5 @@ public record FavoriteResponse(
         Long creationId,
         String creationName,
         Double creationSubtotal,
-        LocalDateTime favoritedAt
+        LocalDateTime favoritedOn
 ) {}

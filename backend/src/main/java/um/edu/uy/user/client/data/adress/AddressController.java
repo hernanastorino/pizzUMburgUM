@@ -9,7 +9,7 @@ import um.edu.uy.user.UserRepository;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/addresses")
+@RequestMapping("/api/payments")
 public class AddressController {
 
     @Autowired private AddressRepository addressRepository;
@@ -18,7 +18,7 @@ public class AddressController {
     // 1. GET (Solo activas)
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<Address>> getByUser(@PathVariable Long userId) {
-        return ResponseEntity.ok(addressRepository.findByUser_UserIdAndIsActive(userId));
+        return ResponseEntity.ok(addressRepository.findByUser_UserIdAndActiveTrue(userId));
     }
 
     // 2. DELETE (Soft Delete - Borrado Lógico)

@@ -8,7 +8,7 @@ import Login from './pages/Login';
 import LandingPage from './pages/LandingPage';
 import Backoffice from './pages/Backoffice';
 import Favoritos from './pages/Favoritos';
-import Perfil from './pages/Perfil';  // ← AGREGADO
+import Perfil from './pages/Perfil';
 
 // Components
 import Navbar from './components/Navbar';

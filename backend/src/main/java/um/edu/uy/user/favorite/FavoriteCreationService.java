@@ -46,7 +46,7 @@ public class FavoriteCreationService {
         FavoriteCreation saved = favoriteCreationRepo.save(fav);
 
         if (user.getFavoriteCreations() != null) {
-            user.getFavoriteCreations().add(saved.getCreation());
+            user.getFavoriteCreations().add(saved);
         }
 
         return mapToResponse(saved);
@@ -68,7 +68,7 @@ public class FavoriteCreationService {
         favoriteCreationRepo.deleteByUserUserIdAndCreationCreationId(userId, creationId);
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public List<FavoriteResponse> listFavorites(Long userId) {
         userRepo.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found: " + userId));
@@ -83,7 +83,7 @@ public class FavoriteCreationService {
                 f.getCreation().getCreationId(),
                 f.getCreation().getName(),
                 f.getCreation().getSubtotal(),
-                f.getCreatedAt()
+                f.getCreatedOn()
         );
     }
 }

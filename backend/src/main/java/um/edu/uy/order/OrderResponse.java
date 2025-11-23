@@ -8,7 +8,7 @@ import java.util.List;
 public record OrderResponse(
         Long id,
         String clientName,
-        String state,
+        OrderStatus state,
         Double total,
         LocalDateTime date,
         String addressDescription,

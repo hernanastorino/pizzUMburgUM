@@ -17,7 +17,7 @@ public class PaymentMethodController {
     // 1. GET
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<PaymentMethod>> getByUser(@PathVariable Long userId) {
-        return ResponseEntity.ok(paymentMethodRepository.findByUser_UserIdAndIsActive(userId));
+        return ResponseEntity.ok(paymentMethodRepository.findByUser_UserIdAndActiveTrue(userId));
     }
 
     // 2. DELETE
