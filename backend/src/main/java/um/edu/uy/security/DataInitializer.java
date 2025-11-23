@@ -9,6 +9,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import um.edu.uy.order.Order;
 import um.edu.uy.order.OrderRepository;
 import um.edu.uy.order.OrderService;
+import um.edu.uy.order.OrderStatus;
 import um.edu.uy.product.beverage.Beverage;
 import um.edu.uy.product.beverage.BeverageRepository;
 import um.edu.uy.product.creation.CreationRepository;
@@ -297,7 +298,7 @@ public class DataInitializer {
                         .client(clientA)
                         .address(addrHome)
                         .paymentMethod(pmCard)
-                        .state("DELIVERED")
+                        .state(OrderStatus.DELIVERED)
                         .date(LocalDateTime.now().minusDays(2))
                         .total(0.0)
                         .itemsCreation(new HashSet<>())
@@ -318,7 +319,7 @@ public class DataInitializer {
                         .client(clientA)
                         .address(addrHome)           // <-- required
                         .paymentMethod(pmCard)      // <-- required
-                        .state("PENDING")
+                        .state(OrderStatus.PENDING)
                         .date(LocalDateTime.now())
                         .total(0.0)
                         .itemsCreation(new HashSet<>())

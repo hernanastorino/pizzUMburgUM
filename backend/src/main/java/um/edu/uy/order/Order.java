@@ -30,8 +30,8 @@ public class Order {
     @JoinColumn(name = "user_id", referencedColumnName = "userId")
     private User client; // La relación "realiza"
 
-    @Column(nullable = false)
-    private String state;
+    @Enumerated(EnumType.STRING)
+    private OrderStatus state;
 
     @Column(nullable = false)
     private Double total;
@@ -59,4 +59,5 @@ public class Order {
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<SideInOrder> itemsSide = new HashSet<>();
+
 }

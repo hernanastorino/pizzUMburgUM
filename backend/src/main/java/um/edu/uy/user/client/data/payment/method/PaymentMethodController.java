@@ -3,7 +3,6 @@ package um.edu.uy.user.client.data.payment.method;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import um.edu.uy.user.User;
 import um.edu.uy.user.UserRepository;
 
 import java.util.List;
@@ -15,33 +14,48 @@ public class PaymentMethodController {
     @Autowired private PaymentMethodRepository paymentMethodRepository;
     @Autowired private UserRepository userRepository;
 
-    // obtener direcciones de un usuario
+    // 1. GET
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<PaymentMethod>> getByUser(@PathVariable Long userId) {
-        return ResponseEntity.ok(paymentMethodRepository.findByUser_UserId(userId));
+        return ResponseEntity.ok(paymentMethodRepository.findByUser_UserIdAndIsActive(userId));
     }
 
-    // crear nueva dir
-    @PostMapping("/user/{userId}")
-    public ResponseEntity<PaymentMethod> create(@PathVariable Long userId, @RequestBody PaymentMethod pmethod) {
-        User user = userRepository.findById(userId).orElseThrow();
-        pmethod.setUser(user);
-        return ResponseEntity.ok(paymentMethodRepository.save(pmethod));
-    }
-
-    // editar dir existente
-    @PutMapping("/{id}")
-    public ResponseEntity<PaymentMethod> update(@PathVariable Long id, @RequestBody PaymentMethod newPm) {
-        return paymentMethodRepository.findById(id).map(pmethod -> {
-            pmethod.setCardName(newPm.getCardName());
-            return ResponseEntity.ok(paymentMethodRepository.save(pmethod));
-        }).orElse(ResponseEntity.notFound().build());
-    }
-
-    // borrar dir
+    // 2. DELETE
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id) {
-        paymentMethodRepository.deleteById(id);
+        PaymentMethod pm = paymentMethodRepository.findById(id).orElseThrow();
+        pm.setActive(false);
+        paymentMethodRepository.save(pm);
         return ResponseEntity.ok().build();
+    }
+
+    // 3. PUT
+    @PutMapping("/{id}")
+    public ResponseEntity<PaymentMethod> updateSmart(@PathVariable Long id, @RequestBody PaymentMethod newInfo) {
+        PaymentMethod oldPayment = paymentMethodRepository.findById(id).orElseThrow();
+
+        // Si cambia el número, es otra tarjeta
+        boolean coreChanges = !oldPayment.getCardNumber().equals(newInfo.getCardNumber());
+
+        if (coreChanges) {
+            // Apagar vieja
+            oldPayment.setActive(false);
+            paymentMethodRepository.save(oldPayment);
+
+            // Crear nueva
+            PaymentMethod newPayment = PaymentMethod.builder()
+                    .user(oldPayment.getUser())
+                    .active(true)
+                    .cardName(newInfo.getCardName())
+                    .cardNumber(newInfo.getCardNumber())
+                    .cvv(newInfo.getCvv())
+                    .ownerName(newInfo.getOwnerName())
+                    .build();
+            return ResponseEntity.ok(paymentMethodRepository.save(newPayment));
+        } else {
+            // Editar existente
+            oldPayment.setCardName(newInfo.getCardName()); // Ej: "Mi Visa" -> "Visa Débito"
+            return ResponseEntity.ok(paymentMethodRepository.save(oldPayment));
+        }
     }
 }

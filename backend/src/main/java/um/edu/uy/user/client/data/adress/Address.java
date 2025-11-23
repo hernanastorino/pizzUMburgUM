@@ -27,4 +27,8 @@ public class Address {
     @JoinColumn(name = "user_id")
     private User user;
 
+    @Builder.Default
+    @Column(nullable = false)
+    private boolean active = true;
+
 }

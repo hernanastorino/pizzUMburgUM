@@ -15,37 +15,58 @@ public class AddressController {
     @Autowired private AddressRepository addressRepository;
     @Autowired private UserRepository userRepository;
 
-    // obtener direcciones de un usuario
+    // 1. GET (Solo activas)
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<Address>> getByUser(@PathVariable Long userId) {
-        return ResponseEntity.ok(addressRepository.findByUser_UserId(userId));
+        return ResponseEntity.ok(addressRepository.findByUser_UserIdAndIsActive(userId));
     }
 
-    // crear nueva dir
-    @PostMapping("/user/{userId}")
-    public ResponseEntity<Address> create(@PathVariable Long userId, @RequestBody Address address) {
-        User user = userRepository.findById(userId).orElseThrow();
-        address.setUser(user);
-        return ResponseEntity.ok(addressRepository.save(address));
-    }
-
-    // editar dir existente
-    @PutMapping("/{id}")
-    public ResponseEntity<Address> update(@PathVariable Long id, @RequestBody Address newAd) {
-        return addressRepository.findById(id).map(addr -> {
-            addr.setName(newAd.getName());
-            addr.setStreet(newAd.getStreet());
-            addr.setDoorNumber(newAd.getDoorNumber());
-            addr.setAptNumber(newAd.getAptNumber());
-            addr.setIndications(newAd.getIndications());
-            return ResponseEntity.ok(addressRepository.save(addr));
-        }).orElse(ResponseEntity.notFound().build());
-    }
-
-    // borrar dir
+    // 2. DELETE (Soft Delete - Borrado Lógico)
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id) {
-        addressRepository.deleteById(id);
+        Address address = addressRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Dirección no encontrada"));
+
+        address.setActive(false); // La apagamos
+        addressRepository.save(address); // Guardamos el cambio
+
         return ResponseEntity.ok().build();
+    }
+
+    // 3. PUT (Smart Update con Soft Delete)
+    @PutMapping("/{id}")
+    public ResponseEntity<Address> updateSmart(@PathVariable Long id, @RequestBody Address newInfo) {
+        Address oldAddress = addressRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Dirección no encontrada"));
+
+        // Definir qué es un cambio drástico
+        boolean coreChanges = !oldAddress.getStreet().equals(newInfo.getStreet()) ||
+                !oldAddress.getDoorNumber().equals(newInfo.getDoorNumber());
+
+        if (coreChanges) {
+            // A. CAMBIO GRANDE:
+            // 1. Apagamos la vieja (Soft Delete)
+            oldAddress.setActive(false);
+            addressRepository.save(oldAddress);
+
+            // 2. Creamos la nueva (Active = true por defecto)
+            Address brandNewAddress = Address.builder()
+                    .user(oldAddress.getUser())
+                    .active(true) // Explícito por las dudas
+                    .name(newInfo.getName())
+                    .street(newInfo.getStreet())
+                    .doorNumber(newInfo.getDoorNumber())
+                    .aptNumber(newInfo.getAptNumber())
+                    .indications(newInfo.getIndications())
+                    .build();
+
+            return ResponseEntity.ok(addressRepository.save(brandNewAddress));
+
+        } else {
+            // B. CAMBIO CHICO (Solo editar)
+            oldAddress.setIndications(newInfo.getIndications());
+            // oldAddress.setName(newInfo.getName()); // Si querés permitir cambiar el alias
+            return ResponseEntity.ok(addressRepository.save(oldAddress));
+        }
     }
 }

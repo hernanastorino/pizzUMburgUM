@@ -10,5 +10,5 @@ import um.edu.uy.user.User;
 public interface PaymentMethodRepository extends JpaRepository<PaymentMethod, Long> {
     List<PaymentMethod> findByUser(User user);
 
-    List<PaymentMethod> findByUser_UserId(Long userId);
+    List<PaymentMethod> findByUser_UserIdAndIsActive(Long userId);
 }

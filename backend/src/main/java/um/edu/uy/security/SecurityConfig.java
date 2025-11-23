@@ -41,6 +41,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authz -> authz
                         // Public endpoints for auth
                         .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/catalog/**").permitAll()
 
                         // Allow H2 Console access
                         .requestMatchers("/h2-console/**").permitAll()

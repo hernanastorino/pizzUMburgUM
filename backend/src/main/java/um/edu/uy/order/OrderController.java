@@ -28,11 +28,15 @@ public class OrderController {
 
     // checkout
     @PostMapping("/{id}/confirm")
-    public ResponseEntity<Order> confirm(@PathVariable Long id,
-                                         @RequestParam Long addressId,
-                                         @RequestParam Long paymentId) {
-        // Acá deberías buscar las entidades Address y Payment y pasarlas al servicio
-        return ResponseEntity.ok(orderService.confirmOrder(id, addressId, paymentId));
+    public ResponseEntity<?> confirmOrder(@PathVariable Long id,
+                                          @RequestParam Long addressId,
+                                          @RequestParam Long paymentId) {
+        try {
+            Order confirmedOrder = orderService.confirmOrder(id, addressId, paymentId);
+            return ResponseEntity.ok(confirmedOrder);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     // boton de avanzar estado

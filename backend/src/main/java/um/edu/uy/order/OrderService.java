@@ -14,6 +14,10 @@ import um.edu.uy.product.side.relations.SideInOrder;
 import um.edu.uy.product.side.relations.SideInOrderKey;
 import um.edu.uy.user.User;
 import um.edu.uy.user.UserRepository;
+import um.edu.uy.user.client.data.adress.Address;
+import um.edu.uy.user.client.data.adress.AddressRepository;
+import um.edu.uy.user.client.data.payment.method.PaymentMethod;
+import um.edu.uy.user.client.data.payment.method.PaymentMethodRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -25,6 +29,8 @@ public class OrderService {
 
     private final OrderRepository orderRepository;
     private final UserRepository userRepository;
+    private final AddressRepository addressRepository;
+    private final PaymentMethodRepository paymentMethodRepository;
 
     public Order getOrderById(Long id) {
         return orderRepository.findById(id)
@@ -188,43 +194,72 @@ public class OrderService {
         User user = userRepository.findById(userId).orElseThrow();
         Order newOrder = Order.builder()
                 .client(user)
-                .state("PENDING")
+                .state(OrderStatus.PENDING)
                 .total(0.0)
                 .date(LocalDateTime.now()) // Fecha de creación
                 .build();
         return orderRepository.save(newOrder);
     }
 
+    @Transactional
     public Order confirmOrder(Long orderId, Long addressId, Long paymentId) {
-        Order order = getOrderById(orderId);if (!"PENDING".equals(order.getState())) throw new RuntimeException("Orden no está pendiente");
+        // 1. Buscar la orden
+        Order order = getOrderById(orderId);
 
-        // Setear datos finales
-        // (Asumo que buscás address y payment en sus repos antes de pasar acá o los buscás acá)
-        // order.setAddress(...);
-        // order.setPaymentMethod(...);
+        // 2. Validar estado (solo se confirma si está PENDING)
+        // Si usás Enum en la entidad: if (order.getState() != OrderStatus.PENDING)
+        if (order.getState() != OrderStatus.PENDING) {
+            throw new RuntimeException("Orden no pendiente");
+        }
 
-        order.setState("CONFIRMED");
-        order.setDate(LocalDateTime.now()); // fecha de confirmacion real
+        // 3. Buscar y Validar Dirección
+        Address address = addressRepository.findById(addressId)
+                .orElseThrow(() -> new RuntimeException("Dirección no encontrada"));
+
+        // Seguridad: Verificar que la dirección pertenezca al dueño de la orden
+        if (!address.getUser().getUserId().equals(order.getClient().getUserId())) {
+            throw new RuntimeException("La dirección no pertenece al usuario de la orden");
+        }
+
+        // 4. Buscar y Validar Medio de Pago
+        PaymentMethod payment = paymentMethodRepository.findById(paymentId)
+                .orElseThrow(() -> new RuntimeException("Método de pago no encontrado"));
+
+        if (!payment.getUser().getUserId().equals(order.getClient().getUserId())) {
+            throw new RuntimeException("El método de pago no pertenece al usuario");
+        }
+
+        // 5. SETEAR TODO (Vinculación final)
+        order.setAddress(address);
+        order.setPaymentMethod(payment);
+
+        // 6. Cambiar Estado y Fecha
+        order.setState(OrderStatus.CONFIRMED); // O usar el Enum directo si cambiaste la entidad
+        order.setDate(LocalDateTime.now()); // Fecha real de la compra
+
         return orderRepository.save(order);
     }
 
     // avanzar estado manual para la demo
     public Order advanceState(Long orderId) {
         Order order = getOrderById(orderId);
-        String current = order.getState();
-        String next = switch (current) {
-            case "CONFIRMED" -> "PREPARING";
-            case "PREPARING" -> "SENT";
-            case "SENT" -> "DELIVERED";
+
+        OrderStatus current = order.getState();
+
+        OrderStatus next = switch (current) {
+            case CONFIRMED -> OrderStatus.PREPARING;
+            case PREPARING -> OrderStatus.SENT;
+            case SENT -> OrderStatus.DELIVERED;
             default -> current;
         };
+
         order.setState(next);
         return orderRepository.save(order);
     }
 
     public void cancelOrder(Long orderId) {
         Order order = getOrderById(orderId);
-        order.setState("CANCELLED");
+        order.setState(OrderStatus.CANCELLED);
         orderRepository.save(order);
     }
 }

@@ -10,5 +10,5 @@ import um.edu.uy.user.User;
 public interface AddressRepository extends JpaRepository<Address, Long> {
     List<Address> findByUser(User user);
 
-    List<Address> findByUser_UserId(Long userId);
+    List<Address> findByUser_UserIdAndIsActive(Long userId);
 }
