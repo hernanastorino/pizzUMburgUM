@@ -1,29 +1,27 @@
-.nav {
-  background: #333;
+.footer {
+  background: rgba(0, 0, 0, 0.4);
+  color: white;
+  padding: 8px;
+  text-align: center;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
   display: flex;
-  justify-content: space-between;
+  justify-content: space-around;
   align-items: center;
-  padding: 15px 50px;
+  flex-wrap: wrap;
+  gap: 10px;
+  z-index: 999;
   
 }
 
-.logo {
-  color: white;
-  font-size: 1.5rem;
-  font-weight: bold;
+.footer div {
+  margin: 3px 0;
 }
 
-ul {
-  list-style: none;
-  display: flex;
-  gap: 20px;
-}
-
-ul li a {
-  color: white;
-  text-decoration: none;
-}
-
-ul li a:hover {
-  text-decoration: underline;
+.footerText {
+  margin: 0;
+  font-size: 15px;
+  color: rgba(255, 255, 255, 10);
 }

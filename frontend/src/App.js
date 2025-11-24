@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import borrosoImage from './assets/images/borroso.jpg'
 
 // Pages
 import Menu from './pages/Menu';
@@ -10,12 +11,11 @@ import Backoffice from './pages/Backoffice';
 import Favoritos from './pages/Favoritos';
 import Perfil from './pages/Perfil';
 import MasaPizza from './pages/MasaPizza';
-import TiposSalsa from './pages/TiposSalsa';
-import TiposQueso from './pages/TiposQueso';
-import Toppings from './pages/Toppings';
-import TipoCarne from './pages/TipoCarne';
-import TipoPan from './pages/TipoPan';
-import BurgerSalsa from './pages/BurgerSalsa';
+import TiposSalsa from './pages/SalsaPizza';
+import TiposQueso from './pages/QuesoPizza';
+import Toppings from './pages/ToppingsPizza';
+import TipoCarne from './pages/BurgerCarne';
+import TipoPan from './pages/BurgerPan';
 import BurgerQueso from './pages/BurgerQueso';
 import BurgerToppings from './pages/BurgerToppings';
 import './index.css'
@@ -26,6 +26,15 @@ import Footer from './components/Footer';
 import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
+    // Aplicar la imagen de fondo al body
+    useEffect(() => {
+        document.body.style.backgroundImage = `url(${borrosoImage})`
+        document.body.style.backgroundSize = 'cover'
+        document.body.style.backgroundPosition = 'center'
+        document.body.style.backgroundAttachment = 'fixed'
+        document.body.style.backgroundRepeat = 'no-repeat'
+    }, [])
+
     return (
         <BrowserRouter>
             <Routes>
@@ -94,8 +103,7 @@ function App() {
                         </>
                     } />
 
-
-                    <Route path="/tipos-salsa" element={
+                    <Route path="/salsa-pizza" element={
                     <>
                         <Navbar />
                         <TiposSalsa />
@@ -103,8 +111,7 @@ function App() {
                     </>
                     } />
 
-
-                    <Route path="/tipos-queso" element={
+                    <Route path="/queso-pizza" element={
                     <>
                         <Navbar />
                         <TiposQueso />
@@ -112,7 +119,7 @@ function App() {
                     </>
                     } />
 
-                    <Route path="/toppings" element={
+                    <Route path="/toppings-pizza" element={
                     <>
                         <Navbar />
                         <Toppings />
@@ -120,7 +127,7 @@ function App() {
                     </>
                     } />
 
-                    <Route path="/tipo-carne" element={
+                    <Route path="/burger-carne" element={
                     <>
                         <Navbar />
                         <TipoCarne />
@@ -128,23 +135,13 @@ function App() {
                     </>
                     } />
 
-                    <Route path="/tipo-pan" element={
+                    <Route path="/burger-pan" element={
                     <>
                         <Navbar />
                         <TipoPan />
                         <Footer />
                     </>
                     } />
-
-
-                    <Route path="/burger-salsa" element={
-                    <>
-                        <Navbar />
-                        <BurgerSalsa />
-                        <Footer />
-                    </>
-                    } />
-
 
                     <Route path="/burger-queso" element={
                     <>
@@ -154,10 +151,6 @@ function App() {
                     </>
                     } />
 
-                    
-
-                    
-
                     <Route path="/burger-toppings" element={
                     <>
                         <Navbar />
@@ -165,7 +158,6 @@ function App() {
                         <Footer />
                     </>
                     } />
-
                     
             </Route>
             </Routes>

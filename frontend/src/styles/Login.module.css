@@ -1,7 +1,4 @@
-/*
- * This is the CSS module for Login.jsx
- * I have removed the 'footer' and 'body' styles as they are in global.css
- */
+
 .container {
     display: flex;
     justify-content: center;
@@ -9,6 +6,7 @@
     min-height: 100vh;
     padding: 20px;
     flex: 1;
+    margin-top: -50px; 
 }
 
 .loginBox {
@@ -156,5 +154,3 @@
     text-shadow: 0px 0px 10px rgba(142, 45, 226, 0.6);
 }
 
-/* Loader styles are NOT included, as they are a special case */
-/* 'back-button' styles are in BackButton.module.css */

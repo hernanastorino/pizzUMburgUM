@@ -17,14 +17,12 @@ const Navbar = () => {
             Inicio
           </Link>
         </li>
-        <li><a href="#about">About</a></li>
-        <li><a href="#menu">Menu</a></li>
         <li>
           <Link 
             to="/favoritos" 
             className={location.pathname === '/favoritos' ? styles.active : ''}
           >
-            ❤️ Favoritos
+            💜 Favoritos
           </Link>
         </li>
       </ul>

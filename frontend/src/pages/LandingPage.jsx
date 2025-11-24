@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './LandingPage.module.css';
 import background from "../assets/images/pizzUM&burgUM2.png";
+import Footer from '../components/Footer';  // ⬅️ AGREGAR ESTE IMPORT
 
 const LandingPage = () => {
   const navigate = useNavigate();
@@ -94,18 +95,9 @@ const LandingPage = () => {
       {/* Espaciador */}
       <div className={styles['content-spacer']}></div>
 
-      {/* Footer */}
-      <footer className={styles['landing-footer']}>
-        <div>
-          <p>&copy; 2025 PizzUM & BurgUM</p>
-        </div>
-        <div>
-          <p>Laboratorio Tic I &copy; arTICode</p>
-        </div>
-        <div>
-          <p>Astorino Hernán, Angeloro Valentina, Hobbins William</p>
-        </div>
-      </footer>
+      {/* Footer - Importado como componente */}
+      <Footer />
+
     </div>
   );
 };

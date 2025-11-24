@@ -4,9 +4,15 @@ import styles from "./Footer.module.css";
 const Footer = () => {
   return (
     <footer className={styles.footer}>
-      <p>&copy; 2025 PizzUM & BurgUM</p>
-      <p>Laboratorio TIC I &copy; arTICode</p>
-      <p>Astorino Hernán, Angeloro Valentina, Hobbins William</p>
+      <div>
+        <p className={styles.footerText}>&copy; 2025 PizzUM & BurgUM</p>
+      </div>
+      <div>
+        <p className={styles.footerText}>Laboratorio TIC I &copy; arTICode</p>
+      </div>
+      <div>
+        <p className={styles.footerText}>Astorino Hernán, Angeloro Valentina, Hobbins William</p>
+      </div>
     </footer>
   );
 };
