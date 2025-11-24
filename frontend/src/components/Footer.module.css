@@ -25,3 +25,32 @@
   font-size: 15px;
   color: rgba(255, 255, 255, 10);
 }
+
+/* ===== RESPONSIVE - Cuando la pantalla es pequeña o está minimizada ===== */
+@media (max-width: 1200px) {
+  .footerText {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 768px) {
+  .footerText {
+    font-size: 12px;
+  }
+  
+  .footer {
+    padding: 10px;
+    gap: 5px;
+    background: rgba(0, 0, 0, 0.3);
+  }
+}
+
+@media (max-width: 480px) {
+  .footerText {
+    font-size: 9px;
+  }
+  
+  .footer {
+    padding: 4px;
+  }
+}

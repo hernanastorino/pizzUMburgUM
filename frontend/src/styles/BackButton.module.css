@@ -14,7 +14,7 @@
     transition: all 0.3s ease;
     box-shadow: 0px 0px 20px rgba(142, 45, 226, 0.5);
     z-index: 1000;
-    text-decoration: none; /* Added for <Link> */
+    text-decoration: none;
 }
 
 .backButton:hover {
@@ -24,4 +24,11 @@
 
 .backButton:active {
     transform: scale(0.95);
+}
+
+/* ===== RESPONSIVE - Botón detrás del menú ===== */
+@media (max-width: 768px) {
+    .backButton {
+        z-index: 500 !important;  /* MENOR que el menú (que tiene z-index: 1000) */
+    }
 }
