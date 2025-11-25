@@ -36,6 +36,8 @@ import um.edu.uy.user.client.data.adress.Address;
 import um.edu.uy.user.client.data.adress.AddressRepository;
 import um.edu.uy.user.client.data.payment.method.PaymentMethod;
 import um.edu.uy.user.client.data.payment.method.PaymentMethodRepository;
+import um.edu.uy.user.favorite.FavoriteCreation;
+import um.edu.uy.user.favorite.FavoriteCreationRepository;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -61,6 +63,7 @@ public class DataInitializer {
             PaymentMethodRepository paymentMethodRepository,
             OrderRepository orderRepository,
             CreationRepository creationRepository,
+            FavoriteCreationRepository favoriteCreationRepository,
             OrderService orderService) {
 
         return args -> {
@@ -263,19 +266,25 @@ public class DataInitializer {
                 bFavoritaA = Burger.builder()
                         .name("Burger Clásica Favorita")
                         .user(clientA)
-                        .isFavorite(true)
                         .meatQuantity(1)
                         .bread(bBrioche)
                         .meat(mRes)
                         .toppings(Set.of(tPanceta))
                         .isAvailable(true)
                         .build();
+                bFavoritaA.setSubtotal(bFavoritaA.calculateSubtotal());
                 bFavoritaA = creationRepository.save(bFavoritaA);
+
+                FavoriteCreation favA = FavoriteCreation.builder()
+                        .user(clientA)
+                        .creation(bFavoritaA)
+                        .build();
+
+                favoriteCreationRepository.save(favA);
 
                 Pizza p = Pizza.builder()
                         .name("Pizza Demo")
                         .user(clientA)
-                        .isFavorite(false)
                         .size("Grande")
                         .dough(dClasica)
                         .cheese(cCheddar)
@@ -283,6 +292,7 @@ public class DataInitializer {
                         .toppings(new HashSet<>())
                         .isAvailable(true)
                         .build();
+                p.setSubtotal(p.calculateSubtotal());
                 creationRepository.save(p);
             } else {
                 bFavoritaA = (Burger) creationRepository.findAll().stream()
