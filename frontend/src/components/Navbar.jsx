@@ -1,26 +1,73 @@
 import React, { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom"; // Agrega useNavigate
 import styles from "./Navbar.module.css";
 
 const Navbar = () => {
   const location = useLocation();
+  const navigate = useNavigate(); // Agrega esto
   const [isChecked, setIsChecked] = useState(false);
+  const [isCartOpen, setIsCartOpen] = useState(false);
+  const [cartItems, setCartItems] = useState([
+    { id: 1, nombre: "Creación 1", precio: 100, cantidad: 1 },
+    { id: 2, nombre: "Bebida 1", precio: 100, cantidad: 1 }
+  ]);
 
   const handleLinkClick = () => {
-    setIsChecked(false); // Cierra el menú al hacer clic en un link
+    setIsChecked(false);
   };
 
   const handleOverlayClick = () => {
-    setIsChecked(false); // Cierra el menú al hacer clic en el overlay
+    setIsChecked(false);
+  };
+
+  const toggleCart = () => {
+    setIsCartOpen(!isCartOpen);
+  };
+
+  const incrementItem = (id) => {
+    setCartItems(cartItems.map(item => 
+      item.id === id ? { ...item, cantidad: item.cantidad + 1 } : item
+    ));
+  };
+
+  const decrementItem = (id) => {
+    setCartItems(cartItems.map(item => {
+      if (item.id === id) {
+        if (item.cantidad > 1) {
+          return { ...item, cantidad: item.cantidad - 1 };
+        }
+        return null;
+      }
+      return item;
+    }).filter(item => item !== null));
+  };
+
+  const getTotalItems = () => {
+    return cartItems.reduce((sum, item) => sum + item.cantidad, 0);
+  };
+
+  const getTotalPrice = () => {
+    return cartItems.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
+  };
+
+  const handleVerPedido = () => {
+    setIsCartOpen(false); // Cierra el carrito desplegable
+    navigate('/carrito'); // Navega a la página del carrito
   };
 
   return (
     <>
-      {/* Overlay que aparece cuando el menú está abierto */}
       {isChecked && (
         <div 
           className={styles.overlay}
           onClick={handleOverlayClick}
+        />
+      )}
+
+      {isCartOpen && (
+        <div 
+          className={styles.cartOverlay}
+          onClick={() => setIsCartOpen(false)}
         />
       )}
 
@@ -55,8 +102,84 @@ const Navbar = () => {
               💜 Favoritos
             </Link>
           </li>
+          <li>
+            <Link 
+              to="#" 
+              className={styles.cartLink}
+              onClick={(e) => {
+                e.preventDefault();
+                toggleCart();
+              }}
+            >
+              🛒 Carrito
+              {getTotalItems() > 0 && (
+                <span className={styles.cartBadge}>{getTotalItems()}</span>
+              )}
+            </Link>
+          </li>
         </ul>
       </nav>
+
+      {isCartOpen && (
+        <div className={styles.cartDropdownWrapper}>
+          <div className={styles.cartDropdownBorder}></div>
+          <div className={styles.cartDropdown}>
+            <div className={styles.cartHeader}>
+              <h3>🛒 Mi Carrito</h3>
+              <button 
+                className={styles.closeCart}
+                onClick={() => setIsCartOpen(false)}
+              >
+                ✕
+              </button>
+            </div>
+            
+            <div className={styles.cartItems}>
+              {cartItems.length === 0 ? (
+                <p className={styles.emptyMessage}>El carrito está vacío</p>
+              ) : (
+                cartItems.map(item => (
+                  <div key={item.id} className={styles.cartItem}>
+                    <div className={styles.itemInfo}>
+                      <span className={styles.itemName}>{item.nombre}</span>
+                      <span className={styles.itemPrice}>${item.precio * item.cantidad}</span>
+                    </div>
+                    <div className={styles.itemControls}>
+                      <button 
+                        className={styles.controlBtn}
+                        onClick={() => decrementItem(item.id)}
+                      >
+                        -
+                      </button>
+                      <span className={styles.quantity}>{item.cantidad}</span>
+                      <button 
+                        className={styles.controlBtn}
+                        onClick={() => incrementItem(item.id)}
+                      >
+                        +
+                      </button>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+
+            {cartItems.length > 0 && (
+              <div className={styles.cartTotal}>
+                <span className={styles.totalLabel}>Total:</span>
+                <span className={styles.totalPrice}>${getTotalPrice()}</span>
+              </div>
+            )}
+
+            <button 
+              className={styles.viewOrderBtn}
+              onClick={handleVerPedido}
+            >
+              Ver Pedido
+            </button>
+          </div>
+        </div>
+      )}
     </>
   );
 };
