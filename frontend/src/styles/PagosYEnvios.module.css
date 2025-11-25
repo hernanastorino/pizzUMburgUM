@@ -1,0 +1,357 @@
+/* ===========================
+   LAYOUT GENERAL
+=========================== */
+
+.perfilWrapper {
+  width: 100%;
+  background-image: url('../assets/images/borroso.jpg');
+  
+}
+
+.perfilGrid {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 30px 20px;
+
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 35px;
+
+  align-items: start;
+}
+
+.columna {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+
+ 
+
+/* ===========================
+   TARJETAS
+=========================== */
+
+.itemCard {
+  width: 100%;
+  background: linear-gradient(90deg, #1B0D4E 0%, #3d0085 50%, #1B0D4E 100%);
+  border-radius: 18px;
+
+  padding: 20px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.35);
+  backdrop-filter: blur(6px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+.itemCardBorder {
+  position: absolute;
+  inset: -2px;
+  border-radius: 15px;
+  padding: 2px;
+  background: conic-gradient(from 0deg, transparent 0%, transparent 60%, rgba(142, 45, 226, 0.5) 65%, rgba(64, 196, 255, 0.6) 72%, rgba(255, 255, 255, 0.7) 79%, rgba(64, 196, 255, 0.6) 86%, rgba(142, 45, 226, 0.5) 93%, transparent 100%);
+  mask-composite: exclude;
+  z-index: 0;
+  animation: rotate 4s linear infinite;
+}
+
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.cardHeaderLeft {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.cardTitle {
+  font-size: 22px;
+  color: white;
+  font-weight: 600;
+}
+
+.arrow {
+  font-size: 18px;
+  transition: transform 0.3s ease;
+  color: white;
+}
+
+.arrowRotated {
+  transform: rotate(90deg);
+}
+
+/* ===========================
+   CONTENEDOR INTERNO
+=========================== */
+
+
+.infoDisplay p {
+  color: #ddd;
+  margin: 8px 0;
+  font-size: 1rem;
+}
+
+.infoDisplay strong {
+  color: #85d7ff;
+}
+
+
+/* ===========================
+   NUEVO DISEÑO – DIRECCIONES CON BORDE
+=========================== */
+
+/* Wrapper para el borde */
+.direccionItemWrapper {
+  position: relative;
+  border-radius: 12px;
+  overflow: visible;
+  margin-bottom: 15px;
+}
+
+/* Borde animado */
+.direccionItemBorder {
+  position: absolute;
+  inset: -2px;
+  border-radius: 12px;
+  padding: 2px;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0%,
+    transparent 60%,
+    rgba(142, 45, 226, 0.5) 65%,
+    rgba(64, 196, 255, 0.6) 72%,
+    rgba(255, 255, 255, 0.7) 79%,
+    rgba(64, 196, 255, 0.6) 86%,
+    rgba(142, 45, 226, 0.5) 93%,
+    transparent 100%
+  );
+  mask-composite: exclude;
+  z-index: 0;
+  animation: rotateBorder 4s linear infinite;
+}
+
+@keyframes rotateBorder {
+  100% {
+    background: conic-gradient(
+      from 360deg,
+      transparent 0%,
+      transparent 60%,
+      rgba(142, 45, 226, 0.5) 65%,
+      rgba(64, 196, 255, 0.6) 72%,
+      rgba(255, 255, 255, 0.7) 79%,
+      rgba(64, 196, 255, 0.6) 86%,
+      rgba(142, 45, 226, 0.5) 93%,
+      transparent 100%
+    );
+  }
+}
+
+.direccionItem {
+  position: relative;
+  z-index: 1;
+  background: linear-gradient(90deg, #2a1560 0%, #4a0090 50%, #2a1560 100%);
+  border-radius: 12px;
+  padding: 12px;  /* Era 20px, ahora 12px */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  color: white;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;  /* Era 15px, ahora 8px */
+}
+
+.direccionInfo p {
+  margin: 5px 0;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.direccionInfo strong {
+  color: #a8dadc; 
+}
+
+.input,
+.direccionItem input {
+  background: rgba(142, 45, 226, 0.25);
+  border: 2px solid #8e2de2;
+  border-radius: 8px;
+  padding: 8px 12px;
+  color: white;
+  font-size: 16px;
+  outline: none;
+  width: 100%;
+}
+
+.input:focus,
+.direccionItem input:focus {
+  border-color: #c985ff;
+  background: rgba(142, 45, 226, 0.35);
+}
+
+.formRow {
+  margin-bottom: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.formRow label {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 14px;
+}
+
+/* ===========================
+   EDICIÓN – INPUTS
+=========================== */
+
+.inputEdit {
+  background: rgba(255, 255, 255, 0.12);
+  border: 2px solid rgba(255, 255, 255, 0.25);
+  padding: 8px 12px;
+  border-radius: 10px;
+  color: white;
+  width: 100%;
+  margin-bottom: 10px;
+  outline: none;
+  font-size: 15px;
+  transition: 0.25s;
+}
+
+.inputEdit:focus {
+  border-color: #a66bff;
+  background: rgba(255, 255, 255, 0.18);
+}
+
+/* ===========================
+   BOTONES ABAJO (EDITAR + X)
+=========================== */
+
+.actionsRow {
+  margin-top: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Botón Editar/Guardar */
+
+.editBtn {
+  width: 100%;
+  padding: 15px;
+  border: none;
+  border-radius: 15px;
+
+  background: linear-gradient(135deg, #8e2de2, #4a00e0);
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.25s;
+  font-size: 1rem;
+}
+
+.editBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 15px rgba(142, 45, 226, 0.6);
+}
+
+
+/* Botón X al lado del botón Editar */
+.deleteBtn {
+  background: linear-gradient(135deg, #ff4757, #e02d2d);
+  color: white;
+  border: 2px solid white;
+  border-radius: 8px;
+  width: 45px;
+  height: 45px;
+  cursor: pointer;
+  font-size: 18px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.fieldDisplay {
+  margin: 8px 0;
+  font-size: 16px;  /* Era 20px */
+  color: white;
+}
+
+.fieldRow label {
+  min-width: 100px;
+  color: #a8dadc;
+  font-size: 16px;  /* Era 20px */
+}
+
+.fieldDisplay strong {
+  color: #a8dadc;
+}
+
+.fieldRow {
+  display: flex;
+  align-items: center;
+  margin: 6px 0;
+  gap: 10px;
+}
+
+/* Agregar al final de PagosYEnvios.module.css */
+
+.addButton {
+  background: linear-gradient(135deg, #8e2de2, #4a00e0);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  font-size: 24px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: 0.3s;
+  font-weight: bold;
+}
+
+.addButton:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 15px rgba(142, 45, 226, 0.6);
+}
+
+/* Agregar al final de PagosYEnvios.module.css */
+
+.addButton {
+  width: 50px;
+  height: 50px;
+  background: linear-gradient(135deg, #8e2de2, #4a00e0);
+  color: white;
+  border: 1px solid #8e2de2;
+  border-radius: 10px;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 10px rgba(142, 45, 226, 0.5), 0 0 20px rgba(142, 45, 226, 0.3);
+}
+
+.addButton:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 15px rgba(142, 45, 226, 0.8), 0 0 30px rgba(142, 45, 226, 0.5);
+}
+
+
+/* ===========================
+   RESPONSIVE
+=========================== */
+
+@media (max-width: 968px) {
+  .perfilGrid {
+    grid-template-columns: 1fr;
+  }
+}
