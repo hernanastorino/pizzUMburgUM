@@ -9,7 +9,7 @@ import Login from './pages/Login';
 import LandingPage from './pages/LandingPage';
 import Backoffice from './pages/Backoffice';
 import Favoritos from './pages/Favoritos';
-import Perfil from './pages/Perfil';
+import Perfil from './pages/PagosYEnvios';
 import MasaPizza from './pages/MasaPizza';
 import TiposSalsa from './pages/SalsaPizza';
 import TiposQueso from './pages/QuesoPizza';
@@ -87,7 +87,7 @@ function App() {
                         </>
                     } />
 
-                    <Route path="/perfil" element={
+                    <Route path="/pagosYEnvios" element={
                         <>
                             <Navbar />
                             <Perfil />
