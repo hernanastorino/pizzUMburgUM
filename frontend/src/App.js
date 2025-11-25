@@ -18,6 +18,7 @@ import TipoCarne from './pages/BurgerCarne';
 import TipoPan from './pages/BurgerPan';
 import BurgerQueso from './pages/BurgerQueso';
 import BurgerToppings from './pages/BurgerToppings';
+import Carrito from "./components/Carrito"; // Cambiado de ./components a ./pages
 import './index.css'
 
 // Components
@@ -95,6 +96,14 @@ function App() {
                         </>
                     } />
 
+                    <Route path="/carrito" element={
+                        <>
+                            <Navbar />
+                            <Carrito />
+                            <Footer />
+                        </>
+                    } />
+
                     <Route path="/masa-pizza" element={
                         <>
                             <Navbar />
@@ -104,62 +113,61 @@ function App() {
                     } />
 
                     <Route path="/salsa-pizza" element={
-                    <>
-                        <Navbar />
-                        <TiposSalsa />
-                        <Footer />
-                    </>
+                        <>
+                            <Navbar />
+                            <TiposSalsa />
+                            <Footer />
+                        </>
                     } />
 
                     <Route path="/queso-pizza" element={
-                    <>
-                        <Navbar />
-                        <TiposQueso />
-                        <Footer />
-                    </>
+                        <>
+                            <Navbar />
+                            <TiposQueso />
+                            <Footer />
+                        </>
                     } />
 
                     <Route path="/toppings-pizza" element={
-                    <>
-                        <Navbar />
-                        <Toppings />
-                        <Footer />
-                    </>
+                        <>
+                            <Navbar />
+                            <Toppings />
+                            <Footer />
+                        </>
                     } />
 
                     <Route path="/burger-carne" element={
-                    <>
-                        <Navbar />
-                        <TipoCarne />
-                        <Footer />
-                    </>
+                        <>
+                            <Navbar />
+                            <TipoCarne />
+                            <Footer />
+                        </>
                     } />
 
                     <Route path="/burger-pan" element={
-                    <>
-                        <Navbar />
-                        <TipoPan />
-                        <Footer />
-                    </>
+                        <>
+                            <Navbar />
+                            <TipoPan />
+                            <Footer />
+                        </>
                     } />
 
                     <Route path="/burger-queso" element={
-                    <>
-                        <Navbar />
-                        <BurgerQueso />
-                        <Footer />
-                    </>
+                        <>
+                            <Navbar />
+                            <BurgerQueso />
+                            <Footer />
+                        </>
                     } />
 
                     <Route path="/burger-toppings" element={
-                    <>
-                        <Navbar />
-                        <BurgerToppings />
-                        <Footer />
-                    </>
+                        <>
+                            <Navbar />
+                            <BurgerToppings />
+                            <Footer />
+                        </>
                     } />
-                    
-            </Route>
+                </Route>
             </Routes>
         </BrowserRouter>
     );

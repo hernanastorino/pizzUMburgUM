@@ -1,3 +1,5 @@
+//Confirmar para eliminar un pedido
+
 import React from 'react';
 import styles from '../styles/Backoffice.module.css';
 
