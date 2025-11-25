@@ -94,4 +94,8 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(dto.getNewPassword()));
         userRepository.save(user);
     }
+
+    public long countEmployees() {
+        return userRepository.countByRole(Role.adminRole);
+    }
 }

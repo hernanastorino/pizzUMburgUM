@@ -59,6 +59,9 @@ public class SecurityConfig {
                         .requestMatchers("/api/admin/**").hasAuthority("adminRole")
                         .requestMatchers("/api/users/admin").hasAuthority("adminRole")
 
+                        //reports access for admins
+                        .requestMatchers("/api/reports/**").hasAuthority("adminRole")
+
                         // profile (authenticated users)
                         .requestMatchers("/api/users/**").authenticated()
 

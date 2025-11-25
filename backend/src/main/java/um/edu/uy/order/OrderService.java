@@ -28,7 +28,9 @@ import um.edu.uy.user.client.data.adress.AddressRepository;
 import um.edu.uy.user.client.data.payment.method.PaymentMethod;
 import um.edu.uy.user.client.data.payment.method.PaymentMethodRepository;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -282,5 +284,18 @@ public class OrderService {
         }
         order.setState(OrderStatus.CANCELLED);
         orderRepository.save(order);
+    }
+
+    public List<OrderResponse> getSalesForDateRange(LocalDate from, LocalDate to) {
+        LocalDateTime startOfDay = from.atStartOfDay();
+        LocalDateTime endOfDay = to.atTime(LocalTime.MAX);
+
+        List<Order> orders = orderRepository.findAllByDateBetween(startOfDay, endOfDay);
+
+        return orders.stream()
+                // solo nos interesan las ordenes que generaron venta real (excluimos PENDING (carrito) y CANCELLED)
+                .filter(o -> o.getState() != OrderStatus.PENDING && o.getState() != OrderStatus.CANCELLED)
+                .map(OrderResponse::new)
+                .toList();
     }
 }
