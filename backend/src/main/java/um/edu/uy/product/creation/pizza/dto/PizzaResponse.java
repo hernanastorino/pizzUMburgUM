@@ -1,6 +1,6 @@
 package um.edu.uy.product.creation.pizza.dto;
 
-import um.edu.uy.product.creation.Topping;
+import um.edu.uy.product.creation.topping.Topping;
 import um.edu.uy.product.creation.pizza.Pizza;
 
 import java.util.Set;

@@ -4,10 +4,10 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import um.edu.uy.product.creation.Creation;
-import um.edu.uy.product.creation.Topping;
-import um.edu.uy.product.creation.pizza.options.Cheese;
-import um.edu.uy.product.creation.pizza.options.Dough;
-import um.edu.uy.product.creation.pizza.options.Sauce;
+import um.edu.uy.product.creation.topping.Topping;
+import um.edu.uy.product.creation.pizza.options.cheese.Cheese;
+import um.edu.uy.product.creation.pizza.options.dough.Dough;
+import um.edu.uy.product.creation.pizza.options.sauce.Sauce;
 
 import java.util.HashSet;
 import java.util.Set;

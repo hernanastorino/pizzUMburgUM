@@ -1,8 +1,7 @@
-package um.edu.uy.product.creation.pizza.repo;
+package um.edu.uy.product.creation.pizza.options.dough;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import um.edu.uy.product.creation.pizza.options.Dough;
 
 import java.util.Optional;
 

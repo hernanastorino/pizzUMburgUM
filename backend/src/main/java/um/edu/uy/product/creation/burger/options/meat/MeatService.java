@@ -1,0 +1,29 @@
+package um.edu.uy.product.creation.burger.options.meat;
+
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
+public class MeatService {
+    private final MeatRepository repository;
+
+    public List<Meat> findAll() { return repository.findAll(); }
+
+    public Meat create(Meat item) {
+        if (repository.existsByName(item.getName())) throw new RuntimeException("Meat already exists");
+        return repository.save(item);
+    }
+
+    public Meat update(Long id, Meat newItem) {
+        Meat item = repository.findById(id).orElseThrow(() -> new RuntimeException("Meat not found"));
+        item.setName(newItem.getName());
+        item.setPrice(newItem.getPrice());
+        item.setAvailable(newItem.isAvailable());
+        return repository.save(item);
+    }
+
+    public void delete(Long id) { repository.deleteById(id); }
+}

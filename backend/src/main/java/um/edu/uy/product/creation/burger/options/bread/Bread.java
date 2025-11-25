@@ -1,8 +1,7 @@
-package um.edu.uy.product.creation.burger.options;
+package um.edu.uy.product.creation.burger.options.bread;
 
 import jakarta.persistence.*;
 import lombok.*;
-import um.edu.uy.product.creation.burger.Burger;
 
 @Entity
 @Table(name = "Bread")

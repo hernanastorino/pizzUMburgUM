@@ -1,4 +1,4 @@
-package um.edu.uy.product.creation;
+package um.edu.uy.product.creation.topping;
 
 import jakarta.persistence.*;
 import lombok.*;

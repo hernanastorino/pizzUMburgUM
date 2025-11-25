@@ -1,21 +1,19 @@
-package um.edu.uy.product.creation.burger.options;
+package um.edu.uy.product.creation.pizza.options.cheese;
 
 import jakarta.persistence.*;
 import lombok.*;
-import um.edu.uy.product.creation.burger.Burger;
 
 @Entity
-@Table(name = "Meat")
+@Table(name = "Cheese")
 @Getter
 @Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-
-public class Meat {
+public class Cheese {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long meatId;
+    private Long cheeseId;
 
     @Column(nullable = false)
     private String name;

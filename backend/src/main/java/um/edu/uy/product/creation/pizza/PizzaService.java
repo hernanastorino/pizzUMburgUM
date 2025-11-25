@@ -2,15 +2,15 @@ package um.edu.uy.product.creation.pizza;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import um.edu.uy.product.creation.Topping;
-import um.edu.uy.product.creation.ToppingRepository;
+import um.edu.uy.product.creation.topping.Topping;
+import um.edu.uy.product.creation.topping.ToppingRepository;
 import um.edu.uy.product.creation.pizza.dto.PizzaRequest;
-import um.edu.uy.product.creation.pizza.options.Cheese;
-import um.edu.uy.product.creation.pizza.options.Dough;
-import um.edu.uy.product.creation.pizza.options.Sauce;
-import um.edu.uy.product.creation.pizza.repo.CheeseRepository;
-import um.edu.uy.product.creation.pizza.repo.DoughRepository;
-import um.edu.uy.product.creation.pizza.repo.SauceRepository;
+import um.edu.uy.product.creation.pizza.options.cheese.Cheese;
+import um.edu.uy.product.creation.pizza.options.dough.Dough;
+import um.edu.uy.product.creation.pizza.options.sauce.Sauce;
+import um.edu.uy.product.creation.pizza.options.cheese.CheeseRepository;
+import um.edu.uy.product.creation.pizza.options.dough.DoughRepository;
+import um.edu.uy.product.creation.pizza.options.sauce.SauceRepository;
 import um.edu.uy.user.User;
 import um.edu.uy.user.UserRepository;
 

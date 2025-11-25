@@ -1,9 +1,7 @@
-package um.edu.uy.product.creation.pizza.options;
+package um.edu.uy.product.creation.pizza.options.sauce;
 
 import jakarta.persistence.*;
 import lombok.*;
-import um.edu.uy.product.creation.burger.Burger;
-import um.edu.uy.product.creation.pizza.Pizza;
 
 
 @Entity
