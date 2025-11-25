@@ -7,45 +7,79 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import um.edu.uy.user.User;
+import um.edu.uy.user.UserRepository;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class AddressService {
 
     private final AddressRepository addressRepository;
+    private final UserRepository userRepository;
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Address> updateSmart(@PathVariable Long id, @RequestBody Address newInfo) {
+    public List<Address> getActiveAddressesByUser(Long userId) {
+        return addressRepository.findByUser_UserIdAndActiveTrue(userId);
+    }
 
-        Address oldAddress = addressRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Dirección no encontrada"));
+    public Address createAddressForUser(Long userId, Address newAddress) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
-        // Definimos qué es "Importante" (Core Fields)
-        boolean coreChanges = !oldAddress.getStreet().equals(newInfo.getStreet()) ||
-                !oldAddress.getDoorNumber().equals(newInfo.getDoorNumber()) ||
-                !oldAddress.getAptNumber().equals(newInfo.getAptNumber()) ||
-                !oldAddress.getName().equals(newInfo.getName()); // Ej: "Casa" vs "Trabajo"
+        Address address = Address.builder()
+                .user(user)
+                .active(true)
+                .name(newAddress.getName())
+                .street(newAddress.getStreet())
+                .doorNumber(newAddress.getDoorNumber())
+                .aptNumber(newAddress.getAptNumber())
+                .indications(newAddress.getIndications())
+                .build();
+
+        return addressRepository.save(address);
+    }
+
+    public void softDelete(Long id) {
+        Address address = addressRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Address not found"));
+
+        address.setActive(false);
+        addressRepository.save(address);
+    }
+
+    public Address updateSmart(Long id, Address newInfo) {
+
+        Address old = addressRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Address not found"));
+
+        boolean coreChanges =
+                !old.getStreet().equals(newInfo.getStreet()) ||
+                        !old.getDoorNumber().equals(newInfo.getDoorNumber()) ||
+                        !old.getAptNumber().equals(newInfo.getAptNumber()) ||
+                        !old.getName().equals(newInfo.getName());
 
         if (coreChanges) {
-            // OPCIÓN A: CAMBIO IMPORTANTE -> CREAR NUEVA (Preservar Historial)
-            // Creamos una entidad nueva de cero vinculada al mismo usuario
-            Address brandNewAddress = Address.builder()
-                    .user(oldAddress.getUser()) // Mismo dueño
+            // Apagar vieja
+            old.setActive(false);
+            addressRepository.save(old);
+
+            // Crear nueva
+            Address fresh = Address.builder()
+                    .user(old.getUser())
+                    .active(true)
                     .name(newInfo.getName())
                     .street(newInfo.getStreet())
                     .doorNumber(newInfo.getDoorNumber())
                     .aptNumber(newInfo.getAptNumber())
-                    .indications(newInfo.getIndications()) // Copiamos indicaciones nuevas
+                    .indications(newInfo.getIndications())
                     .build();
 
-            // Guardamos la nueva. La vieja queda "huérfana" de uso futuro pero vinculada a órdenes viejas.
-            return ResponseEntity.ok(addressRepository.save(brandNewAddress));
-
-        } else {
-            // OPCIÓN B: CAMBIO MENOR (Indicaciones) -> EDITAR EXISTENTE
-            // Si solo cambió "Tocar timbre fuerte", actualizamos la misma
-            oldAddress.setIndications(newInfo.getIndications());
-            return ResponseEntity.ok(addressRepository.save(oldAddress));
+            return addressRepository.save(fresh);
         }
+
+        // Cambios menores → actualizar misma
+        old.setIndications(newInfo.getIndications());
+        return addressRepository.save(old);
     }
 }
