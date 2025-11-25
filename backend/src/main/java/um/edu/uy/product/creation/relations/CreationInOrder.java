@@ -1,5 +1,6 @@
 package um.edu.uy.product.creation.relations;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import um.edu.uy.product.creation.Creation;
@@ -21,6 +22,7 @@ public class CreationInOrder {
     @ManyToOne(fetch = FetchType.EAGER)
     @MapsId("orderId") //
     @JoinColumn(name = "order_id")
+    @JsonIgnore
     private Order order;
 
     // Define la relación con Creacion
@@ -38,7 +40,7 @@ public class CreationInOrder {
     @PrePersist
     public void calculateSubtotal() {
         if (creation != null && creationSubtotal != null) {
-            this.creationSubtotal = creation.getUnitPrice() * creationSubtotal;
+            this.creationSubtotal = creation.getUnitPrice() * this.CreationQuantity;
         }
     }
 }

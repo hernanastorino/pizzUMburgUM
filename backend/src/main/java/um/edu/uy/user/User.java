@@ -1,5 +1,6 @@
 package um.edu.uy.user;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -41,10 +42,8 @@ public class User implements UserDetails {
     private Role role;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private Set<FavoriteCreation> favoriteCreations = new HashSet<>();
-
-    // --- UserDetails Methods ---
-    // These methods are required by Spring Security
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
