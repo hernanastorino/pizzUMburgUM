@@ -49,21 +49,16 @@ public class OrderService {
 
     @GetMapping("/{id}")
     public ResponseEntity<OrderResponse> getOrder(@PathVariable Long id, Authentication authentication) {
-        // 1. Get the email of the logged-in user
         String userEmail = authentication.getName();
 
-        // 2. Check if the user is an Admin
-        // (Matches the string "adminRole" defined in your Role enum)
         boolean isAdmin = authentication.getAuthorities()
                 .contains(new SimpleGrantedAuthority("adminRole"));
 
-        // 3. Pass all this info to the service
         try {
             Order order = this.getOrderById(id, userEmail, isAdmin);
             return ResponseEntity.ok(new OrderResponse(order));
         } catch (RuntimeException e) {
-            // This catches the "Access Denied" or "Not Found" errors
-            return ResponseEntity.status(403).build(); // or 404
+            return ResponseEntity.status(403).build();
         }
     }
 
@@ -298,5 +293,9 @@ public class OrderService {
 
         order.setState(OrderStatus.CANCELLED);
         orderRepository.save(order);
+    }
+
+    public List<Order> getOrdersByUser(Long userId) {
+        return orderRepository.findByClient_UserId(userId);
     }
 }
