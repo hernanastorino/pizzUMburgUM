@@ -28,7 +28,6 @@ public abstract class Creation { // Abstracta, porque una creación SIEMPRE es P
     private String name;
 
     private Double subtotal;
-    private boolean isFavorite;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id") // La relación "crea"
@@ -43,7 +42,13 @@ public abstract class Creation { // Abstracta, porque una creación SIEMPRE es P
     )
     private Set<CreationInOrder> itemsPedido = new HashSet<>();
 
-    public abstract double getUnitPrice();
-
     private boolean isAvailable;
+
+    public double calculateSubtotal() {
+        double price = getUnitPrice();
+        this.subtotal = price;
+        return price;
+    }
+
+    public abstract double getUnitPrice();
 }

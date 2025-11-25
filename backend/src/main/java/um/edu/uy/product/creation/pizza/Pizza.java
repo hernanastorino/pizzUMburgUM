@@ -78,7 +78,4 @@ public class Pizza extends Creation {
         }
         return total;
     }
-
-
 }
-

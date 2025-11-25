@@ -9,6 +9,7 @@ import um.edu.uy.user.User;
 import um.edu.uy.user.UserRepository;
 import um.edu.uy.user.favorite.dto.FavoriteResponse;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -31,36 +32,25 @@ public class FavoriteCreationService {
         Creation creation = creationRepo.findById(creationId)
                 .orElseThrow(() -> new RuntimeException("Creation not found: " + creationId));
 
-        boolean exists = favoriteCreationRepo.existsByUserUserIdAndCreationCreationId(userId, creationId);
-        if (exists) {
+        if (favoriteCreationRepo.existsByUserUserIdAndCreationCreationId(userId, creationId)) {
             FavoriteCreation existing = favoriteCreationRepo.findByUserUserIdAndCreationCreationId(userId, creationId)
-                    .orElseThrow();
-            return mapToResponse(existing);
+                    .orElseThrow(() -> new RuntimeException("Favorite creation not found: " + creationId));
+            return map(existing);
         }
 
         FavoriteCreation fav = FavoriteCreation.builder()
                 .user(user)
                 .creation(creation)
+                .createdOn(LocalDateTime.now())
                 .build();
 
         FavoriteCreation saved = favoriteCreationRepo.save(fav);
 
-        if (user.getFavoriteCreations() != null) {
-            user.getFavoriteCreations().add(saved);
-        }
-
-        return mapToResponse(saved);
+        return map(saved);
     }
 
     @Transactional
     public void removeFavorite(Long userId, Long creationId) {
-        User user = userRepo.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found: " + userId));
-
-        if (user.getRole() != null && !"clientRole".equals(user.getRole().name())) {
-            throw new RuntimeException("Only clients can remove favorites");
-        }
-
         if (!favoriteCreationRepo.existsByUserUserIdAndCreationCreationId(userId, creationId)) {
             throw new RuntimeException("Favorite not found");
         }
@@ -68,17 +58,16 @@ public class FavoriteCreationService {
         favoriteCreationRepo.deleteByUserUserIdAndCreationCreationId(userId, creationId);
     }
 
-    @Transactional
     public List<FavoriteResponse> listFavorites(Long userId) {
         userRepo.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found: " + userId));
 
         List<FavoriteCreation> list = favoriteCreationRepo.findAllByUserUserId(userId);
 
-        return list.stream().map(this::mapToResponse).toList();
+        return list.stream().map(this::map).toList();
     }
 
-    private FavoriteResponse mapToResponse(FavoriteCreation f) {
+    private FavoriteResponse map(FavoriteCreation f) {
         return new FavoriteResponse(
                 f.getCreation().getCreationId(),
                 f.getCreation().getName(),
