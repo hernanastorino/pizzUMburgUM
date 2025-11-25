@@ -30,5 +30,4 @@ public class Address {
     @Builder.Default
     @Column(nullable = false)
     private boolean active = true;
-
 }

@@ -11,6 +11,7 @@ import um.edu.uy.product.creation.burger.repo.BreadRepository;
 import um.edu.uy.product.creation.burger.repo.CondimentRepository;
 import um.edu.uy.product.creation.burger.repo.MeatRepository;
 import um.edu.uy.product.creation.ToppingRepository;
+import um.edu.uy.product.creation.relations.CreationInOrderRepository;
 import um.edu.uy.user.User;
 import um.edu.uy.user.UserRepository;
 
@@ -22,6 +23,7 @@ import java.util.List;
 public class BurgerService {
 
     private final BurgerRepository burgerRepository;
+    private final CreationInOrderRepository creationInOrderRepository;
     private final CondimentRepository condimentRepository;
     private final BreadRepository breadRepository;
     private final MeatRepository meatRepository;
@@ -72,7 +74,39 @@ public class BurgerService {
     }
 
     public Burger updateBurgerFromRequest(Long id, BurgerRequest req) {
-        Burger burger = getBurgerById(id);
+
+        Burger original = getBurgerById(id);
+
+        // Verificar si forma parte de un pedido PENDING
+        boolean isUsedInPendingOrder =
+                !creationInOrderRepository.findPendingOrdersUsingCreation(id).isEmpty();
+
+        if (!isUsedInPendingOrder) {
+            // Caso A: Burger NO está en un carrito -> modificar en la base directamente
+            return updateExistingBurger(original, req);
+        }
+
+        // Caso B: está en un carrito -> crear una copia nueva
+        Burger copy = duplicateBurger(original);
+
+        return updateExistingBurger(copy, req);
+    }
+
+    private Burger duplicateBurger(Burger b) {
+        Burger copy = Burger.builder()
+                .name(b.getName())
+                .user(b.getUser())
+                .meatQuantity(b.getMeatQuantity())
+                .condiment(b.getCondiment())
+                .bread(b.getBread())
+                .meat(b.getMeat())
+                .toppings(new HashSet<>(b.getToppings()))
+                .build();
+
+        return burgerRepository.save(copy);
+    }
+
+    private Burger updateExistingBurger(Burger burger, BurgerRequest req) {
 
         burger.setName(req.name());
         burger.setMeatQuantity(req.meatQuantity());

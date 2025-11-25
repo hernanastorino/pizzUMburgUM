@@ -268,6 +268,7 @@ public class DataInitializer {
                         .bread(bBrioche)
                         .meat(mRes)
                         .toppings(Set.of(tPanceta))
+                        .isAvailable(true)
                         .build();
                 bFavoritaA = creationRepository.save(bFavoritaA);
 
@@ -280,6 +281,7 @@ public class DataInitializer {
                         .cheese(cCheddar)
                         .sauce(sTomate)
                         .toppings(new HashSet<>())
+                        .isAvailable(true)
                         .build();
                 creationRepository.save(p);
             } else {
