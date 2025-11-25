@@ -270,6 +270,28 @@
   align-items: center;
 }
 
+.subcategorySizesPreview {
+  display: flex;
+  gap: 40px;
+  margin-right: 20px;
+  color: white;
+  font-weight: 600;
+  font-size: 18px;
+  min-height: 0; /* Permite colapsar */
+}
+
+.subcategorySizesPreview span {
+  text-align: center;
+  min-width: 0; /* Permite que se colapse completamente */
+  width: auto; /* En lugar de 110px fijo */
+  white-space: nowrap;
+}
+
+/* Ocultar el contenedor si no tiene texto visible */
+.subcategorySizesPreview:has(span:empty) {
+  display: none;
+}
+
 .subcategoryAddOption {
   background: linear-gradient(135deg, #8e2de2, #4a00e0);
   color: white;
@@ -627,11 +649,13 @@
   
   /* GRID RESPONSIVE */
   .optionsHeader {
-    grid-template-columns: 1fr 20px 20px 55px auto;
+    grid-template-columns: 1px 10px 10px 20px auto;
     column-gap: 60px;
     font-size: 14px;
+    padding-left: 250px; 
   }
 
+  
   .optionItem {
     grid-template-columns: 1fr 50px 50px 50px auto;
     column-gap: 15px;
@@ -649,5 +673,14 @@
 
   .optionName {
     font-size: 14px;
+  }
+
+  .subcategorySizesPreview {
+    gap: 15px;
+    font-size: 14px;
+  }
+  
+  .subcategorySizesPreview span {
+    width: 50px;
   }
 }

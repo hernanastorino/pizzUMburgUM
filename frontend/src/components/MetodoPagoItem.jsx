@@ -1,17 +1,40 @@
+// src/components/MetodoPagoItem.jsx
 import React, { useState } from 'react';
-import styles from '../styles/Perfil.module.css';
+import styles from '../styles/PagosYEnvios.module.css';
 
-const MetodoPagoItem = ({ metodo, onUpdate, onDelete }) => {
-  const [isEditing, setIsEditing] = useState(false);
-  const [edited, setEdited] = useState({ ...metodo });
+const MetodoPagoItem = ({ metodo, onUpdate, onDelete, onDeleteDirecto }) => {
+  const [isEditing, setIsEditing] = useState(
+    !metodo.tipo || !metodo.numero || !metodo.titular
+  );
+  const [edited, setEdited] = useState({ 
+    tipo: metodo.tipo || '',
+    numero: metodo.numero || '',
+    titular: metodo.titular || '',
+    cvv: metodo.cvv || '',
+    vencimiento: metodo.vencimiento || ''
+  });
 
   const handleChange = (e) => {
     setEdited({ ...edited, [e.target.name]: e.target.value });
   };
 
   const handleSave = () => {
-    onUpdate(edited);
+    // Verificar si TODOS los campos están vacíos
+    if (!edited.tipo.trim() && !edited.numero.trim() && !edited.titular.trim() && !edited.cvv.trim() && !edited.vencimiento.trim()) {
+      // Si TODO está vacío, eliminar DIRECTAMENTE sin modal
+      onDeleteDirecto(metodo.id);
+      return;
+    }
+
+    // Si hay ALGO escrito (aunque sea solo un campo), guardar normalmente
+    onUpdate({ ...edited, id: metodo.id });
     setIsEditing(false);
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      handleSave();
+    }
   };
 
   // Ocultar dígitos de la tarjeta (mostrar solo últimos 4)
@@ -30,6 +53,20 @@ const MetodoPagoItem = ({ metodo, onUpdate, onDelete }) => {
           <>
             {/* MODO EDICIÓN - Mostrar todo */}
             
+            {/* Tipo */}
+            <div className={styles.fieldRow}>
+              <label><strong>Tipo:</strong></label>
+              <input
+                className={styles.inputEdit}
+                type="text"
+                name="tipo"
+                value={edited.tipo}
+                onChange={handleChange}
+                onKeyDown={handleKeyDown}
+                placeholder="Ej: Visa, Mastercard"
+              />
+            </div>
+
             {/* Número completo */}
             <div className={styles.fieldRow}>
               <label><strong>Número:</strong></label>
@@ -39,7 +76,9 @@ const MetodoPagoItem = ({ metodo, onUpdate, onDelete }) => {
                 name="numero"
                 value={edited.numero}
                 onChange={handleChange}
+                onKeyDown={handleKeyDown}
                 maxLength="16"
+                placeholder="1234567890123456"
               />
             </div>
 
@@ -52,6 +91,8 @@ const MetodoPagoItem = ({ metodo, onUpdate, onDelete }) => {
                 name="titular"
                 value={edited.titular}
                 onChange={handleChange}
+                onKeyDown={handleKeyDown}
+                placeholder="Nombre del titular"
               />
             </div>
 
@@ -64,7 +105,9 @@ const MetodoPagoItem = ({ metodo, onUpdate, onDelete }) => {
                 name="cvv"
                 value={edited.cvv}
                 onChange={handleChange}
+                onKeyDown={handleKeyDown}
                 maxLength="3"
+                placeholder="123"
                 style={{ width: '80px', marginRight: '20px' }}
               />
               <label><strong>Venc:</strong></label>
@@ -75,6 +118,7 @@ const MetodoPagoItem = ({ metodo, onUpdate, onDelete }) => {
                 placeholder="MM/AA"
                 value={edited.vencimiento}
                 onChange={handleChange}
+                onKeyDown={handleKeyDown}
                 maxLength="5"
                 style={{ width: '100px' }}
               />
@@ -82,22 +126,37 @@ const MetodoPagoItem = ({ metodo, onUpdate, onDelete }) => {
           </>
         ) : (
           <>
-            {/* MODO VISTA - Solo mostrar tipo, titular y últimos 4 dígitos */}
+            {/* MODO VISTA - Solo mostrar campos con contenido */}
             
-            {/* Tipo */}
-            <p className={styles.fieldDisplay}>
-              <strong>Tipo:</strong> {metodo.tipo}
-            </p>
+            {metodo.tipo && metodo.tipo.trim() !== '' && (
+              <p className={styles.fieldDisplay}>
+                <strong>Tipo:</strong> {metodo.tipo}
+              </p>
+            )}
 
-            {/* Titular */}
-            <p className={styles.fieldDisplay}>
-              <strong>Titular:</strong> {metodo.titular}
-            </p>
+            {metodo.titular && metodo.titular.trim() !== '' && (
+              <p className={styles.fieldDisplay}>
+                <strong>Titular:</strong> {metodo.titular}
+              </p>
+            )}
 
-            {/* Últimos 4 dígitos */}
-            <p className={styles.fieldDisplay}>
-              <strong>Número:</strong> {formatearNumero(metodo.numero)}
-            </p>
+            {metodo.numero && metodo.numero.trim() !== '' && (
+              <p className={styles.fieldDisplay}>
+                <strong>Número:</strong> {formatearNumero(metodo.numero)}
+              </p>
+            )}
+
+            {metodo.cvv && metodo.cvv.trim() !== '' && (
+              <p className={styles.fieldDisplay}>
+                <strong>CVV:</strong> •••
+              </p>
+            )}
+
+            {metodo.vencimiento && metodo.vencimiento.trim() !== '' && (
+              <p className={styles.fieldDisplay}>
+                <strong>Vencimiento:</strong> {metodo.vencimiento}
+              </p>
+            )}
           </>
         )}
 

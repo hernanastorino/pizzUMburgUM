@@ -14,16 +14,28 @@ const FavoritoItem = ({ favorito, onUpdate, onDelete }) => {
   const [editedDetalles, setEditedDetalles] = useState({ ...favorito.detalles });
 
   const [showTamañoDropdown, setShowTamañoDropdown] = useState(false);
+  const [showTipoCarneDropdown, setShowTipoCarneDropdown] = useState(false);
+  const [showSalsaDropdown, setShowSalsaDropdown] = useState(false);
+  const [showQuesoDropdown, setShowQuesoDropdown] = useState(false);
   const [showOpcionesDropdown, setShowOpcionesDropdown] = useState(false);
   const [showToppingsDropdown, setShowToppingsDropdown] = useState(false);
   const [tamañoPosition, setTamañoPosition] = useState({ top: 0, left: 0 });
+  const [tipoCarnePosition, setTipoCarnePosition] = useState({ top: 0, left: 0 });
+  const [salsaPosition, setSalsaPosition] = useState({ top: 0, left: 0 });
+  const [quesoPosition, setQuesoPosition] = useState({ top: 0, left: 0 });
   const [opcionesPosition, setOpcionesPosition] = useState({ top: 0, left: 0 });
   const [toppingsPosition, setToppingsPosition] = useState({ top: 0, left: 0 });
 
   const tamañoRef = useRef(null);
+  const tipoCarneRef = useRef(null);
+  const salsaRef = useRef(null);
+  const quesoRef = useRef(null);
   const opcionesRef = useRef(null);
   const toppingsRef = useRef(null);
   const tamañoMenuRef = useRef(null);
+  const tipoCarneMenuRef = useRef(null);
+  const salsaMenuRef = useRef(null);
+  const quesoMenuRef = useRef(null);
   const opcionesMenuRef = useRef(null);
   const toppingsMenuRef = useRef(null);
 
@@ -45,6 +57,18 @@ const FavoritoItem = ({ favorito, onUpdate, onDelete }) => {
         tamañoMenuRef.current && !tamañoMenuRef.current.contains(event.target)) {
         setShowTamañoDropdown(false);
       }
+      if (tipoCarneRef.current && !tipoCarneRef.current.contains(event.target) &&
+        tipoCarneMenuRef.current && !tipoCarneMenuRef.current.contains(event.target)) {
+        setShowTipoCarneDropdown(false);
+      }
+      if (salsaRef.current && !salsaRef.current.contains(event.target) &&
+        salsaMenuRef.current && !salsaMenuRef.current.contains(event.target)) {
+        setShowSalsaDropdown(false);
+      }
+      if (quesoRef.current && !quesoRef.current.contains(event.target) &&
+        quesoMenuRef.current && !quesoMenuRef.current.contains(event.target)) {
+        setShowQuesoDropdown(false);
+      }
       if (opcionesRef.current && !opcionesRef.current.contains(event.target) &&
         opcionesMenuRef.current && !opcionesMenuRef.current.contains(event.target)) {
         setShowOpcionesDropdown(false);
@@ -58,17 +82,23 @@ const FavoritoItem = ({ favorito, onUpdate, onDelete }) => {
     const handleScroll = (event) => {
       const isScrollInsideMenu =
         (tamañoMenuRef.current && tamañoMenuRef.current.contains(event.target)) ||
+        (tipoCarneMenuRef.current && tipoCarneMenuRef.current.contains(event.target)) ||
+        (salsaMenuRef.current && salsaMenuRef.current.contains(event.target)) ||
+        (quesoMenuRef.current && quesoMenuRef.current.contains(event.target)) ||
         (opcionesMenuRef.current && opcionesMenuRef.current.contains(event.target)) ||
         (toppingsMenuRef.current && toppingsMenuRef.current.contains(event.target));
 
       if (!isScrollInsideMenu) {
         setShowTamañoDropdown(false);
+        setShowTipoCarneDropdown(false);
+        setShowSalsaDropdown(false);
+        setShowQuesoDropdown(false);
         setShowOpcionesDropdown(false);
         setShowToppingsDropdown(false);
       }
     };
 
-    if (showTamañoDropdown || showOpcionesDropdown || showToppingsDropdown) {
+    if (showTamañoDropdown || showTipoCarneDropdown || showSalsaDropdown || showQuesoDropdown || showOpcionesDropdown || showToppingsDropdown) {
       document.addEventListener('mousedown', handleClickOutside);
       window.addEventListener('scroll', handleScroll, true);
     }
@@ -77,18 +107,22 @@ const FavoritoItem = ({ favorito, onUpdate, onDelete }) => {
       document.removeEventListener('mousedown', handleClickOutside);
       window.removeEventListener('scroll', handleScroll, true);
     };
-  }, [showTamañoDropdown, showOpcionesDropdown, showToppingsDropdown]);
+  }, [showTamañoDropdown, showTipoCarneDropdown, showSalsaDropdown, showQuesoDropdown, showOpcionesDropdown, showToppingsDropdown]);
 
   const opcionesPizza = {
     tamaños: ['15cm', '20cm', '25cm'],
     masas: ['Napolitana', 'Integral', 'Sin Gluten'],
+    salsas: ['Salsa de Tomate', 'Pomodoro'],
+    quesos: ['Mozzarella', 'Cheddar', 'Roquefort', 'Provolone'],
     toppings: ['Jamón', 'Pepperoni', 'Champiñones', 'Aceitunas', 'Pimientos']
   };
 
   const opcionesHamburguesa = {
     tamaños: ['1 carne', '2 carnes', '3 carnes'],
+    tiposCarne: ['De Vaca', 'De Pollo', 'De Cerdo', 'Salmón', 'De Lentejas', 'De Soja'],
+    quesos: ['Cheddar', 'Mozzarella', 'Queso Azul', 'Queso Suizo'],
     panes: ['Pan de Papa', 'Pan Integral', 'Pan Sin Gluten'],
-    toppings: ['Lechuga', 'Tomate', 'Queso Cheddar']
+    toppings: ['Ketchup', 'Mostaza', 'Mayonesa', 'Salsa BBQ', 'Lechuga', 'Tomate', 'Cebolla Caramelizada', 'Pepinillos', 'Bacon', 'Huevo Frito']
   };
 
   const handleSave = () => {
@@ -99,6 +133,9 @@ const FavoritoItem = ({ favorito, onUpdate, onDelete }) => {
     });
     setIsEditing(false);
     setShowTamañoDropdown(false);
+    setShowTipoCarneDropdown(false);
+    setShowSalsaDropdown(false);
+    setShowQuesoDropdown(false);
     setShowOpcionesDropdown(false);
     setShowToppingsDropdown(false);
   };
@@ -108,6 +145,9 @@ const FavoritoItem = ({ favorito, onUpdate, onDelete }) => {
     setEditedDetalles({ ...favorito.detalles });
     setIsEditing(false);
     setShowTamañoDropdown(false);
+    setShowTipoCarneDropdown(false);
+    setShowSalsaDropdown(false);
+    setShowQuesoDropdown(false);
     setShowOpcionesDropdown(false);
     setShowToppingsDropdown(false);
   };
@@ -132,7 +172,7 @@ const FavoritoItem = ({ favorito, onUpdate, onDelete }) => {
     if (favorito.tipo === 'pizza') {
       return { masa: detalles.masa, salsa: detalles.salsa, queso: detalles.queso };
     } else {
-      return { carne: detalles.carne, pan: detalles.pan };
+      return { tipoCarne: detalles.tipoCarne, queso: detalles.queso, pan: detalles.pan };
     }
   };
 
@@ -141,8 +181,160 @@ const FavoritoItem = ({ favorito, onUpdate, onDelete }) => {
     return detalles.toppings || [];
   };
 
+  const renderTipoCarne = () => {
+    if (favorito.tipo !== 'hamburguesa') return null;
+
+    return (
+      <div className={favStyles.detailRow}>
+        <span className={favStyles.label}>Tipo de Carne:</span>
+        {isEditing ? (
+          <div className={favStyles.dropdownWrapper} ref={tipoCarneRef}>
+            <button
+              className={favStyles.dropdownButton}
+              onClick={(e) => handleDropdownClick(e, setShowTipoCarneDropdown, setTipoCarnePosition)}
+            >
+              {editedDetalles.tipoCarne || 'Seleccionar'} ▼
+            </button>
+            {showTipoCarneDropdown && createPortal(
+              <div
+                ref={tipoCarneMenuRef}
+                className={favStyles.dropdownMenu}
+                style={{
+                  position: 'fixed',
+                  top: `${tipoCarnePosition.top}px`,
+                  left: `${tipoCarnePosition.left}px`
+                }}
+              >
+                {opcionesHamburguesa.tiposCarne.map(tipoCarne => (
+                  <div
+                    key={tipoCarne}
+                    className={favStyles.dropdownItem}
+                    onClick={() => {
+                      setEditedDetalles({ ...editedDetalles, tipoCarne });
+                      setShowTipoCarneDropdown(false);
+                    }}
+                    style={{ cursor: 'pointer' }}
+                  >
+                    <span className={favStyles.checkbox}>
+                      {editedDetalles.tipoCarne === tipoCarne ? '☑' : '☐'}
+                    </span>
+                    {tipoCarne}
+                  </div>
+                ))}
+              </div>,
+              document.body
+            )}
+          </div>
+        ) : (
+          <span className={favStyles.value}>{favorito.detalles.tipoCarne || 'No especificado'}</span>
+        )}
+      </div>
+    );
+  };
+
+  const renderSalsa = () => {
+    if (favorito.tipo !== 'pizza') return null;
+
+    return (
+      <div className={favStyles.detailRow}>
+        <span className={favStyles.label}>Salsa:</span>
+        {isEditing ? (
+          <div className={favStyles.dropdownWrapper} ref={salsaRef}>
+            <button
+              className={favStyles.dropdownButton}
+              onClick={(e) => handleDropdownClick(e, setShowSalsaDropdown, setSalsaPosition)}
+            >
+              {editedDetalles.salsa || 'Seleccionar'} ▼
+            </button>
+            {showSalsaDropdown && createPortal(
+              <div
+                ref={salsaMenuRef}
+                className={favStyles.dropdownMenu}
+                style={{
+                  position: 'fixed',
+                  top: `${salsaPosition.top}px`,
+                  left: `${salsaPosition.left}px`
+                }}
+              >
+                {opcionesPizza.salsas.map(salsa => (
+                  <div
+                    key={salsa}
+                    className={favStyles.dropdownItem}
+                    onClick={() => {
+                      setEditedDetalles({ ...editedDetalles, salsa });
+                      setShowSalsaDropdown(false);
+                    }}
+                    style={{ cursor: 'pointer' }}
+                  >
+                    <span className={favStyles.checkbox}>
+                      {editedDetalles.salsa === salsa ? '☑' : '☐'}
+                    </span>
+                    {salsa}
+                  </div>
+                ))}
+              </div>,
+              document.body
+            )}
+          </div>
+        ) : (
+          <span className={favStyles.value}>{favorito.detalles.salsa || 'No especificado'}</span>
+        )}
+      </div>
+    );
+  };
+
+  const renderQueso = () => {
+    const opcionesQueso = favorito.tipo === 'pizza' ? opcionesPizza.quesos : opcionesHamburguesa.quesos;
+
+    return (
+      <div className={favStyles.detailRow}>
+        <span className={favStyles.label}>Queso:</span>
+        {isEditing ? (
+          <div className={favStyles.dropdownWrapper} ref={quesoRef}>
+            <button
+              className={favStyles.dropdownButton}
+              onClick={(e) => handleDropdownClick(e, setShowQuesoDropdown, setQuesoPosition)}
+            >
+              {editedDetalles.queso || 'Seleccionar'} ▼
+            </button>
+            {showQuesoDropdown && createPortal(
+              <div
+                ref={quesoMenuRef}
+                className={favStyles.dropdownMenu}
+                style={{
+                  position: 'fixed',
+                  top: `${quesoPosition.top}px`,
+                  left: `${quesoPosition.left}px`
+                }}
+              >
+                {opcionesQueso.map(queso => (
+                  <div
+                    key={queso}
+                    className={favStyles.dropdownItem}
+                    onClick={() => {
+                      setEditedDetalles({ ...editedDetalles, queso });
+                      setShowQuesoDropdown(false);
+                    }}
+                    style={{ cursor: 'pointer' }}
+                  >
+                    <span className={favStyles.checkbox}>
+                      {editedDetalles.queso === queso ? '☑' : '☐'}
+                    </span>
+                    {queso}
+                  </div>
+                ))}
+              </div>,
+              document.body
+            )}
+          </div>
+        ) : (
+          <span className={favStyles.value}>{favorito.detalles.queso || 'No especificado'}</span>
+        )}
+      </div>
+    );
+  };
+
   const renderOpciones = () => {
-    const opciones = getOpciones();
     if (isEditing) {
       if (favorito.tipo === 'pizza') {
         return (
@@ -227,9 +419,9 @@ const FavoritoItem = ({ favorito, onUpdate, onDelete }) => {
       }
     } else {
       if (favorito.tipo === 'pizza') {
-        return <span className={favStyles.value}>{opciones.masa}, {opciones.salsa}, {opciones.queso}</span>;
+        return <span className={favStyles.value}>{favorito.detalles.masa}</span>;
       } else {
-        return <span className={favStyles.value}>{opciones.carne}, {opciones.pan}</span>;
+        return <span className={favStyles.value}>{favorito.detalles.pan}</span>;
       }
     }
   };
@@ -272,6 +464,17 @@ const FavoritoItem = ({ favorito, onUpdate, onDelete }) => {
                       <span className={favStyles.value}>{favorito.nombre}</span>
                     )}
                   </div>
+
+                  {/* Para PIZZAS: Masa primero */}
+                  {favorito.tipo === 'pizza' && (
+                    <div className={favStyles.detailRow}>
+                      <span className={favStyles.label}>Masa:</span>
+                      {renderOpciones()}
+                    </div>
+                  )}
+
+                  {/* Para HAMBURGUESAS: Tipo de Carne primero */}
+                  {renderTipoCarne()}
 
                   <div className={favStyles.detailRow}>
                     <span className={favStyles.label}>Tamaño:</span>
@@ -318,10 +521,19 @@ const FavoritoItem = ({ favorito, onUpdate, onDelete }) => {
                     )}
                   </div>
 
-                  <div className={favStyles.detailRow}>
-                    <span className={favStyles.label}>Opciones:</span>
-                    {renderOpciones()}
-                  </div>
+                  {/* Para PIZZAS: Salsa */}
+                  {renderSalsa()}
+
+                  {/* Para HAMBURGUESAS: Pan */}
+                  {favorito.tipo === 'hamburguesa' && (
+                    <div className={favStyles.detailRow}>
+                      <span className={favStyles.label}>Pan:</span>
+                      {renderOpciones()}
+                    </div>
+                  )}
+
+                  {/* Queso para ambos */}
+                  {renderQueso()}
 
                   <div className={favStyles.detailRow}>
                     <span className={favStyles.label}>Toppings:</span>
