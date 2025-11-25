@@ -45,6 +45,15 @@ const Navbar = () => {
     navigate(path);
   };
 
+  const handleLogout = () => {
+    // Borrar todo el localStorage
+    localStorage.clear();
+    // Cerrar el menú de perfil
+    setIsProfileOpen(false);
+    // Redirigir a la landing page
+    navigate('/');
+  };
+
   const incrementItem = (id) => {
     setCartItems(cartItems.map(item => 
       item.id === id ? { ...item, cantidad: item.cantidad + 1 } : item
@@ -251,6 +260,13 @@ const Navbar = () => {
                   onClick={() => handleNavigation('/pedidos')}
                 >
                   <span>📦</span> Pedidos
+                </button>
+                <button 
+                  className={styles.profileItem}
+                  onClick={handleLogout}
+                  style={{ color: '#ff4444', borderTop: '1px solid #eee', marginTop: '8px', paddingTop: '12px' }}
+                >
+                  <span>🚪</span> Cerrar Sesión
                 </button>
               </div>
             </div>
