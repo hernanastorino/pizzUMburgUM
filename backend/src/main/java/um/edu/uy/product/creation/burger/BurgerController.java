@@ -9,7 +9,7 @@ import um.edu.uy.product.creation.burger.dto.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/burgers")
+@RequestMapping("/api/products/burgers")
 @RequiredArgsConstructor
 public class BurgerController {
 

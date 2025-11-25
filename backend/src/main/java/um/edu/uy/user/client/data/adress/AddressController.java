@@ -9,7 +9,7 @@ import um.edu.uy.user.UserRepository;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/payments")
+@RequestMapping("/api/addresses")
 public class AddressController {
 
     @Autowired private AddressRepository addressRepository;

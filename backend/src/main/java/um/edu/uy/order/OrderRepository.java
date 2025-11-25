@@ -13,5 +13,5 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     List<Order> findByClient_UserId(Long userId);
 
     // Buscar el pedido en curso del carrito
-    Optional<Order> findByClient_UserIdAndState(Long userId, String state);
+    Optional<Order> findByClient_UserIdAndState(Long userId, OrderStatus state);
 }

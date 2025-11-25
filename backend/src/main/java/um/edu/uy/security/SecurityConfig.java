@@ -1,16 +1,17 @@
-// src/main/java/um/edu/uy/security/SecurityConfig.java
 package um.edu.uy.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer; // Import added
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -21,6 +22,7 @@ import um.edu.uy.user.CustomUserDetailsService;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthFilter;
@@ -34,40 +36,40 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                // Disable CSRF
                 .csrf(AbstractHttpConfigurer::disable)
-
-                // Define authorization rules
                 .authorizeHttpRequests(authz -> authz
-                        // Public endpoints for auth
+                        // auth and public technical endpoints
                         .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/api/catalog/**").permitAll()
-
-                        // Allow H2 Console access
                         .requestMatchers("/h2-console/**").permitAll()
 
-                        // Admin-only endpoints
-                        .requestMatchers("/api/admin/**", "/api/products/**").hasRole("adminRole")
+                        // catalog/menu (public view, admin edit)
+                        .requestMatchers(HttpMethod.GET, "/api/products/**", "/api/catalog/**").permitAll()
+                        .requestMatchers("/api/products/**", "/api/catalog/**").hasAuthority("adminRole")
 
-                        // Client-only endpoints
-                        .requestMatchers("/api/orders/**", "/api/creations/**").hasRole("clientRole")
+                        // user specific data (favorites, addresses, payments)
+                        .requestMatchers("/api/addresses/**", "/api/payments/**").hasAuthority("clientRole")
+                        .requestMatchers("/users/{userId}/favorites/**").hasAuthority("clientRole")
 
-                        // All other requests must be authenticated
+                        // orders
+                        // clients can create/view their own. admins can view/edit all
+                        .requestMatchers(HttpMethod.POST, "/orders/start/**").hasAuthority("clientRole")
+                        .requestMatchers("/orders/**").hasAnyAuthority("clientRole", "adminRole")
+
+                        // admin dashboard and user management
+                        .requestMatchers("/api/admin/**").hasAuthority("adminRole")
+                        .requestMatchers("/api/users/admin").hasAuthority("adminRole")
+
+                        // profile (authenticated users)
+                        .requestMatchers("/api/users/**").authenticated()
+
+                        // catch-all
                         .anyRequest().authenticated()
                 )
-
-                // Allow frames for H2 Console to render (Fixes the "download file" issue)
                 .headers(headers -> headers
                         .frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin)
                 )
-
-                // Configure session management to be stateless (for JWT)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-
-                // Tell Spring to use the AuthProvider we defined
                 .authenticationProvider(authenticationProvider())
-
-                // Add our custom JWT filter before the standard auth filter
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

@@ -9,7 +9,7 @@ import um.edu.uy.product.creation.pizza.dto.PizzaResponse;
 import java.util.List;
 
 @RestController
-@RequestMapping("/pizzas")
+@RequestMapping("/api/products/pizzas")
 @RequiredArgsConstructor
 public class PizzaController {
 

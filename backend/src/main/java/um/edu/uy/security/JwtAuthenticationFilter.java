@@ -39,8 +39,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response); // Pass to next filter
             return;
         }
-
-        // 2. Extract token from header
         jwt = authHeader.substring(7); // "Bearer ".length()
 
         try {

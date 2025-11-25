@@ -2,7 +2,10 @@ package um.edu.uy.order;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import um.edu.uy.product.beverage.Beverage;
 import um.edu.uy.product.beverage.relations.BeverageInOrder;
 import um.edu.uy.product.beverage.relations.BeverageInOrderKey;
@@ -12,6 +15,8 @@ import um.edu.uy.product.creation.relations.CreationInOrderKey;
 import um.edu.uy.product.side.Side;
 import um.edu.uy.product.side.relations.SideInOrder;
 import um.edu.uy.product.side.relations.SideInOrderKey;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import um.edu.uy.user.User;
 import um.edu.uy.user.UserRepository;
 import um.edu.uy.user.client.data.adress.Address;
@@ -32,9 +37,34 @@ public class OrderService {
     private final AddressRepository addressRepository;
     private final PaymentMethodRepository paymentMethodRepository;
 
-    public Order getOrderById(Long id) {
-        return orderRepository.findById(id)
+    public Order getOrderById(Long id, String userEmail, boolean isAdmin) {
+        Order order = orderRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Order not found"));
+
+        if (!isAdmin && !order.getClient().getEmail().equals(userEmail)) {
+            throw new RuntimeException("Access Denied: You do not own this order.");
+        }
+        return order;
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<OrderResponse> getOrder(@PathVariable Long id, Authentication authentication) {
+        // 1. Get the email of the logged-in user
+        String userEmail = authentication.getName();
+
+        // 2. Check if the user is an Admin
+        // (Matches the string "adminRole" defined in your Role enum)
+        boolean isAdmin = authentication.getAuthorities()
+                .contains(new SimpleGrantedAuthority("adminRole"));
+
+        // 3. Pass all this info to the service
+        try {
+            Order order = this.getOrderById(id, userEmail, isAdmin);
+            return ResponseEntity.ok(new OrderResponse(order));
+        } catch (RuntimeException e) {
+            // This catches the "Access Denied" or "Not Found" errors
+            return ResponseEntity.status(403).build(); // or 404
+        }
     }
 
     public List<Order> findAllOrders() {
@@ -188,7 +218,7 @@ public class OrderService {
 
     public Order createOrderForUser(Long userId) {
         // verificar si ya tiene una pendiente
-        Optional<Order> pending = orderRepository.findByClient_UserIdAndState(userId, "PENDING");
+        Optional<Order> pending = orderRepository.findByClient_UserIdAndState(userId, OrderStatus.PENDING);
         if (pending.isPresent()) return pending.get();
 
         User user = userRepository.findById(userId).orElseThrow();
@@ -202,51 +232,53 @@ public class OrderService {
     }
 
     @Transactional
-    public Order confirmOrder(Long orderId, Long addressId, Long paymentId) {
-        // 1. Buscar la orden
-        Order order = getOrderById(orderId);
+    public Order confirmOrder(Long orderId, Long addressId, Long paymentId, String userEmail, boolean isAdmin) {
+        // 1. SECURE FETCH: This ensures "Client A" cannot confirm "Client B's" order
+        Order order = getOrderById(orderId, userEmail, isAdmin);
 
-        // 2. Validar estado (solo se confirma si está PENDING)
-        // Si usás Enum en la entidad: if (order.getState() != OrderStatus.PENDING)
+        // 2. Validate State
         if (order.getState() != OrderStatus.PENDING) {
-            throw new RuntimeException("Orden no pendiente");
+            throw new RuntimeException("Order is not pending confirmation");
         }
 
-        // 3. Buscar y Validar Dirección
+        // 3. Fetch & Validate Address
         Address address = addressRepository.findById(addressId)
-                .orElseThrow(() -> new RuntimeException("Dirección no encontrada"));
+                .orElseThrow(() -> new RuntimeException("Address not found"));
 
-        // Seguridad: Verificar que la dirección pertenezca al dueño de la orden
+        // Security: Ensure address belongs to the order owner
         if (!address.getUser().getUserId().equals(order.getClient().getUserId())) {
-            throw new RuntimeException("La dirección no pertenece al usuario de la orden");
+            throw new RuntimeException("Address does not belong to the user");
         }
 
-        // 4. Buscar y Validar Medio de Pago
+        // 4. Fetch & Validate Payment
         PaymentMethod payment = paymentMethodRepository.findById(paymentId)
-                .orElseThrow(() -> new RuntimeException("Método de pago no encontrado"));
+                .orElseThrow(() -> new RuntimeException("Payment method not found"));
 
+        // Security: Ensure payment belongs to the order owner
         if (!payment.getUser().getUserId().equals(order.getClient().getUserId())) {
-            throw new RuntimeException("El método de pago no pertenece al usuario");
+            throw new RuntimeException("Payment method does not belong to the user");
         }
 
-        // 5. SETEAR ALL
         order.setAddress(address);
         order.setPaymentMethod(payment);
-
-        // 6. Cambiar Estado y Fecha
-        order.setState(OrderStatus.CONFIRMED); // O usar el Enum directo si cambiaste la entidad
-        order.setDate(LocalDateTime.now()); // Fecha real de la compra
+        order.setState(OrderStatus.CONFIRMED);
+        order.setDate(LocalDateTime.now());
 
         return orderRepository.save(order);
     }
 
     // avanzar estado manual para la demo
-    public Order advanceState(Long orderId) {
-        Order order = getOrderById(orderId);
+    public Order advanceState(Long orderId, boolean isAdmin) {
+        if (!isAdmin) {
+            throw new RuntimeException("Access Denied: Only admins can advance order state.");
+        }
+
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Order not found"));
 
         OrderStatus current = order.getState();
-
         OrderStatus next = switch (current) {
+            case PENDING -> OrderStatus.CONFIRMED;
             case CONFIRMED -> OrderStatus.PREPARING;
             case PREPARING -> OrderStatus.SENT;
             case SENT -> OrderStatus.DELIVERED;
@@ -257,8 +289,13 @@ public class OrderService {
         return orderRepository.save(order);
     }
 
-    public void cancelOrder(Long orderId) {
-        Order order = getOrderById(orderId);
+    public void cancelOrder(Long orderId, String userEmail, boolean isAdmin) {
+        Order order = getOrderById(orderId, userEmail, isAdmin);
+
+        if (order.getState() == OrderStatus.SENT || order.getState() == OrderStatus.DELIVERED) {
+            throw new RuntimeException("Cannot cancel an order that is already on the way.");
+        }
+
         order.setState(OrderStatus.CANCELLED);
         orderRepository.save(order);
     }

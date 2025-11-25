@@ -1,5 +1,6 @@
 package um.edu.uy.product.side.relations;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import um.edu.uy.order.Order;
@@ -17,10 +18,10 @@ public class SideInOrder {
     @EmbeddedId
     private SideInOrderKey id;
 
-    // Define la relación con Pedido
     @ManyToOne(fetch = FetchType.EAGER)
     @MapsId("orderId")
     @JoinColumn(name = "order_id")
+    @JsonIgnore
     private Order order;
 
     // Define la relación con bebida

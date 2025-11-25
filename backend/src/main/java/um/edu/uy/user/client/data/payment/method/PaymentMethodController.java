@@ -8,7 +8,7 @@ import um.edu.uy.user.UserRepository;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/addresses")
+@RequestMapping("/api/payments")
 public class PaymentMethodController {
 
     @Autowired private PaymentMethodRepository paymentMethodRepository;
