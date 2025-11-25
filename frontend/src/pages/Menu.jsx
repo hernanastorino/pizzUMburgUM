@@ -36,7 +36,7 @@ function Menu() {
         <button 
           className={styles.secondaryBtn}
           style={{ backgroundImage: `url(${papasImage})` }}
-          onClick={() => navigate('/acompanamiento')}
+          onClick={() => navigate('/acompaniamiento')}
         >
           Acompañamiento
         </button>

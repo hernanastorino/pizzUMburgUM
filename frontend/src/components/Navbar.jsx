@@ -1,16 +1,28 @@
-import React, { useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom"; // Agrega useNavigate
+import React, { useState, useRef, useEffect } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import styles from "./Navbar.module.css";
 
 const Navbar = () => {
   const location = useLocation();
-  const navigate = useNavigate(); // Agrega esto
+  const navigate = useNavigate();
   const [isChecked, setIsChecked] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const profileRef = useRef(null);
   const [cartItems, setCartItems] = useState([
     { id: 1, nombre: "Creación 1", precio: 100, cantidad: 1 },
     { id: 2, nombre: "Bebida 1", precio: 100, cantidad: 1 }
   ]);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (profileRef.current && !profileRef.current.contains(event.target)) {
+        setIsProfileOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const handleLinkClick = () => {
     setIsChecked(false);
@@ -22,6 +34,15 @@ const Navbar = () => {
 
   const toggleCart = () => {
     setIsCartOpen(!isCartOpen);
+  };
+
+  const toggleProfile = () => {
+    setIsProfileOpen(!isProfileOpen);
+  };
+
+  const handleNavigation = (path) => {
+    setIsProfileOpen(false);
+    navigate(path);
   };
 
   const incrementItem = (id) => {
@@ -51,8 +72,8 @@ const Navbar = () => {
   };
 
   const handleVerPedido = () => {
-    setIsCartOpen(false); // Cierra el carrito desplegable
-    navigate('/carrito'); // Navega a la página del carrito
+    setIsCartOpen(false);
+    navigate('/carrito');
   };
 
   return (
@@ -117,6 +138,18 @@ const Navbar = () => {
               )}
             </Link>
           </li>
+          <li>
+            <Link 
+              to="#" 
+              className={styles.cartLink}
+              onClick={(e) => {
+                e.preventDefault();
+                toggleProfile();
+              }}
+            >
+              👤 Perfil
+            </Link>
+          </li>
         </ul>
       </nav>
 
@@ -179,6 +212,50 @@ const Navbar = () => {
             </button>
           </div>
         </div>
+      )}
+
+      {isProfileOpen && (
+        <>
+          <div 
+            className={styles.cartOverlay}
+            onClick={() => setIsProfileOpen(false)}
+          />
+          <div className={styles.profileDropdownWrapper} ref={profileRef}>
+            <div className={styles.profileDropdownBorder}></div>
+            <div className={styles.profileDropdown}>
+              <div className={styles.profileHeader}>
+                <h3>👤 Mi Perfil</h3>
+                <button 
+                  className={styles.closeProfile}
+                  onClick={() => setIsProfileOpen(false)}
+                >
+                  ✕
+                </button>
+              </div>
+              
+              <div className={styles.profileItems}>
+                <button 
+                  className={styles.profileItem}
+                  onClick={() => handleNavigation('/perfil')}
+                >
+                  <span>👤</span> Perfil
+                </button>
+                <button 
+                  className={styles.profileItem}
+                  onClick={() => handleNavigation('/pagosYEnvios')}
+                >
+                  <span>📍💳</span> Direcciones y Pagos
+                </button>
+                <button 
+                  className={styles.profileItem}
+                  onClick={() => handleNavigation('/pedidos')}
+                >
+                  <span>📦</span> Pedidos
+                </button>
+              </div>
+            </div>
+          </div>
+        </>
       )}
     </>
   );

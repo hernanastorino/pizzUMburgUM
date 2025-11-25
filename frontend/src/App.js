@@ -9,7 +9,11 @@ import Login from './pages/Login';
 import LandingPage from './pages/LandingPage';
 import Backoffice from './pages/Backoffice';
 import Favoritos from './pages/Favoritos';
-import Perfil from './pages/PagosYEnvios';
+import PagosYEnvios from './pages/PagosYEnvios';
+import Perfil from './pages/Perfil';
+import Pedidos from './pages/Pedidos';
+import Acompaniamiento from './pages/Acompaniamiento';
+import Bebidas from './pages/Bebidas';
 import MasaPizza from './pages/MasaPizza';
 import TiposSalsa from './pages/SalsaPizza';
 import TiposQueso from './pages/QuesoPizza';
@@ -18,7 +22,7 @@ import TipoCarne from './pages/BurgerCarne';
 import TipoPan from './pages/BurgerPan';
 import BurgerQueso from './pages/BurgerQueso';
 import BurgerToppings from './pages/BurgerToppings';
-import Carrito from "./components/Carrito"; // Cambiado de ./components a ./pages
+import Carrito from "./components/Carrito";
 import './index.css'
 
 // Components
@@ -88,10 +92,42 @@ function App() {
                         </>
                     } />
 
-                    <Route path="/pagosYEnvios" element={
+                    <Route path="/perfil" element={
                         <>
                             <Navbar />
                             <Perfil />
+                            <Footer />
+                        </>
+                    } />
+
+                    <Route path="/pagosYEnvios" element={
+                        <>
+                            <Navbar />
+                            <PagosYEnvios />
+                            <Footer />
+                        </>
+                    } />
+
+                    <Route path="/pedidos" element={
+                        <>
+                            <Navbar />
+                            <Pedidos />
+                            <Footer />
+                        </>
+                    } />
+
+                    <Route path="/acompaniamiento" element={
+                        <>
+                            <Navbar />
+                            <Acompaniamiento />
+                            <Footer />
+                        </>
+                    } />
+
+                    <Route path="/bebidas" element={
+                        <>
+                            <Navbar />
+                            <Bebidas />
                             <Footer />
                         </>
                     } />

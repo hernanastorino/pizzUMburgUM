@@ -1,0 +1,370 @@
+/* src/styles/Pedidos.module.css */
+
+/* ===========================
+   WRAPPER Y CONTENEDOR PRINCIPAL
+=========================== */
+
+.pedidosWrapper {
+  min-height: 100vh;
+  background-color: #1B0D4E;
+  background-image: url('../assets/images/borroso.jpg');
+  background-size: cover;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  background-position: center;
+  display: flex;
+  flex-direction: column;
+  padding: 120px 20px 40px 20px;
+}
+
+.pedidosContainer {
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.pageTitle {
+  color: white;
+  font-size: 28px;
+  font-weight: 600;
+  margin-bottom: 30px;
+  text-align: center;
+  text-shadow: 0 0 20px rgba(142, 45, 226, 0.8), 0 0 40px rgba(74, 0, 224, 0.6);
+}
+
+/* ===========================
+   LISTA DE PEDIDOS
+=========================== */
+
+.pedidosList {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* ===========================
+   TARJETA DE PEDIDO CON BORDE ANIMADO
+=========================== */
+
+.pedidoCard {
+  position: relative;
+  border-radius: 15px;
+  overflow: visible;
+}
+
+.pedidoBorder {
+  position: absolute;
+  inset: -2px;
+  border-radius: 15px;
+  padding: 2px;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0%,
+    transparent 60%,
+    rgba(142, 45, 226, 0.5) 65%,
+    rgba(64, 196, 255, 0.6) 72%,
+    rgba(255, 255, 255, 0.7) 79%,
+    rgba(64, 196, 255, 0.6) 86%,
+    rgba(142, 45, 226, 0.5) 93%,
+    transparent 100%
+  );
+  mask-composite: exclude;
+  z-index: 0;
+  animation: rotate 4s linear infinite;
+}
+
+@keyframes rotate {
+  100% {
+    background: conic-gradient(
+      from 360deg,
+      transparent 0%,
+      transparent 60%,
+      rgba(142, 45, 226, 0.5) 65%,
+      rgba(64, 196, 255, 0.6) 72%,
+      rgba(255, 255, 255, 0.7) 79%,
+      rgba(64, 196, 255, 0.6) 86%,
+      rgba(142, 45, 226, 0.5) 93%,
+      transparent 100%
+    );
+  }
+}
+
+.pedidoContent {
+  position: relative;
+  z-index: 1;
+  background: linear-gradient(90deg, #1B0D4E 0%, #3d0085 50%, #1B0D4E 100%);
+  border-radius: 15px;
+  box-shadow: 0px 0px 10px rgba(74, 0, 224, 0.25), 0px 0px 20px rgba(142, 45, 226, 0.2);
+}
+
+/* ===========================
+   HEADER DEL PEDIDO
+=========================== */
+
+.pedidoHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 25px 30px;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.3s ease;
+}
+
+.pedidoHeader:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 15px 15px 0 0;
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  flex: 1;
+}
+
+.arrow {
+  font-size: 24px;
+  color: white;
+  transition: transform 0.3s ease;
+  display: inline-block;
+}
+
+.arrowRotated {
+  transform: rotate(90deg);
+}
+
+.pedidoInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.pedidoNumero {
+  font-size: 22px;
+  font-weight: 600;
+  color: white;
+  margin: 0;
+}
+
+.estadoContainer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.estadoEmoji {
+  font-size: 20px;
+}
+
+.estadoTexto {
+  font-size: 18px;
+  font-weight: 600;
+  color: #a8dadc;
+  text-shadow: 0 0 10px rgba(168, 218, 220, 0.5);
+}
+
+.totalPedido {
+  font-size: 22px;
+  font-weight: 600;
+  color: #a8dadc;
+  text-shadow: 0 0 10px rgba(168, 218, 220, 0.5);
+}
+
+/* ===========================
+   CONTENEDOR DE ITEMS
+=========================== */
+
+.itemsContainer {
+  background: rgba(0, 0, 0, 0.2);
+  padding: 20px 30px 30px 30px;
+}
+
+.itemCard {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  margin-bottom: 10px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.itemCard:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(142, 45, 226, 0.5);
+  transform: translateX(5px);
+}
+
+.itemCard:last-child {
+  margin-bottom: 0;
+}
+
+.itemInfo {
+  flex: 1;
+}
+
+.itemNombre {
+  color: white;
+  font-size: 18px;
+  font-weight: 500;
+  margin-bottom: 5px;
+}
+
+.itemDescripcion {
+  color: #a8dadc;
+  font-size: 16px;
+}
+
+.itemPrecio {
+  color: #a8dadc;
+  font-size: 18px;
+  font-weight: 600;
+  min-width: 100px;
+  text-align: right;
+  text-shadow: 0 0 10px rgba(168, 218, 220, 0.5);
+}
+
+/* ===========================
+   ESTADO VACÍO
+=========================== */
+
+.emptyState {
+  text-align: center;
+  color: white;
+  margin-top: 50px;
+  padding: 40px;
+  background: linear-gradient(90deg, #1B0D4E 0%, #3d0085 50%, #1B0D4E 100%);
+  border-radius: 15px;
+  box-shadow: 0px 0px 10px rgba(74, 0, 224, 0.25), 0px 0px 20px rgba(142, 45, 226, 0.2);
+}
+
+.emptyIcon {
+  font-size: 48px;
+  margin-bottom: 15px;
+}
+
+.emptyText {
+  font-size: 20px;
+  margin: 0;
+}
+
+.emptySubtext {
+  font-size: 16px;
+  margin-top: 10px;
+  opacity: 0.7;
+}
+
+/* ===========================
+   RESPONSIVE
+=========================== */
+
+@media (max-width: 768px) {
+  .pedidosWrapper {
+    padding: 110px 15px 30px 15px;
+  }
+
+  .pageTitle {
+    font-size: 22px;
+  }
+
+  .pedidoHeader {
+    padding: 20px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+
+  .totalPedido {
+    font-size: 18px;
+    align-self: flex-end;
+  }
+
+  .pedidoNumero {
+    font-size: 18px;
+  }
+
+  .estadoTexto {
+    font-size: 16px;
+  }
+
+  .itemsContainer {
+    padding: 15px 20px 20px 20px;
+  }
+
+  .itemCard {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 12px 15px;
+  }
+
+  .itemNombre {
+    font-size: 16px;
+  }
+
+  .itemDescripcion {
+    font-size: 14px;
+  }
+
+  .itemPrecio {
+    font-size: 16px;
+    align-self: flex-end;
+  }
+
+  .arrow {
+    font-size: 20px;
+  }
+
+  .emptyState {
+    padding: 30px 20px;
+  }
+
+  .emptyIcon {
+    font-size: 40px;
+  }
+
+  .emptyText {
+    font-size: 18px;
+  }
+
+  .emptySubtext {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .pageTitle {
+    font-size: 20px;
+  }
+
+  .pedidoContent {
+    padding: 0;
+  }
+
+  .pedidoHeader {
+    padding: 15px;
+  }
+
+  .itemsContainer {
+    padding: 10px 15px 15px 15px;
+  }
+
+  .itemCard {
+    padding: 10px 12px;
+  }
+
+  .itemNombre {
+    font-size: 15px;
+  }
+
+  .itemDescripcion {
+    font-size: 13px;
+  }
+
+  .itemPrecio {
+    font-size: 15px;
+  }
+}

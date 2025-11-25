@@ -102,6 +102,7 @@
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.35);
   backdrop-filter: blur(6px);
   overflow: visible;
+  min-height: 200px;
 }
 
 .cardTitle {
@@ -212,11 +213,10 @@
   text-shadow: 0 0 10px rgba(168, 218, 220, 0.5);
 }
 
-/* Dropdown styles */
+/* Dropdown styles - CORREGIDO */
 .dropdownWrapper {
   position: relative;
   margin-top: 15px;
-  z-index: 10;
 }
 
 .dropdownButton {
@@ -251,14 +251,16 @@
   position: absolute;
   top: calc(100% + 10px);
   left: 0;
-  right: 0;
+  width: 100%;
   background: linear-gradient(135deg, #2a1560, #4a0090);
   border: 2px solid #8e2de2;
   border-radius: 12px;
   padding: 10px;
-  z-index: 9999;
+  z-index: 1000;
   box-shadow: 0 8px 32px rgba(142, 45, 226, 0.6);
   animation: slideDown 0.3s ease;
+  max-height: 400px;
+  overflow-y: auto;
 }
 
 @keyframes slideDown {
@@ -284,6 +286,10 @@
 .dropdownItem:hover {
   background: rgba(142, 45, 226, 0.4);
   transform: translateX(5px);
+}
+
+.dropdownItem:last-of-type {
+  margin-bottom: 0;
 }
 
 .dropdownItemTitle {
@@ -319,8 +325,7 @@
   box-shadow: 0 0 15px rgba(74, 222, 128, 0.6);
 }
 
-
-/* Botón Pagar - Ahora en la columna derecha */
+/* Botón Pagar */
 .pagarButton {
   width: 100%;
   padding: 18px;
@@ -340,42 +345,7 @@
   box-shadow: 0 0 20px rgba(142, 45, 226, 0.8), 0 0 40px rgba(142, 45, 226, 0.6);
 }
 
-.mainContent {
-  padding: 40px 40px 40px 40px; /* Reducido de 120px a 90px */
-  max-width: 1400px;
-  margin: 0 auto;
-}
-
-/* OPCIÓN 4: Notificación integrada con tu diseño (RECOMENDADA) */
-/* Agregar estos estilos al final de tu Carrito.module.css */
-
-.notification {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: rgba(30, 20, 60, 0.98);
-  color: white;
-  padding: 24px 36px;
-  border-radius: 20px;
-  box-shadow: 
-    0 0 0 2px rgba(138, 43, 226, 0.4),
-    0 20px 60px rgba(138, 43, 226, 0.5),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
-  font-size: 17px;
-  font-weight: 500;
-  z-index: 10000;
-  animation: popIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-  backdrop-filter: blur(20px);
-  border: 2px solid rgba(138, 43, 226, 0.5);
-  text-align: center;
-  min-width: 300px;
-  max-width: 500px;
-}
-
-/* OPCIÓN 1: Notificación Toast - Superior Centrado */
-/* Agregar estos estilos al final de tu Carrito.module.css */
-
+/* Notificación Toast */
 .notification {
   position: fixed;
   top: 100px;
@@ -389,12 +359,12 @@
   font-size: 16px;
   font-weight: 500;
   z-index: 10000;
-  animation: slideDown 0.4s ease-out, fadeOut 0.4s ease-in 2.6s;
+  animation: slideDownNotif 0.4s ease-out, fadeOut 0.4s ease-in 2.6s;
   backdrop-filter: blur(10px);
   border: 2px solid rgba(255, 255, 255, 0.2);
 }
 
-@keyframes slideDown {
+@keyframes slideDownNotif {
   from {
     opacity: 0;
     transform: translateX(-50%) translateY(-20px);
@@ -414,6 +384,25 @@
   }
 }
 
+/* Scroll personalizado para dropdown */
+.dropdownMenu::-webkit-scrollbar {
+  width: 8px;
+}
+
+.dropdownMenu::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+}
+
+.dropdownMenu::-webkit-scrollbar-thumb {
+  background: #8e2de2;
+  border-radius: 10px;
+}
+
+.dropdownMenu::-webkit-scrollbar-thumb:hover {
+  background: #4a00e0;
+}
+
 /* Responsive */
 @media (max-width: 968px) {
   .carritoGrid {
@@ -426,5 +415,30 @@
 
   .title {
     font-size: 2rem;
+  }
+
+  .cardTitle {
+    font-size: 1.3rem;
+  }
+
+  .itemName {
+    font-size: 1rem;
+  }
+
+  .itemPrice {
+    font-size: 1.1rem;
+  }
+
+  .totalLabel {
+    font-size: 1.2rem;
+  }
+
+  .totalPrice {
+    font-size: 1.5rem;
+  }
+
+  .pagarButton {
+    font-size: 1.2rem;
+    padding: 15px;
   }
 }

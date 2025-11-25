@@ -132,6 +132,12 @@ const Carrito = () => {
     // setCartItems([]);
   };
 
+  // Nueva función para ir a Pedidos
+  const handleVerEstado = () => {
+    setShowOrderModal(false);
+    navigate('/pedidos');
+  };
+
   const toggleDireccion = () => {
     setIsDireccionOpen(!isDireccionOpen);
     setIsMetodoPagoOpen(false);
@@ -297,6 +303,7 @@ const Carrito = () => {
       <OrderConfirmModal 
         isOpen={showOrderModal}
         onClose={handleCloseModal}
+        onVerEstado={handleVerEstado}
         numeroPedido={numeroPedido}
       />
     </div>

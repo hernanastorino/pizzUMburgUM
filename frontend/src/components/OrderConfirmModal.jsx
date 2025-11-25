@@ -1,17 +1,14 @@
 // src/components/OrderConfirmModal.jsx
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
 import styles from '../styles/OrderConfirmModal.module.css';
 
-const OrderConfirmModal = ({ isOpen, onClose, numeroPedido }) => {
-  const navigate = useNavigate();
-
+const OrderConfirmModal = ({ isOpen, onClose, onVerEstado, numeroPedido }) => {
   if (!isOpen) return null;
 
   const handleVerEstado = () => {
-    // Aquí redirige a la página de estado del pedido
-    navigate(`/pedidos/${numeroPedido}`);
-    onClose();
+    if (onVerEstado) {
+      onVerEstado();
+    }
   };
 
   return (
@@ -27,12 +24,16 @@ const OrderConfirmModal = ({ isOpen, onClose, numeroPedido }) => {
           Tu pedido ha sido registrado exitosamente
         </p>
         
-        <button 
-          className={styles.verEstadoBtn}
-          onClick={handleVerEstado}
-        >
-          Ver Estado
-        </button>
+        <div className={styles.buttonGroup}>
+          <button 
+            className={styles.verEstadoBtn}
+            onClick={handleVerEstado}
+          >
+            📦 Ver Estado
+          </button>
+          
+    
+        </div>
       </div>
     </div>
   );
