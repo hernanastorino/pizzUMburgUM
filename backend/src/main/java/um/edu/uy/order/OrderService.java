@@ -62,7 +62,9 @@ public class OrderService {
     @GetMapping("/{id}")
     public ResponseEntity<OrderResponse> getOrder(@PathVariable Long id, Authentication authentication) {
         String userEmail = authentication.getName();
-        boolean isAdmin = authentication.getAuthorities().contains(new SimpleGrantedAuthority("adminRole"));
+
+        boolean isAdmin = authentication.getAuthorities()
+                .contains(new SimpleGrantedAuthority("adminRole"));
 
         try {
             Order order = this.getOrderById(id, userEmail, isAdmin);
@@ -152,6 +154,7 @@ public class OrderService {
                     .beverageQuantity(quantity)
                     .beverageSubtotal(beverage.getPrice() * quantity)
                     .build();
+
             order.getItemsBeverage().add(line);
         }
         recalculateTotal(order);
@@ -178,6 +181,7 @@ public class OrderService {
                     .sideQuantity(quantity)
                     .sideSubtotal(side.getPrice() * quantity)
                     .build();
+
             order.getItemsSide().add(line);
         }
         recalculateTotal(order);
@@ -196,6 +200,7 @@ public class OrderService {
             int newQuantity = existingCreation.getCreationQuantity() + quantity;
             existingCreation.setCreationQuantity(newQuantity);
             existingCreation.setCreationSubtotal(creation.getUnitPrice() * newQuantity);
+
         } else {
             CreationInOrder line = CreationInOrder.builder()
                     .id(key)
@@ -204,26 +209,41 @@ public class OrderService {
                     .CreationQuantity(quantity)
                     .creationSubtotal(creation.getUnitPrice() * quantity)
                     .build();
+
             order.getItemsCreation().add(line);
         }
         recalculateTotal(order);
         return orderRepository.save(order);
     }
 
+    @Transactional
+    public Order removeCreation(Order order, Creation creation) {
+        order.getItemsCreation().removeIf(
+                item -> item.getCreation().getCreationId().equals(creation.getCreationId())
+        );
+
+        recalculateTotal(order);
+        return orderRepository.save(order);
+    }
+
     public void recalculateTotal(Order order) {
         double total = 0;
+
         if (order.getItemsCreation() != null) {
             total += order.getItemsCreation().stream()
                     .mapToDouble(item -> item.getCreation().getUnitPrice() * item.getCreationQuantity()).sum();
         }
+
         if (order.getItemsBeverage() != null) {
             total += order.getItemsBeverage().stream()
                     .mapToDouble(item -> item.getBeverage().getPrice() * item.getBeverageQuantity()).sum();
         }
+
         if (order.getItemsSide() != null) {
             total += order.getItemsSide().stream()
                     .mapToDouble(item -> item.getSide().getPrice() * item.getSideQuantity()).sum();
         }
+
         order.setTotal(total);
     }
 
@@ -282,6 +302,7 @@ public class OrderService {
         if (order.getState() == OrderStatus.SENT || order.getState() == OrderStatus.DELIVERED) {
             throw new RuntimeException("Cannot cancel an order that is already on the way.");
         }
+
         order.setState(OrderStatus.CANCELLED);
         orderRepository.save(order);
     }
@@ -297,5 +318,9 @@ public class OrderService {
                 .filter(o -> o.getState() != OrderStatus.PENDING && o.getState() != OrderStatus.CANCELLED)
                 .map(OrderResponse::new)
                 .toList();
+    }
+
+    public List<Order> getOrdersByUser(Long userId) {
+        return orderRepository.findByClient_UserId(userId);
     }
 }
