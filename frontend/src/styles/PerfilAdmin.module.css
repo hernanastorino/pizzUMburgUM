@@ -1,5 +1,5 @@
 /*
- * CSS module for Perfil.jsx
+ * CSS module for PerfilAdmin.jsx
  * Based on Register.module.css styling
  */
 .container {
@@ -110,11 +110,6 @@
 
 .input[type="password"]::-webkit-credentials-auto-fill-button {
     filter: invert(1) brightness(2);
-}
-
-.input[type="date"]::-webkit-calendar-picker-indicator {
-    filter: invert(1) brightness(1.5);
-    cursor: pointer;
 }
 
 .button {
