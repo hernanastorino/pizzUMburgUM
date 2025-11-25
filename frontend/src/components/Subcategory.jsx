@@ -82,6 +82,10 @@ const Subcategory = ({ subcategory, onUpdate, onDelete, onDeleteOption }) => {
             )}
           </div>
         </div>
+        
+
+
+
 
         <div className={styles.subcategoryRight}>
           <button className={styles.subcategoryAddOption} onClick={handleAddOption} title="Agregar opción">+</button>
