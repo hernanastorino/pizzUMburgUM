@@ -1,0 +1,430 @@
+.pageContainer {
+  min-height: 100vh;
+  background-color: #1B0D4E;
+  background-image: url('../assets/images/borroso.jpg');
+  background-size: cover;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  background-position: center;
+  padding-bottom: 3rem;
+}
+
+.mainContent {
+  padding: 120px 40px 40px 40px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.title {
+  color: white;
+  font-size: 2.5rem;
+  text-align: center;
+  margin-bottom: 3rem;
+  font-weight: 600;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.carritoGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 35px;
+  margin-bottom: 3rem;
+}
+
+.leftColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.rightColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+/* Wrapper con borde animado */
+.cardWrapper {
+  position: relative;
+  border-radius: 18px;
+  overflow: visible;
+  z-index: 1;
+}
+
+/* Aumentar z-index cuando tiene dropdown abierto */
+.cardWrapper:has(.dropdownMenu) {
+  z-index: 999;
+}
+
+.cardBorder {
+  position: absolute;
+  inset: -2px;
+  border-radius: 18px;
+  padding: 2px;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0%,
+    transparent 60%,
+    rgba(142, 45, 226, 0.5) 65%,
+    rgba(64, 196, 255, 0.6) 72%,
+    rgba(255, 255, 255, 0.7) 79%,
+    rgba(64, 196, 255, 0.6) 86%,
+    rgba(142, 45, 226, 0.5) 93%,
+    transparent 100%
+  );
+  mask-composite: exclude;
+  z-index: 0;
+  animation: rotateBorder 4s linear infinite;
+}
+
+@keyframes rotateBorder {
+  100% {
+    background: conic-gradient(
+      from 360deg,
+      transparent 0%,
+      transparent 60%,
+      rgba(142, 45, 226, 0.5) 65%,
+      rgba(64, 196, 255, 0.6) 72%,
+      rgba(255, 255, 255, 0.7) 79%,
+      rgba(64, 196, 255, 0.6) 86%,
+      rgba(142, 45, 226, 0.5) 93%,
+      transparent 100%
+    );
+  }
+}
+
+.card {
+  position: relative;
+  z-index: 1;
+  background: linear-gradient(90deg, #1B0D4E 0%, #3d0085 50%, #1B0D4E 100%);
+  border-radius: 18px;
+  padding: 25px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(6px);
+  overflow: visible;
+}
+
+.cardTitle {
+  color: white;
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+/* Items del carrito */
+.itemsList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.cartItem {
+  background: linear-gradient(90deg, #2a1560 0%, #4a0090 50%, #2a1560 100%);
+  border-radius: 12px;
+  padding: 15px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.itemInfo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.itemName {
+  font-weight: 600;
+  color: white;
+  font-size: 1.1rem;
+}
+
+.itemPrice {
+  color: #a8dadc;
+  font-weight: bold;
+  font-size: 1.2rem;
+  text-shadow: 0 0 10px rgba(168, 218, 220, 0.5);
+}
+
+.itemControls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+}
+
+.controlBtn {
+  background: linear-gradient(135deg, #8e2de2, #4a00e0);
+  color: white;
+  border: 2px solid rgba(255, 255, 255, 0.85);
+  border-radius: 10px;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 24px;
+  font-weight: bold;
+  transition: all 0.3s;
+  box-shadow: 0 0 10px rgba(142, 45, 226, 0.5), 0 0 20px rgba(142, 45, 226, 0.3);
+}
+
+.controlBtn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 15px rgba(142, 45, 226, 0.8), 0 0 30px rgba(142, 45, 226, 0.5);
+}
+
+.quantity {
+  font-weight: bold;
+  font-size: 1.3rem;
+  min-width: 35px;
+  text-align: center;
+  color: white;
+}
+
+.emptyMessage {
+  text-align: center;
+  color: rgba(255, 255, 255, 0.5);
+  padding: 40px 20px;
+  font-size: 1rem;
+  font-style: italic;
+}
+
+.totalSection {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 20px;
+  border-top: 2px solid rgba(142, 45, 226, 0.3);
+}
+
+.totalLabel {
+  font-size: 1.4rem;
+  font-weight: bold;
+  color: white;
+}
+
+.totalPrice {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #a8dadc;
+  text-shadow: 0 0 10px rgba(168, 218, 220, 0.5);
+}
+
+/* Dropdown styles */
+.dropdownWrapper {
+  position: relative;
+  margin-top: 15px;
+  z-index: 10;
+}
+
+.dropdownButton {
+  width: 100%;
+  padding: 15px 20px;
+  background: linear-gradient(135deg, #8e2de2, #4a00e0);
+  color: white;
+  border: 2px solid #8e2de2;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 10px rgba(142, 45, 226, 0.5);
+}
+
+.dropdownButton:hover {
+  background: linear-gradient(135deg, #9d3ef0, #5a10f0);
+  transform: translateY(-2px);
+  box-shadow: 0 0 15px rgba(142, 45, 226, 0.8);
+}
+
+.dropdownArrow {
+  font-size: 0.9rem;
+  transition: transform 0.3s ease;
+}
+
+.dropdownMenu {
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 0;
+  right: 0;
+  background: linear-gradient(135deg, #2a1560, #4a0090);
+  border: 2px solid #8e2de2;
+  border-radius: 12px;
+  padding: 10px;
+  z-index: 9999;
+  box-shadow: 0 8px 32px rgba(142, 45, 226, 0.6);
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dropdownItem {
+  padding: 12px 15px;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  margin-bottom: 8px;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.dropdownItem:hover {
+  background: rgba(142, 45, 226, 0.4);
+  transform: translateX(5px);
+}
+
+.dropdownItemTitle {
+  color: white;
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.dropdownItemSubtitle {
+  color: #a8dadc;
+  font-size: 0.95rem;
+}
+
+.addButtonDropdown {
+  width: 100%;
+  margin-top: 10px;
+  padding: 12px;
+  background: linear-gradient(135deg, #4ade80, #22c55e);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 10px rgba(74, 222, 128, 0.4);
+}
+
+.addButtonDropdown:hover {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  transform: translateY(-2px);
+  box-shadow: 0 0 15px rgba(74, 222, 128, 0.6);
+}
+
+
+/* Botón Pagar - Ahora en la columna derecha */
+.pagarButton {
+  width: 100%;
+  padding: 18px;
+  background: linear-gradient(135deg, #8e2de2, #4a00e0);
+  color: white;
+  border: none;
+  border-radius: 15px;
+  font-size: 1.4rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 0 0 15px rgba(142, 45, 226, 0.6), 0 0 30px rgba(142, 45, 226, 0.4);
+}
+
+.pagarButton:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 0 20px rgba(142, 45, 226, 0.8), 0 0 40px rgba(142, 45, 226, 0.6);
+}
+
+.mainContent {
+  padding: 40px 40px 40px 40px; /* Reducido de 120px a 90px */
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* OPCIÓN 4: Notificación integrada con tu diseño (RECOMENDADA) */
+/* Agregar estos estilos al final de tu Carrito.module.css */
+
+.notification {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(30, 20, 60, 0.98);
+  color: white;
+  padding: 24px 36px;
+  border-radius: 20px;
+  box-shadow: 
+    0 0 0 2px rgba(138, 43, 226, 0.4),
+    0 20px 60px rgba(138, 43, 226, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  font-size: 17px;
+  font-weight: 500;
+  z-index: 10000;
+  animation: popIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  backdrop-filter: blur(20px);
+  border: 2px solid rgba(138, 43, 226, 0.5);
+  text-align: center;
+  min-width: 300px;
+  max-width: 500px;
+}
+
+/* OPCIÓN 1: Notificación Toast - Superior Centrado */
+/* Agregar estos estilos al final de tu Carrito.module.css */
+
+.notification {
+  position: fixed;
+  top: 100px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(to right, #8e2de2, #4a00e0);
+  color: white;
+  padding: 16px 32px;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  font-size: 16px;
+  font-weight: 500;
+  z-index: 10000;
+  animation: slideDown 0.4s ease-out, fadeOut 0.4s ease-in 2.6s;
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+/* Responsive */
+@media (max-width: 968px) {
+  .carritoGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .mainContent {
+    padding: 100px 20px 30px 20px;
+  }
+
+  .title {
+    font-size: 2rem;
+  }
+}
