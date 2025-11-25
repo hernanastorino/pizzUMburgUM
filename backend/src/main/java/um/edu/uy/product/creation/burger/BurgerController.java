@@ -30,6 +30,7 @@ public class BurgerController {
         return new BurgerResponse(burgerService.saveBurgerFromRequest(request));
     }
 
+    @PutMapping("/{id}")
     public BurgerResponse updateBurger(@PathVariable Long id, @RequestBody BurgerRequest request) {
         return new BurgerResponse(burgerService.updateBurgerFromRequest(id, request));
     }

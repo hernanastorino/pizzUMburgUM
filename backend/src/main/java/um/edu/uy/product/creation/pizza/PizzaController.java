@@ -30,6 +30,7 @@ public class PizzaController {
         return new PizzaResponse(pizzaService.savePizzaFromRequest(request));
     }
 
+    @PutMapping("/{id}")
     public PizzaResponse updatePizza(@PathVariable Long id, @RequestBody PizzaRequest request) {
         return new PizzaResponse(pizzaService.updatePizzaFromRequest(id, request));
     }

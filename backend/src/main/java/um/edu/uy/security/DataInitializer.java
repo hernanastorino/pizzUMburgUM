@@ -292,13 +292,15 @@ public class DataInitializer {
             // =====================================================
             if (orderRepository.count() == 0) {
                 System.out.println("Cargando Órdenes de prueba...");
+                String clientEmail = clientA.getEmail();
 
-                // --- 6.1 ORDEN 1: COMPLETADA
+                // --- 6.1 ORDEN 1: COMPLETADA (Historial)
+                // 1. La creamos como PENDING para poder agregar items
                 Order order1 = Order.builder()
                         .client(clientA)
                         .address(addrHome)
                         .paymentMethod(pmCard)
-                        .state(OrderStatus.DELIVERED)
+                        .state(OrderStatus.PENDING) // <--- IMPORTANTE: Empezar como PENDING
                         .date(LocalDateTime.now().minusDays(2))
                         .total(0.0)
                         .itemsCreation(new HashSet<>())
@@ -306,19 +308,27 @@ public class DataInitializer {
                         .itemsSide(new HashSet<>())
                         .build();
 
+                order1 = orderRepository.save(order1);
+
+                // 2. Agregamos items (el servicio ahora permite esto porque es PENDING)
+                if (bFavoritaA != null) {
+                    orderService.addCreationToOrder(order1.getId(), bFavoritaA.getCreationId(), 2, clientEmail, false);
+                }
+                orderService.addBeverageToOrder(order1.getId(), bCoca.getBeverageId(), 1, clientEmail, false);
+                orderService.addSideToOrder(order1.getId(), sPapas.getSideId(), 1, clientEmail, false);
+
+                // 3. ACTUALIZAMOS ESTADO A DELIVERED (Simulando que ya pasó)
+                // Recargamos para tener el objeto con los totales actualizados por el servicio
+                order1 = orderRepository.findById(order1.getId()).orElseThrow();
+                order1.setState(OrderStatus.DELIVERED); // <--- CAMBIO MANUAL FINAL
                 orderRepository.save(order1);
 
-                if (bFavoritaA != null) orderService.addOrUpdateCreation(order1, bFavoritaA, 2);
-                orderService.addBeverage(order1, bCoca, 1);
-                orderService.addSide(order1, sPapas, 1);
-                orderService.recalculateTotal(order1);
-                orderRepository.save(order1);
 
-                // --- 6.2 ORDEN 2: PENDIENTE (fixed: include address + paymentMethod + client)
+                // --- 6.2 ORDEN 2: PENDIENTE (Carrito actual)
                 Order order2 = Order.builder()
                         .client(clientA)
-                        .address(addrHome)           // <-- required
-                        .paymentMethod(pmCard)      // <-- required
+                        .address(addrHome)
+                        .paymentMethod(pmCard)
                         .state(OrderStatus.PENDING)
                         .date(LocalDateTime.now())
                         .total(0.0)
@@ -327,17 +337,15 @@ public class DataInitializer {
                         .itemsSide(new HashSet<>())
                         .build();
 
-                orderRepository.save(order2);
+                order2 = orderRepository.save(order2);
 
-                // Optionally add some items to order2 for realism; example:
-                 if (bFavoritaA != null) orderService.addOrUpdateCreation(order2, bFavoritaA, 1);
-                 orderService.addBeverage(order2, bCoca, 1);
-                 orderService.recalculateTotal(order2);
-                 orderRepository.save(order2);
+                if (bFavoritaA != null) {
+                    orderService.addCreationToOrder(order2.getId(), bFavoritaA.getCreationId(), 1, clientEmail, false);
+                }
+                orderService.addBeverageToOrder(order2.getId(), bCoca.getBeverageId(), 1, clientEmail, false);
 
                 System.out.println("Órdenes cargadas exitosamente.");
             }
-
 
             System.out.println("¡INICIALIZACIÓN FINALIZADA! Backend listo.");
         };
