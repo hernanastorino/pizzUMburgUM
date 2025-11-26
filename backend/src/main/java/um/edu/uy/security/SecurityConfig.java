@@ -65,6 +65,8 @@ public class SecurityConfig {
                         // profile (authenticated users)
                         .requestMatchers("/api/users/**").authenticated()
 
+                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+
                         // catch-all
                         .anyRequest().authenticated()
                 )

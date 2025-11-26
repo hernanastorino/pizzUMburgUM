@@ -2,7 +2,6 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 
-// Import your page components with their NEW English names
 import Layout from './pages/Layout'
 import Home from './pages/Home'
 import Login from './pages/Login'
