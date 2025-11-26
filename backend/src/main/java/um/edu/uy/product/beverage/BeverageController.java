@@ -43,7 +43,7 @@ public class BeverageController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteBeverage(@PathVariable Long id) {
-        beverageService.deleteBeverageById(id);
+        beverageService.delete(id);
         return ResponseEntity.noContent().build();
     }
 }

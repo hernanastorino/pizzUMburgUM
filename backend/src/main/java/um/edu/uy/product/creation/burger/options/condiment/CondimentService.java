@@ -10,7 +10,11 @@ import java.util.List;
 public class CondimentService {
     private final CondimentRepository repository;
 
-    public List<Condiment> findAll() { return repository.findAll(); }
+    public List<Condiment> findAll() {
+        return repository.findAll().stream()
+                .filter(Condiment::isAvailable)
+                .toList();
+    }
 
     public Condiment create(Condiment item) {
         if (repository.existsByName(item.getName())) throw new RuntimeException("Condiment already exists");
@@ -27,5 +31,12 @@ public class CondimentService {
         return repository.save(item);
     }
 
-    public void delete(Long id) { repository.deleteById(id); }
+    public void delete(Long id) {
+        Condiment item = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Beverage not found"));
+
+        item.setAvailable(false);
+        repository.save(item);
+    }
+
 }

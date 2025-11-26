@@ -16,7 +16,9 @@ public class SideService {
     }
 
     public List<Side> findAllSides() {
-        return sideRepository.findAll();
+        return sideRepository.findAll().stream()
+                .filter(Side::isAvailable)
+                .toList();
     }
 
     public Side saveSide(Side side) {
@@ -24,9 +26,10 @@ public class SideService {
     }
 
     public void deleteSideById(Long id) {
-        if (!sideRepository.existsById(id)) {
-            throw new RuntimeException("Side not found: " + id);
-        }
-        sideRepository.deleteById(id);
+        Side item = sideRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Beverage not found"));
+
+        item.setAvailable(false);
+        sideRepository.save(item);
     }
 }

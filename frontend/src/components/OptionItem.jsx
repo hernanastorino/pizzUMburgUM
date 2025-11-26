@@ -1,134 +1,198 @@
-// src/components/OptionItem.jsx
 import React, { useState } from "react";
+import axios from 'axios';
 import styles from "../styles/Backoffice.module.css";
 
 const OptionItem = ({ option, onUpdate, onDelete }) => {
-  const [isEditing, setIsEditing] = useState(!option.name);
+    const safeOption = option || {};
 
-  const [name, setName] = useState(option.name || "");
-  const [price15, setPrice15] = useState(option.price15 !== undefined ? option.price15.toString() : "");
-  const [price20, setPrice20] = useState(option.price20 !== undefined ? option.price20.toString() : "");
-  const [price25, setPrice25] = useState(option.price25 !== undefined ? option.price25.toString() : "");
+    const [isEditing, setIsEditing] = useState(!safeOption.name);
+    const [name, setName] = useState(safeOption.name || "");
+    const [price15, setPrice15] = useState(safeOption.price15 !== undefined ? safeOption.price15.toString() : "");
+    const [price20, setPrice20] = useState(safeOption.price20 !== undefined ? safeOption.price20.toString() : "");
+    const [price25, setPrice25] = useState(safeOption.price25 !== undefined ? safeOption.price25.toString() : "");
 
-  const save = () => {
-    onUpdate({
-      ...option,
-      name,
-      price15: Number(price15) || 0,
-      price20: Number(price20) || 0,
-      price25: Number(price25) || 0,
-    });
-    setIsEditing(false);
-  };
+    if (!option || !option.id) return null;
 
-  const cancel = () => {
-    setName(option.name || "");
-    setPrice15(option.price15 !== undefined ? option.price15.toString() : "");
-    setPrice20(option.price20 !== undefined ? option.price20.toString() : "");
-    setPrice25(option.price25 !== undefined ? option.price25.toString() : "");
-    setIsEditing(false);
-  };
+    // Guardar cambios (PUT)
+    const save = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            const endpoint = option.endpoint;
 
-  const handleKeys = (e) => {
-    if (e.key === "Enter") save();
-    if (e.key === "Escape") cancel();
-  };
+            const isSinglePrice = ['beverages', 'sides'].includes(endpoint);
 
-  return (
-    <div className={styles.optionItem}>
-      
-      {/* ===== COLUMNA 1 — NOMBRE ===== */}
-      {isEditing ? (
-        <input
-          className={styles.optionInput}
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          onKeyDown={handleKeys}
-          placeholder="Nombre"
-          autoFocus
-        />
-      ) : (
-        <span className={styles.optionName}>{option.name}</span>
-      )}
+            let body = {
+                name: name,
+                // CORRECCIÓN CLAVE: Enviamos 'available' para que Jackson no lo ponga en false
+                available: true,
+                isAvailable: true
+            };
 
-      {/* ===== COLUMNA 2 — PRECIO 15 ===== */}
-      {isEditing ? (
-        <input
-          className={styles.optionInputPrice}
-          type="number"
-          value={price15}
-          onChange={(e) => setPrice15(e.target.value)}
-          onKeyDown={handleKeys}
-          placeholder="$0"  
-        />
-      ) : (
-        <span 
-          className={styles.optionPrice}
-          style={{ color: (!option.name && option.price15 === 0) ? 'rgba(255, 255, 255, 0.4)' : '#a8dadc' }}
-        >
+            if (isSinglePrice) {
+                body.price = parseFloat(price15) || 0;
+            } else {
+                body.priceSmall = parseFloat(price15) || 0;
+                body.priceMedium = parseFloat(price20) || 0;
+                body.priceLarge = parseFloat(price25) || 0;
+            }
+
+            await axios.put(`http://localhost:8080/api/products/${endpoint}/${option.id}`, body, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            onUpdate({
+                ...option,
+                name,
+                price15: Number(price15) || 0,
+                price20: Number(price20) || 0,
+                price25: Number(price25) || 0,
+            });
+            setIsEditing(false);
+
+        } catch (error) {
+            console.error("Error al actualizar:", error);
+            alert("Error al guardar cambios.");
+        }
+    };
+
+    const handleDeleteDirect = async () => {
+        if (!window.confirm(`¿Eliminar "${option.name}"?`)) return;
+
+        try {
+            const token = localStorage.getItem('token');
+            const endpoint = option.endpoint;
+
+            await axios.delete(`http://localhost:8080/api/products/${endpoint}/${option.id}`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+
+            onDelete();
+
+        } catch (error) {
+            console.error("Error al eliminar:", error);
+            alert("Error al eliminar el producto.");
+        }
+    };
+
+    const cancel = () => {
+        setName(safeOption.name || "");
+        setPrice15(safeOption.price15 !== undefined ? safeOption.price15.toString() : "");
+        setPrice20(safeOption.price20 !== undefined ? safeOption.price20.toString() : "");
+        setPrice25(safeOption.price25 !== undefined ? safeOption.price25.toString() : "");
+        setIsEditing(false);
+    };
+
+    const handleKeys = (e) => {
+        if (e.key === "Enter") save();
+        if (e.key === "Escape") cancel();
+    };
+
+    return (
+        <div className={styles.optionItem}>
+            {/* COLUMNA 1 — NOMBRE */}
+            {isEditing ? (
+                <input
+                    className={styles.optionInput}
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    onKeyDown={handleKeys}
+                    placeholder="Nombre"
+                    autoFocus
+                />
+            ) : (
+                <span className={styles.optionName}>{option.name}</span>
+            )}
+
+            {/* COLUMNA 2 — PRECIO 15 */}
+            {isEditing ? (
+                <input
+                    className={styles.optionInputPrice}
+                    type="number"
+                    value={price15}
+                    onChange={(e) => setPrice15(e.target.value)}
+                    onKeyDown={handleKeys}
+                    placeholder="$0"
+                />
+            ) : (
+                <span
+                    className={styles.optionPrice}
+                    style={{ color: (!option.name && option.price15 === 0) ? 'rgba(255, 255, 255, 0.4)' : '#a8dadc' }}
+                >
           ${option.price15}
         </span>
-      )}
-      {/* ===== COLUMNA 3 — PRECIO 20 ===== */}
-      {isEditing ? (
-        <input
-          className={styles.optionInputPrice}
-          type="number"
-          value={price20}
-          onChange={(e) => setPrice20(e.target.value)}
-          onKeyDown={handleKeys}
-          placeholder="$0"
-        />
-      ) : (
-        <span 
-          className={styles.optionPrice}
-          style={{ color: (!option.name && option.price20 === 0) ? 'rgba(255, 255, 255, 0.4)' : '#a8dadc' }}
-        >
+            )}
+
+            {/* COLUMNA 3 — PRECIO 20 */}
+            {isEditing ? (
+                <input
+                    className={styles.optionInputPrice}
+                    type="number"
+                    value={price20}
+                    onChange={(e) => setPrice20(e.target.value)}
+                    onKeyDown={handleKeys}
+                    placeholder="$0"
+                    disabled={['beverages', 'sides'].includes(option.endpoint)}
+                    style={['beverages', 'sides'].includes(option.endpoint) ? {opacity: 0.3} : {}}
+                />
+            ) : (
+                <span
+                    className={styles.optionPrice}
+                    style={{ color: (!option.name && option.price20 === 0) ? 'rgba(255, 255, 255, 0.4)' : '#a8dadc' }}
+                >
           ${option.price20}
         </span>
-      )}
+            )}
 
-      {/* ===== COLUMNA 4 — PRECIO 25 ===== */}
-      {isEditing ? (
-        <input
-          className={styles.optionInputPrice}
-          type="number"
-          value={price25}
-          onChange={(e) => setPrice25(e.target.value)}
-          onKeyDown={handleKeys}
-          placeholder="$0"
-        />
-      ) : (
-        <span 
-          className={styles.optionPrice}
-          style={{ color: (!option.name && option.price25 === 0) ? 'rgba(255, 255, 255, 0.4)' : '#a8dadc' }}
-        >
+            {/* COLUMNA 4 — PRECIO 25 */}
+            {isEditing ? (
+                <input
+                    className={styles.optionInputPrice}
+                    type="number"
+                    value={price25}
+                    onChange={(e) => setPrice25(e.target.value)}
+                    onKeyDown={handleKeys}
+                    placeholder="$0"
+                    disabled={['beverages', 'sides'].includes(option.endpoint)}
+                    style={['beverages', 'sides'].includes(option.endpoint) ? {opacity: 0.3} : {}}
+                />
+            ) : (
+                <span
+                    className={styles.optionPrice}
+                    style={{ color: (!option.name && option.price25 === 0) ? 'rgba(255, 255, 255, 0.4)' : '#a8dadc' }}
+                >
           ${option.price25}
         </span>
-      )}
+            )}
 
-      {/* ===== COLUMNA 5 — BOTONES ===== */}
-      <div className={styles.optionActions}>
-        <button
-          className={`${styles.optionEdit} ${isEditing ? styles.optionEditActive : ''}`}
-          onClick={() => {
-            if (isEditing) {
-              save();
-            } else {
-              setIsEditing(true);
-            }
-          }}
-          title={isEditing ? "Guardar" : "Editar"}
-        >
-          ✏️
-        </button>
+            {/* COLUMNA 5 — BOTONES */}
+            <div className={styles.optionActions}>
+                <button
+                    className={`${styles.optionEdit} ${isEditing ? styles.optionEditActive : ''}`}
+                    onClick={() => {
+                        if (isEditing) {
+                            save();
+                        } else {
+                            setIsEditing(true);
+                        }
+                    }}
+                    title={isEditing ? "Guardar" : "Editar"}
+                >
+                    {isEditing ? "💾" : "✏️"}
+                </button>
 
-        <button className={styles.optionRemove} onClick={onDelete} title="Eliminar">
-          ✕
-        </button>
-      </div>
-    </div>
-  );
+                <button
+                    className={styles.optionRemove}
+                    onClick={handleDeleteDirect}
+                    title="Eliminar"
+                >
+                    ✕
+                </button>
+            </div>
+        </div>
+    );
 };
 
 export default OptionItem;

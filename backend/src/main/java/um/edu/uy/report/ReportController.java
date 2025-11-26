@@ -33,7 +33,8 @@ public class ReportController {
     @GetMapping("/bps")
     @PreAuthorize("hasAuthority('adminRole')") // Protegemos el endpoint
     public ResponseEntity<Map<String, Long>> getEmployeeCount() {
-        long count = userService.countEmployees();
-        return ResponseEntity.ok(Map.of("employeeCount", count));
+        long countAdmins = userService.countEmployees();
+        long countUsers = userService.countUsers();
+        return ResponseEntity.ok(Map.of("employeeCount", countAdmins,"userCount", countUsers));
     }
 }

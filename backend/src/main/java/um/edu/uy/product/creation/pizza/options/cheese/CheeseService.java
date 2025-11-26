@@ -9,7 +9,11 @@ import java.util.List;
 public class CheeseService {
     private final CheeseRepository repository;
 
-    public List<Cheese> findAll() { return repository.findAll(); }
+    public List<Cheese> findAll() {
+        return repository.findAll().stream()
+                .filter(Cheese::isAvailable)
+                .toList();
+    }
 
     public Cheese create(Cheese item) {
         if (repository.existsByName(item.getName())) throw new RuntimeException("Cheese already exists");
@@ -26,5 +30,12 @@ public class CheeseService {
         return repository.save(item);
     }
 
-    public void delete(Long id) { repository.deleteById(id); }
+    public void delete(Long id) {
+        Cheese item = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Beverage not found"));
+
+        item.setAvailable(false);
+        repository.save(item);
+    }
+
 }

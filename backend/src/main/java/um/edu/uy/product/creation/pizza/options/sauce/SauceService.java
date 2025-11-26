@@ -9,7 +9,11 @@ import java.util.List;
 public class SauceService {
     private final SauceRepository repository;
 
-    public List<Sauce> findAll() { return repository.findAll(); }
+    public List<Sauce> findAll() {
+        return repository.findAll().stream()
+                .filter(Sauce::isAvailable)
+                .toList();
+    }
 
     public Sauce create(Sauce item) {
         if (repository.existsByName(item.getName())) throw new RuntimeException("Sauce already exists");
@@ -25,6 +29,12 @@ public class SauceService {
         item.setAvailable(newItem.isAvailable());
         return repository.save(item);
     }
+    public void delete(Long id) {
+        Sauce item = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Beverage not found"));
 
-    public void delete(Long id) { repository.deleteById(id); }
+        item.setAvailable(false);
+        repository.save(item);
+    }
+
 }

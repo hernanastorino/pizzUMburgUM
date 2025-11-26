@@ -9,7 +9,11 @@ import java.util.List;
 public class DoughService {
     private final DoughRepository repository;
 
-    public List<Dough> findAll() { return repository.findAll(); }
+    public List<Dough> findAll() {
+        return repository.findAll().stream()
+                .filter(Dough::isAvailable)
+                .toList();
+    }
 
     public Dough create(Dough item) {
         if (repository.existsByName(item.getName())) throw new RuntimeException("Dough already exists");
@@ -26,5 +30,12 @@ public class DoughService {
         return repository.save(item);
     }
 
-    public void delete(Long id) { repository.deleteById(id); }
+    public void delete(Long id) {
+        Dough item = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Beverage not found"));
+
+        item.setAvailable(false);
+        repository.save(item);
+    }
+
 }

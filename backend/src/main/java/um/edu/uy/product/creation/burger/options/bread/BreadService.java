@@ -10,7 +10,11 @@ import java.util.List;
 public class BreadService {
     private final BreadRepository repository;
 
-    public List<Bread> findAll() { return repository.findAll(); }
+    public List<Bread> findAll() {
+        return repository.findAll().stream()
+                .filter(Bread::isAvailable)
+                .toList();
+    }
 
     public Bread create(Bread item) {
         if (repository.existsByName(item.getName())) throw new RuntimeException("Bread already exists");
@@ -27,5 +31,11 @@ public class BreadService {
         return repository.save(item);
     }
 
-    public void delete(Long id) { repository.deleteById(id); }
+    public void delete(Long id) {
+        Bread item = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Beverage not found"));
+
+        item.setAvailable(false);
+        repository.save(item);
+    }
 }

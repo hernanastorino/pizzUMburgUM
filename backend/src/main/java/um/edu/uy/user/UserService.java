@@ -105,4 +105,8 @@ public class UserService {
     public long countEmployees() {
         return userRepository.countByRole(Role.adminRole);
     }
+
+    public long countUsers() {
+        return userRepository.countByRole(Role.clientRole);
+    }
 }

@@ -11,7 +11,9 @@ public class ToppingService {
     private final ToppingRepository toppingRepository;
 
     public List<Topping> findAll() {
-        return toppingRepository.findAll();
+        return toppingRepository.findAll().stream()
+                .filter(Topping::isAvailable)
+                .toList();
     }
 
     public Topping getById(Long id) {
@@ -37,9 +39,10 @@ public class ToppingService {
     }
 
     public void delete(Long id) {
-        if (!toppingRepository.existsById(id)) {
-            throw new RuntimeException("Topping not found");
-        }
-        toppingRepository.deleteById(id);
+        Topping item = toppingRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Item not found"));
+
+        item.setAvailable(false);
+        toppingRepository.save(item);
     }
 }

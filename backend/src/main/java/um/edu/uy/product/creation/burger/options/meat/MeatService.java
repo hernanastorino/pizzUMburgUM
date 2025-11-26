@@ -10,7 +10,11 @@ import java.util.List;
 public class MeatService {
     private final MeatRepository repository;
 
-    public List<Meat> findAll() { return repository.findAll(); }
+    public List<Meat> findAll() {
+        return repository.findAll().stream()
+                .filter(Meat::isAvailable)
+                .toList();
+    }
 
     public Meat create(Meat item) {
         if (repository.existsByName(item.getName())) throw new RuntimeException("Meat already exists");
@@ -26,6 +30,11 @@ public class MeatService {
         item.setAvailable(newItem.isAvailable());
         return repository.save(item);
     }
+    public void delete(Long id) {
+        Meat item = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Meat not found"));
 
-    public void delete(Long id) { repository.deleteById(id); }
+        item.setAvailable(false);
+        repository.save(item);
+    }
 }
