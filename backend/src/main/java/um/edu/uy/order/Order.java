@@ -1,5 +1,6 @@
 package um.edu.uy.order;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import um.edu.uy.product.beverage.relations.BeverageInOrder;
@@ -52,6 +53,7 @@ public class Order {
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
+    @JsonIgnore
     private Set<CreationInOrder> itemsCreation = new HashSet<>();
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)

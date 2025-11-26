@@ -20,7 +20,9 @@ public class CondimentService {
     public Condiment update(Long id, Condiment newItem) {
         Condiment item = repository.findById(id).orElseThrow(() -> new RuntimeException("Condiment not found"));
         item.setName(newItem.getName());
-        item.setPrice(newItem.getPrice());
+        item.setPriceSmall(newItem.getPriceSmall());
+        item.setPriceMedium(newItem.getPriceMedium());
+        item.setPriceLarge(newItem.getPriceLarge());
         item.setAvailable(newItem.isAvailable());
         return repository.save(item);
     }

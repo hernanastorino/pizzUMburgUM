@@ -20,7 +20,9 @@ public class MeatService {
     public Meat update(Long id, Meat newItem) {
         Meat item = repository.findById(id).orElseThrow(() -> new RuntimeException("Meat not found"));
         item.setName(newItem.getName());
-        item.setPrice(newItem.getPrice());
+        item.setPriceSmall(newItem.getPriceSmall());
+        item.setPriceMedium(newItem.getPriceMedium());
+        item.setPriceLarge(newItem.getPriceLarge());
         item.setAvailable(newItem.isAvailable());
         return repository.save(item);
     }

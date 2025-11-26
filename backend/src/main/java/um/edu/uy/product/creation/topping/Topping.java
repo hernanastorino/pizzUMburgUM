@@ -24,8 +24,11 @@ public class Topping {
     @Column(nullable = false, unique = true)
     private String name;
 
-    @Column(nullable = false)
-    private Double price;
+    private Double priceSmall;
+    private Double priceMedium;
+    private Double priceLarge;
+
+    private boolean isAvailable;
 
     @ManyToMany(mappedBy = "toppings")
     private Set<Pizza> pizzas = new HashSet<>();

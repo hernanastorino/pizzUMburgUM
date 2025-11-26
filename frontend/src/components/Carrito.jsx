@@ -1,313 +1,177 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from 'axios';
 import OrderConfirmModal from "../components/OrderConfirmModal";
 import styles from "../styles/Carrito.module.css";
 
 const Carrito = () => {
-  const navigate = useNavigate();
-  
-  const [cartItems, setCartItems] = useState([
-    { id: 1, nombre: "Creación 1", precio: 100, cantidad: 1 },
-    { id: 2, nombre: "Bebida 1", precio: 100, cantidad: 1 }
-  ]);
+    const navigate = useNavigate();
+    const [cartItems, setCartItems] = useState([]);
+    const [orderId, setOrderId] = useState(null);
+    const [total, setTotal] = useState(0);
+    const [loading, setLoading] = useState(true);
 
-  const [isDireccionOpen, setIsDireccionOpen] = useState(false);
-  const [isMetodoPagoOpen, setIsMetodoPagoOpen] = useState(false);
-  const [selectedDireccion, setSelectedDireccion] = useState(null);
-  const [selectedMetodoPago, setSelectedMetodoPago] = useState(null);
-  
-  // Estado para el modal de pedido realizado
-  const [showOrderModal, setShowOrderModal] = useState(false);
-  const [numeroPedido, setNumeroPedido] = useState(null);
-  
-  // Estado para notificaciones personalizadas
-  const [notification, setNotification] = useState({ show: false, message: "" });
+    // Estados visuales existentes...
+    const [isDireccionOpen, setIsDireccionOpen] = useState(false);
+    const [isMetodoPagoOpen, setIsMetodoPagoOpen] = useState(false);
+    const [selectedDireccion, setSelectedDireccion] = useState(null);
+    const [selectedMetodoPago, setSelectedMetodoPago] = useState(null);
+    const [showOrderModal, setShowOrderModal] = useState(false);
+    const [numeroPedido, setNumeroPedido] = useState(null);
+    const [notification, setNotification] = useState({ show: false, message: "" });
 
-  const direccionRef = useRef(null);
-  const metodoPagoRef = useRef(null);
+    const direccionRef = useRef(null);
+    const metodoPagoRef = useRef(null);
 
-  const direcciones = [
-    { id: 1, nombre: "Casa", direccion: "Av. Libertador 1234" },
-    { id: 2, nombre: "Trabajo", direccion: "Calle San Martín 567" }
-  ];
+    // Datos mock para direcciones/pagos por ahora
+    const direcciones = [{ id: 1, nombre: "Casa", direccion: "Av. Libertador 1234" }];
+    const metodosPago = [{ id: 1, tipo: "Visa", numero: "**** 1234" }];
 
-  const metodosPago = [
-    { id: 1, tipo: "Visa", numero: "**** 1234" },
-    { id: 2, tipo: "Mastercard", numero: "**** 5678" }
-  ];
+    // 1. CARGAR CARRITO REAL
+    useEffect(() => {
+        const fetchCart = async () => {
+            try {
+                const token = localStorage.getItem('token');
+                if (!token) return;
 
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (direccionRef.current && !direccionRef.current.contains(event.target)) {
-        setIsDireccionOpen(false);
-      }
-      if (metodoPagoRef.current && !metodoPagoRef.current.contains(event.target)) {
-        setIsMetodoPagoOpen(false);
-      }
-    };
+                // PEGAR ESTO
+                const userEmail = localStorage.getItem('email');
+                if (!userEmail) return; // O manejar error
 
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
+                const userRes = await axios.get(`http://localhost:8080/api/users/${userEmail}`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
 
-  // Auto-ocultar notificación después de 3 segundos
-  useEffect(() => {
-    if (notification.show) {
-      const timer = setTimeout(() => {
-        setNotification({ show: false, message: "" });
-      }, 3000);
-      return () => clearTimeout(timer);
-    }
-  }, [notification.show]);
+// Ajusta según tu entidad (id o userId)
+                const userId = userRes.data.userId || userRes.data.id;
 
-  const showNotification = (message) => {
-    setNotification({ show: true, message });
-  };
+                // Obtener Orden Pendiente
+                const orderRes = await axios.post(
+                    `http://localhost:8080/orders/start/user/${userId}`,
+                    {},
+                    { headers: { Authorization: `Bearer ${token}` } }
+                );
 
-  const incrementItem = (id) => {
-    setCartItems(cartItems.map(item => 
-      item.id === id ? { ...item, cantidad: item.cantidad + 1 } : item
-    ));
-  };
+                const order = orderRes.data;
+                setOrderId(order.id);
+                setTotal(order.total);
 
-  const decrementItem = (id) => {
-    setCartItems(cartItems.map(item => {
-      if (item.id === id) {
-        if (item.cantidad > 1) {
-          return { ...item, cantidad: item.cantidad - 1 };
+                // Unificar items (Creaciones + Bebidas + Sides)
+                const items = [];
+                if (order.itemsCreation) items.push(...order.itemsCreation.map(i => ({...i, type: 'creation'})));
+                if (order.itemsBeverage) items.push(...order.itemsBeverage.map(i => ({...i, type: 'beverage'})));
+                if (order.itemsSide) items.push(...order.itemsSide.map(i => ({...i, type: 'side'})));
+
+                setCartItems(items);
+                setLoading(false);
+
+            } catch (error) {
+                console.error("Error cargando carrito:", error);
+                setLoading(false);
+            }
+        };
+        fetchCart();
+    }, []);
+
+    // --- Funciones de confirmación ---
+    const handlePagar = async () => {
+        if (!selectedDireccion || !selectedMetodoPago) {
+            alert("Selecciona dirección y pago");
+            return;
         }
-        return null;
-      }
-      return item;
-    }).filter(item => item !== null));
-  };
 
-  const getTotalPrice = () => {
-    return cartItems.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
-  };
+        try {
+            const token = localStorage.getItem('token');
+            // Confirmar orden en backend
+            await axios.post(
+                `http://localhost:8080/orders/${orderId}/confirm?addressId=${selectedDireccion.id}&paymentId=${selectedMetodoPago.id}`, // Asumiendo IDs mock coinciden o usar reales
+                {},
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
 
-  const handleSelectDireccion = (direccion) => {
-    setSelectedDireccion(direccion);
-    setIsDireccionOpen(false);
-  };
+            setNumeroPedido(orderId);
+            setShowOrderModal(true);
+        } catch (error) {
+            console.error("Error al pagar", error);
+            alert("Error al procesar pago");
+        }
+    };
 
-  const handleSelectMetodoPago = (metodo) => {
-    setSelectedMetodoPago(metodo);
-    setIsMetodoPagoOpen(false);
-  };
+    // --- Renderizado (usando tus estilos existentes) ---
+    if (loading) return <div style={{color:'white', padding:'50px'}}>Cargando carrito...</div>;
 
-  const handleAgregarDireccion = () => {
-    navigate('/pagosYEnvios', { state: { from: '/carrito' } });
-  };
+    return (
+        <div className={styles.pageContainer}>
+            <div className={styles.mainContent}>
+                <div className={styles.carritoGrid}>
+                    {/* Columna Items */}
+                    <div className={styles.leftColumn}>
+                        <div className={styles.cardWrapper}>
+                            <div className={styles.cardBorder}></div>
+                            <div className={styles.card}>
+                                <h2 className={styles.cardTitle}>Carrito (Pedido #{orderId})</h2>
 
-  const handleAgregarMetodoPago = () => {
-    navigate('/pagosYEnvios', { state: { from: '/carrito' } });
-  };
+                                {cartItems.length === 0 ? (
+                                    <p className={styles.emptyMessage}>Carrito vacío</p>
+                                ) : (
+                                    <div className={styles.itemsList}>
+                                        {cartItems.map((item, index) => (
+                                            <div key={index} className={styles.cartItem}>
+                                                <div className={styles.itemInfo}>
+                                                    {/* El backend devuelve item.name? Revisar UserDTO/OrderDTO */}
+                                                    <span className={styles.itemName}>{item.name || "Producto"}</span>
+                                                    <span className={styles.itemPrice}>${item.subTotal || item.price}</span>
+                                                </div>
+                                                <div className={styles.itemControls}>
+                                                    <span className={styles.quantity}>x{item.quantity}</span>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
 
-  const handlePagar = () => {
-    // Validar que haya seleccionado dirección y método de pago
-    if (!selectedDireccion) {
-      showNotification("📍 Por favor selecciona una dirección de envío");
-      return;
-    }
-    
-    if (!selectedMetodoPago) {
-      showNotification("💳 Por favor selecciona un método de pago");
-      return;
-    }
-
-    // Generar número de pedido (temporal)
-    const numeroPedidoGenerado = Math.floor(100000 + Math.random() * 900000);
-    setNumeroPedido(numeroPedidoGenerado);
-    
-    // Mostrar modal de confirmación
-    setShowOrderModal(true);
-  };
-
-  const handleCloseModal = () => {
-    setShowOrderModal(false);
-    // Opcionalmente puedes limpiar el carrito aquí
-    // setCartItems([]);
-  };
-
-  // Nueva función para ir a Pedidos
-  const handleVerEstado = () => {
-    setShowOrderModal(false);
-    navigate('/pedidos');
-  };
-
-  const toggleDireccion = () => {
-    setIsDireccionOpen(!isDireccionOpen);
-    setIsMetodoPagoOpen(false);
-  };
-
-  const toggleMetodoPago = () => {
-    setIsMetodoPagoOpen(!isMetodoPagoOpen);
-    setIsDireccionOpen(false);
-  };
-
-  return (
-    <div className={styles.pageContainer}>
-      <div className={styles.mainContent}>
-        <div className={styles.carritoGrid}>
-          {/* Columna Izquierda - Items del carrito */}
-          <div className={styles.leftColumn}>
-            <div className={styles.cardWrapper}>
-              <div className={styles.cardBorder}></div>
-              <div className={styles.card}>
-                <h2 className={styles.cardTitle}>Carrito</h2>
-                
-                {cartItems.length === 0 ? (
-                  <p className={styles.emptyMessage}>El carrito está vacío</p>
-                ) : (
-                  <div className={styles.itemsList}>
-                    {cartItems.map(item => (
-                      <div key={item.id} className={styles.cartItem}>
-                        <div className={styles.itemInfo}>
-                          <span className={styles.itemName}>{item.nombre}</span>
-                          <span className={styles.itemPrice}>${item.precio * item.cantidad}</span>
+                                <div className={styles.totalSection}>
+                                    <span className={styles.totalLabel}>Total:</span>
+                                    <span className={styles.totalPrice}>${total}</span>
+                                </div>
+                            </div>
                         </div>
-                        <div className={styles.itemControls}>
-                          <button 
-                            className={styles.controlBtn}
-                            onClick={() => decrementItem(item.id)}
-                          >
-                            -
-                          </button>
-                          <span className={styles.quantity}>{item.cantidad}</span>
-                          <button 
-                            className={styles.controlBtn}
-                            onClick={() => incrementItem(item.id)}
-                          >
-                            +
-                          </button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-
-                <div className={styles.totalSection}>
-                  <span className={styles.totalLabel}>Total:</span>
-                  <span className={styles.totalPrice}>${getTotalPrice()}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Columna Derecha - Dirección y Método de Pago */}
-          <div className={styles.rightColumn}>
-            {/* Tarjeta de Dirección - Dropdown */}
-            <div className={styles.cardWrapper}>
-              <div className={styles.cardBorder}></div>
-              <div className={styles.card}>
-                <h2 className={styles.cardTitle}>📍 Dirección</h2>
-                
-                <div className={styles.dropdownWrapper} ref={direccionRef}>
-                  <button 
-                    className={styles.dropdownButton}
-                    onClick={toggleDireccion}
-                  >
-                    <span>{selectedDireccion ? selectedDireccion.nombre : "Seleccionar dirección"}</span>
-                    <span className={styles.dropdownArrow}>▼</span>
-                  </button>
-                  
-                  {isDireccionOpen && (
-                    <div className={styles.dropdownMenu}>
-                      {direcciones.map(dir => (
-                        <div 
-                          key={dir.id}
-                          className={styles.dropdownItem}
-                          onClick={() => handleSelectDireccion(dir)}
-                        >
-                          <div>
-                            <div className={styles.dropdownItemTitle}>{dir.nombre}</div>
-                            <div className={styles.dropdownItemSubtitle}>{dir.direccion}</div>
-                          </div>
-                        </div>
-                      ))}
-                      <button 
-                        className={styles.addButtonDropdown}
-                        onClick={handleAgregarDireccion}
-                      >
-                        + Agregar dirección
-                      </button>
                     </div>
-                  )}
-                </div>
-              </div>
-            </div>
 
-            {/* Tarjeta de Método de Pago - Dropdown */}
-            <div className={styles.cardWrapper}>
-              <div className={styles.cardBorder}></div>
-              <div className={styles.card}>
-                <h2 className={styles.cardTitle}>💳 Método de Pago</h2>
-                
-                <div className={styles.dropdownWrapper} ref={metodoPagoRef}>
-                  <button 
-                    className={styles.dropdownButton}
-                    onClick={toggleMetodoPago}
-                  >
-                    <span>{selectedMetodoPago ? `${selectedMetodoPago.tipo} ${selectedMetodoPago.numero}` : "Seleccionar método"}</span>
-                    <span className={styles.dropdownArrow}>▼</span>
-                  </button>
-                  
-                  {isMetodoPagoOpen && (
-                    <div className={styles.dropdownMenu}>
-                      {metodosPago.map(metodo => (
-                        <div 
-                          key={metodo.id}
-                          className={styles.dropdownItem}
-                          onClick={() => handleSelectMetodoPago(metodo)}
-                        >
-                          <div>
-                            <div className={styles.dropdownItemTitle}>{metodo.tipo}</div>
-                            <div className={styles.dropdownItemSubtitle}>{metodo.numero}</div>
-                          </div>
+                    {/* Columna Pago/Dirección (Mantener tu lógica visual actual) */}
+                    <div className={styles.rightColumn}>
+                        {/* ... (Tus componentes visuales de Dropdown aquí, usando las funciones handle...) ... */}
+                        {/* Para simplificar el código aquí, asumo que mantienes tu estructura visual de dropdowns */}
+
+                        <div className={styles.cardWrapper}>
+                            <div className={styles.cardBorder}></div>
+                            <div className={styles.card}>
+                                <h2 className={styles.cardTitle}>📍 Envío y Pago</h2>
+                                <button className={styles.dropdownButton} onClick={() => setSelectedDireccion(direcciones[0])}>
+                                    {selectedDireccion ? selectedDireccion.nombre : "Seleccionar Dirección (Mock)"}
+                                </button>
+                                <button className={styles.dropdownButton} onClick={() => setSelectedMetodoPago(metodosPago[0])} style={{marginTop:'10px'}}>
+                                    {selectedMetodoPago ? selectedMetodoPago.tipo : "Seleccionar Pago (Mock)"}
+                                </button>
+                            </div>
                         </div>
-                      ))}
-                      <button 
-                        className={styles.addButtonDropdown}
-                        onClick={handleAgregarMetodoPago}
-                      >
-                        + Agregar método de pago
-                      </button>
+
+                        <button className={styles.pagarButton} onClick={handlePagar}>
+                            Confirmar Pedido
+                        </button>
                     </div>
-                  )}
+
                 </div>
-              </div>
             </div>
 
-            {/* Botón Pagar */}
-            <button 
-              className={styles.pagarButton}
-              onClick={handlePagar}
-            >
-              Pagar
-            </button>
-          </div>
+            <OrderConfirmModal
+                isOpen={showOrderModal}
+                onClose={() => setShowOrderModal(false)}
+                onVerEstado={() => navigate('/pedidos')}
+                numeroPedido={numeroPedido}
+            />
         </div>
-      </div>
-
-      {/* Notificación Toast */}
-      {notification.show && (
-        <div className={styles.notification}>
-          {notification.message}
-        </div>
-      )}
-
-      {/* Modal de Pedido Realizado */}
-      <OrderConfirmModal 
-        isOpen={showOrderModal}
-        onClose={handleCloseModal}
-        onVerEstado={handleVerEstado}
-        numeroPedido={numeroPedido}
-      />
-    </div>
-  );
+    );
 };
 
 export default Carrito;

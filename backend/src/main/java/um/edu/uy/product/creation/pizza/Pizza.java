@@ -59,23 +59,42 @@ public class Pizza extends Creation {
     public double getUnitPrice() {
         double total = 0.0;
 
+        // Determinar el tamaño para saber qué precio cobrar
+        // 1 = Small (15cm), 2 = Medium (20cm), 3 = Large (25cm)
+        int sizeTier = 1;
+        if ("20cm".equals(this.size)) sizeTier = 2;
+        if ("25cm".equals(this.size)) sizeTier = 3;
+
+        // Sumar Masa
         if (this.dough != null) {
-            total += this.dough.getPrice();
+            if (sizeTier == 3) total += this.dough.getPriceLarge();
+            else if (sizeTier == 2) total += this.dough.getPriceMedium();
+            else total += this.dough.getPriceSmall();
         }
 
+        // Sumar Queso
         if (this.cheese != null) {
-            total += this.cheese.getPrice();
+            if (sizeTier == 3) total += this.cheese.getPriceLarge();
+            else if (sizeTier == 2) total += this.cheese.getPriceMedium();
+            else total += this.cheese.getPriceSmall();
         }
 
+        // Sumar Salsa
         if (this.sauce != null) {
-            total += this.sauce.getPrice();
+            if (sizeTier == 3) total += this.sauce.getPriceLarge();
+            else if (sizeTier == 2) total += this.sauce.getPriceMedium();
+            else total += this.sauce.getPriceSmall();
         }
 
+        // Sumar Toppings
         if (this.toppings != null && !this.toppings.isEmpty()) {
-            total += this.toppings.stream()
-                    .mapToDouble(Topping::getPrice)
-                    .sum();
+            for (Topping t : this.toppings) {
+                if (sizeTier == 3) total += t.getPriceLarge();
+                else if (sizeTier == 2) total += t.getPriceMedium();
+                else total += t.getPriceSmall();
+            }
         }
+
         return total;
     }
 }

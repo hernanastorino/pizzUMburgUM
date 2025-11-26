@@ -5,7 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-// REPOSITORIOS
+// REPOSITORIOS E IMPORTACIONES
 import um.edu.uy.order.Order;
 import um.edu.uy.order.OrderRepository;
 import um.edu.uy.order.OrderService;
@@ -77,18 +77,24 @@ public class DataInitializer {
                 adminUser.setEmail("admin@pizzum.com");
                 adminUser.setPassword(passwordEncoder.encode("1234!"));
                 adminUser.setRole(Role.adminRole);
+                adminUser.setName("Super");
+                adminUser.setSurname("Admin");
                 userRepository.save(adminUser);
 
                 clientA = new User();
                 clientA.setEmail("clienta@pizzum.com");
                 clientA.setPassword(passwordEncoder.encode("1234!"));
                 clientA.setRole(Role.clientRole);
+                clientA.setName("Cliente");
+                clientA.setSurname("Uno");
                 userRepository.save(clientA);
 
                 clientB = new User();
                 clientB.setEmail("clientb@pizzum.com");
                 clientB.setPassword(passwordEncoder.encode("1234!"));
                 clientB.setRole(Role.clientRole);
+                clientB.setName("Cliente");
+                clientB.setSurname("Dos");
                 userRepository.save(clientB);
                 System.out.println("Usuarios creados.");
             }
@@ -99,68 +105,68 @@ public class DataInitializer {
             clientB = userRepository.findByEmail("clientb@pizzum.com").orElseThrow();
 
             // =====================================================
-            // 2. INICIALIZACIÓN DEL CATÁLOGO
+            // 2. INICIALIZACIÓN DEL CATÁLOGO (CON PRECIOS ACTUALIZADOS)
             // =====================================================
 
-            // --- PANES ---
+            // --- PANES (Small / Medium / Large) ---
             if (breadRepository.count() == 0) {
                 breadRepository.saveAll(List.of(
-                        Bread.builder().name("Pan Brioche").price(50.0).isAvailable(true).build(),
-                        Bread.builder().name("Pan de Papa").price(40.0).isAvailable(true).build(),
-                        Bread.builder().name("Pan Integral").price(30.0).isAvailable(true).build(),
-                        Bread.builder().name("Pan Sin Gluten").price(60.0).isAvailable(true).build()
+                        Bread.builder().name("Pan Brioche").priceSmall(50.0).priceMedium(60.0).priceLarge(70.0).isAvailable(true).build(),
+                        Bread.builder().name("Pan de Papa").priceSmall(40.0).priceMedium(50.0).priceLarge(60.0).isAvailable(true).build(),
+                        Bread.builder().name("Pan Integral").priceSmall(30.0).priceMedium(40.0).priceLarge(50.0).isAvailable(true).build(),
+                        Bread.builder().name("Pan Sin Gluten").priceSmall(60.0).priceMedium(70.0).priceLarge(80.0).isAvailable(true).build()
                 ));
             }
 
             // --- CARNES ---
             if (meatRepository.count() == 0) {
                 meatRepository.saveAll(List.of(
-                        Meat.builder().name("Carne de Res 180g").price(150.0).isAvailable(true).build(),
-                        Meat.builder().name("Pollo Crispy").price(130.0).isAvailable(true).build(),
-                        Meat.builder().name("Hamburguesa de Lentejas").price(120.0).isAvailable(true).build()
+                        Meat.builder().name("Carne de Res").priceSmall(150.0).priceMedium(200.0).priceLarge(250.0).isAvailable(true).build(),
+                        Meat.builder().name("Pollo Crispy").priceSmall(130.0).priceMedium(180.0).priceLarge(230.0).isAvailable(true).build(),
+                        Meat.builder().name("Lentejas").priceSmall(120.0).priceMedium(160.0).priceLarge(200.0).isAvailable(true).build()
                 ));
             }
 
-            // --- QUESOS ---
+            // --- QUESOS (Pizza) ---
             if (cheeseRepository.count() == 0) {
                 cheeseRepository.saveAll(List.of(
-                        Cheese.builder().name("Cheddar").price(30.0).isAvailable(true).build(),
-                        Cheese.builder().name("Dambo").price(30.0).isAvailable(true).build(),
-                        Cheese.builder().name("Roquefort").price(45.0).isAvailable(true).build(),
-                        Cheese.builder().name("Provolone").price(40.0).isAvailable(true).build()
+                        Cheese.builder().name("Cheddar").priceSmall(30.0).priceMedium(40.0).priceLarge(50.0).isAvailable(true).build(),
+                        Cheese.builder().name("Dambo").priceSmall(30.0).priceMedium(40.0).priceLarge(50.0).isAvailable(true).build(),
+                        Cheese.builder().name("Roquefort").priceSmall(45.0).priceMedium(55.0).priceLarge(65.0).isAvailable(true).build(),
+                        Cheese.builder().name("Provolone").priceSmall(40.0).priceMedium(50.0).priceLarge(60.0).isAvailable(true).build()
                 ));
             }
 
             // --- PIZZA OPTIONS ---
             if (doughRepository.count() == 0) {
                 doughRepository.saveAll(List.of(
-                        Dough.builder().name("Masa Clásica").price(100.0).isAvailable(true).build(),
-                        Dough.builder().name("Masa Fina").price(90.0).isAvailable(true).build()
+                        Dough.builder().name("Masa Clásica").priceSmall(100.0).priceMedium(120.0).priceLarge(150.0).isAvailable(true).build(),
+                        Dough.builder().name("Masa Fina").priceSmall(90.0).priceMedium(110.0).priceLarge(140.0).isAvailable(true).build()
                 ));
             }
             if (sauceRepository.count() == 0) {
                 sauceRepository.saveAll(List.of(
-                        Sauce.builder().name("Salsa Tomate").price(50.0).isAvailable(true).build(),
-                        Sauce.builder().name("Salsa Pesto").price(70.0).isAvailable(true).build()
+                        Sauce.builder().name("Salsa Tomate").priceSmall(50.0).priceMedium(60.0).priceLarge(70.0).isAvailable(true).build(),
+                        Sauce.builder().name("Salsa Pesto").priceSmall(70.0).priceMedium(80.0).priceLarge(90.0).isAvailable(true).build()
                 ));
             }
 
-            // --- TOPPINGS ---
+            // --- TOPPINGS (Con isAvailable y 3 precios) ---
             if (toppingRepository.count() == 0) {
                 toppingRepository.saveAll(List.of(
-                        Topping.builder().name("Panceta").price(50.0).build(),
-                        Topping.builder().name("Rúcula").price(20.0).build(),
-                        Topping.builder().name("Pepperoni").price(45.0).build(),
-                        Topping.builder().name("Champiñones").price(35.0).build(),
-                        Topping.builder().name("Cebolla Caramelizada").price(30.0).build(),
-                        Topping.builder().name("Huevo").price(25.0).build(),
-                        Topping.builder().name("Olivas Negras").price(15.0).build(),
-                        Topping.builder().name("Anchoas").price(60.0).build(),
-                        Topping.builder().name("Albahaca").price(15.0).build()
+                        Topping.builder().name("Panceta").priceSmall(50.0).priceMedium(60.0).priceLarge(70.0).isAvailable(true).build(),
+                        Topping.builder().name("Rúcula").priceSmall(20.0).priceMedium(25.0).priceLarge(30.0).isAvailable(true).build(),
+                        Topping.builder().name("Pepperoni").priceSmall(45.0).priceMedium(55.0).priceLarge(65.0).isAvailable(true).build(),
+                        Topping.builder().name("Champiñones").priceSmall(35.0).priceMedium(45.0).priceLarge(55.0).isAvailable(true).build(),
+                        Topping.builder().name("Cebolla Caramelizada").priceSmall(30.0).priceMedium(40.0).priceLarge(50.0).isAvailable(true).build(),
+                        Topping.builder().name("Huevo").priceSmall(25.0).priceMedium(30.0).priceLarge(35.0).isAvailable(true).build(),
+                        Topping.builder().name("Olivas Negras").priceSmall(15.0).priceMedium(20.0).priceLarge(25.0).isAvailable(true).build(),
+                        Topping.builder().name("Anchoas").priceSmall(60.0).priceMedium(70.0).priceLarge(80.0).isAvailable(true).build(),
+                        Topping.builder().name("Albahaca").priceSmall(15.0).priceMedium(20.0).priceLarge(25.0).isAvailable(true).build()
                 ));
             }
 
-            // --- SIDES & BEVERAGES ---
+            // --- SIDES & BEVERAGES (Estos suelen mantener precio único, NO los cambié) ---
             if (sideRepository.count() == 0) {
                 sideRepository.saveAll(List.of(
                         Side.builder().name("Papas Fritas Clásicas").price(100.0).isAvailable(true).build(),
@@ -177,36 +183,34 @@ public class DataInitializer {
             }
 
             // =====================================================
-            // 3. RECUPERACIÓN SEGURA (USANDO orElseGet PARA NO DUPLICAR)
+            // 3. RECUPERACIÓN SEGURA PARA PRUEBAS
             // =====================================================
 
+            // Bread
             Bread bBrioche = breadRepository.findByName("Pan Brioche").orElseGet(() ->
-                    breadRepository.save(Bread.builder().name("Pan Brioche").price(50.0).isAvailable(true).build()));
+                    breadRepository.save(Bread.builder().name("Pan Brioche").priceSmall(50.0).priceMedium(60.0).priceLarge(70.0).isAvailable(true).build()));
 
-            Meat mRes = meatRepository.findByName("Carne de Res 180g").orElseGet(() ->
-                    meatRepository.save(Meat.builder().name("Carne de Res 180g").price(150.0).isAvailable(true).build()));
+            // Meat
+            Meat mRes = meatRepository.findByName("Carne de Res").orElseGet(() ->
+                    meatRepository.save(Meat.builder().name("Carne de Res").priceSmall(150.0).priceMedium(200.0).priceLarge(250.0).isAvailable(true).build()));
 
+            // Cheese
             Cheese cCheddar = cheeseRepository.findByName("Cheddar").orElseGet(() ->
-                    cheeseRepository.save(Cheese.builder().name("Cheddar").price(30.0).isAvailable(true).build()));
+                    cheeseRepository.save(Cheese.builder().name("Cheddar").priceSmall(30.0).priceMedium(40.0).priceLarge(50.0).isAvailable(true).build()));
 
+            // Dough
             Dough dClasica = doughRepository.findByName("Masa Clásica").orElseGet(() ->
-                    doughRepository.save(Dough.builder().name("Masa Clásica").price(100.0).isAvailable(true).build()));
+                    doughRepository.save(Dough.builder().name("Masa Clásica").priceSmall(100.0).priceMedium(120.0).priceLarge(150.0).isAvailable(true).build()));
 
+            // Sauce
             Sauce sTomate = sauceRepository.findByName("Salsa Tomate").orElseGet(() ->
-                    sauceRepository.save(Sauce.builder().name("Salsa Tomate").price(50.0).isAvailable(true).build()));
+                    sauceRepository.save(Sauce.builder().name("Salsa Tomate").priceSmall(50.0).priceMedium(60.0).priceLarge(70.0).isAvailable(true).build()));
 
+            // Topping
             Topping tPanceta = toppingRepository.findByName("Panceta").orElseGet(() ->
-                    toppingRepository.save(Topping.builder().name("Panceta").price(50.0).build()));
+                    toppingRepository.save(Topping.builder().name("Panceta").priceSmall(50.0).priceMedium(60.0).priceLarge(70.0).isAvailable(true).build()));
 
-            Topping tRucula = toppingRepository.findByName("Rúcula").orElseGet(() ->
-                    toppingRepository.save(Topping.builder().name("Rúcula").price(20.0).build()));
-
-            Topping tPepperoni = toppingRepository.findByName("Pepperoni").orElseGet(() ->
-                    toppingRepository.save(Topping.builder().name("Pepperoni").price(45.0).build()));
-
-            Topping tChampignon = toppingRepository.findByName("Champiñones").orElseGet(() ->
-                    toppingRepository.save(Topping.builder().name("Champiñones").price(35.0).build()));
-
+            // Sides & Beverage (Precio único)
             Side sPapas = sideRepository.findByName("Papas Fritas Clásicas").orElseGet(() ->
                     sideRepository.save(Side.builder().name("Papas Fritas Clásicas").price(100.0).isAvailable(true).build()));
 
@@ -214,10 +218,9 @@ public class DataInitializer {
                     beverageRepository.save(Beverage.builder().name("Coca Cola 500ml").price(80.0).isAvailable(true).build()));
 
             // =====================================================
-            // 4. INFO DEL CLIENTE (DIRECCIÓN Y PAGO) - ¡BLINDADO!
+            // 4. INFO DEL CLIENTE (DIRECCIÓN Y PAGO)
             // =====================================================
 
-            // FIX: Creamos una variable FINAL para usar en las lambdas
             User finalClientA = clientA;
 
             Address addrHome = addressRepository.findAll().stream()
@@ -226,7 +229,6 @@ public class DataInitializer {
                     .orElse(null);
 
             if (addrHome == null) {
-                System.out.println("Creando Dirección para Client A...");
                 Address newAddr = Address.builder()
                         .user(clientA)
                         .name("Casa")
@@ -238,14 +240,12 @@ public class DataInitializer {
                 addrHome = addressRepository.save(newAddr);
             }
 
-            // Usamos la misma variable final
             PaymentMethod pmCard = paymentMethodRepository.findAll().stream()
                     .filter(pm -> pm.getUser().getUserId().equals(finalClientA.getUserId()))
                     .findFirst()
                     .orElse(null);
 
             if (pmCard == null) {
-                System.out.println("Creando Método de Pago para Client A...");
                 PaymentMethod newPm = PaymentMethod.builder()
                         .user(clientA)
                         .cardName("Visa Débito")
@@ -262,7 +262,8 @@ public class DataInitializer {
             Burger bFavoritaA = null;
 
             if (creationRepository.count() == 0) {
-                System.out.println("Cargando Creaciones de prueba...");
+                // Como actualizamos Burger.java, el .calculateSubtotal() ahora usará los precios
+                // Small/Medium/Large que acabamos de cargar en la DB.
                 bFavoritaA = Burger.builder()
                         .name("Burger Clásica Favorita")
                         .user(clientA)
@@ -272,27 +273,27 @@ public class DataInitializer {
                         .toppings(Set.of(tPanceta))
                         .isAvailable(true)
                         .build();
-                bFavoritaA.setSubtotal(bFavoritaA.calculateSubtotal());
+                // Importante: calculateSubtotal() usa los getters actualizados de la entidad
+                bFavoritaA.setSubtotal(bFavoritaA.getUnitPrice());
                 bFavoritaA = creationRepository.save(bFavoritaA);
 
                 FavoriteCreation favA = FavoriteCreation.builder()
                         .user(clientA)
                         .creation(bFavoritaA)
                         .build();
-
                 favoriteCreationRepository.save(favA);
 
                 Pizza p = Pizza.builder()
                         .name("Pizza Demo")
                         .user(clientA)
-                        .size("Grande")
+                        .size("25cm") // Large
                         .dough(dClasica)
                         .cheese(cCheddar)
                         .sauce(sTomate)
                         .toppings(new HashSet<>())
                         .isAvailable(true)
                         .build();
-                p.setSubtotal(p.calculateSubtotal());
+                p.setSubtotal(p.getUnitPrice());
                 creationRepository.save(p);
             } else {
                 bFavoritaA = (Burger) creationRepository.findAll().stream()
@@ -303,16 +304,14 @@ public class DataInitializer {
             // 6. ÓRDENES DE PRUEBA
             // =====================================================
             if (orderRepository.count() == 0) {
-                System.out.println("Cargando Órdenes de prueba...");
                 String clientEmail = clientA.getEmail();
 
-                // --- 6.1 ORDEN 1: COMPLETADA (Historial)
-                // 1. La creamos como PENDING para poder agregar items
+                // ORDEN 1
                 Order order1 = Order.builder()
                         .client(clientA)
                         .address(addrHome)
                         .paymentMethod(pmCard)
-                        .state(OrderStatus.PENDING) // <--- IMPORTANTE: Empezar como PENDING
+                        .state(OrderStatus.PENDING)
                         .date(LocalDateTime.now().minusDays(2))
                         .total(0.0)
                         .itemsCreation(new HashSet<>())
@@ -322,21 +321,18 @@ public class DataInitializer {
 
                 order1 = orderRepository.save(order1);
 
-                // 2. Agregamos items (el servicio ahora permite esto porque es PENDING)
                 if (bFavoritaA != null) {
                     orderService.addCreationToOrder(order1.getId(), bFavoritaA.getCreationId(), 2, clientEmail, false);
                 }
                 orderService.addBeverageToOrder(order1.getId(), bCoca.getBeverageId(), 1, clientEmail, false);
                 orderService.addSideToOrder(order1.getId(), sPapas.getSideId(), 1, clientEmail, false);
 
-                // 3. ACTUALIZAMOS ESTADO A DELIVERED (Simulando que ya pasó)
-                // Recargamos para tener el objeto con los totales actualizados por el servicio
                 order1 = orderRepository.findById(order1.getId()).orElseThrow();
-                order1.setState(OrderStatus.DELIVERED); // <--- CAMBIO MANUAL FINAL
+                order1.setState(OrderStatus.DELIVERED);
                 orderRepository.save(order1);
 
 
-                // --- 6.2 ORDEN 2: PENDIENTE (Carrito actual)
+                // ORDEN 2
                 Order order2 = Order.builder()
                         .client(clientA)
                         .address(addrHome)
@@ -355,8 +351,6 @@ public class DataInitializer {
                     orderService.addCreationToOrder(order2.getId(), bFavoritaA.getCreationId(), 1, clientEmail, false);
                 }
                 orderService.addBeverageToOrder(order2.getId(), bCoca.getBeverageId(), 1, clientEmail, false);
-
-                System.out.println("Órdenes cargadas exitosamente.");
             }
 
             System.out.println("¡INICIALIZACIÓN FINALIZADA! Backend listo.");

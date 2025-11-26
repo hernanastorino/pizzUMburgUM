@@ -19,7 +19,9 @@ public class DoughService {
     public Dough update(Long id, Dough newItem) {
         Dough item = repository.findById(id).orElseThrow(() -> new RuntimeException("Dough not found"));
         item.setName(newItem.getName());
-        item.setPrice(newItem.getPrice());
+        item.setPriceSmall(newItem.getPriceSmall());
+        item.setPriceMedium(newItem.getPriceMedium());
+        item.setPriceLarge(newItem.getPriceLarge());
         item.setAvailable(newItem.isAvailable());
         return repository.save(item);
     }

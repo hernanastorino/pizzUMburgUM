@@ -7,28 +7,28 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/products/toppings")
+@RequestMapping("/api/products")
 @RequiredArgsConstructor
 public class ToppingController {
 
     private final ToppingService toppingService;
 
-    @GetMapping
-    public ResponseEntity<List<Topping>> getAll() {
-        return ResponseEntity.ok(toppingService.findAll());
+    @GetMapping("/toppings")
+    public List<Topping> getAllToppings() {
+        return toppingService.findAll();
     }
 
-    @PostMapping
-    public ResponseEntity<Topping> create(@RequestBody Topping topping) {
-        return ResponseEntity.ok(toppingService.create(topping));
+    @PostMapping("/toppings")
+    public Topping createTopping(@RequestBody Topping item) {
+        return toppingService.create(item);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Topping> update(@PathVariable Long id, @RequestBody Topping topping) {
-        return ResponseEntity.ok(toppingService.update(id, topping));
+    @PutMapping("/toppings/{id}")
+    public Topping update(@PathVariable Long id, @RequestBody Topping item) {
+        return toppingService.update(id, item);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/toppings/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         toppingService.delete(id);
         return ResponseEntity.noContent().build();

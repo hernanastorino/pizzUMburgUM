@@ -18,7 +18,9 @@ public class Dough {
     @Column(nullable = false)
     private String name;
 
-    private Double price;
+    private Double priceSmall;  // 15cm
+    private Double priceMedium; // 20cm
+    private Double priceLarge;  // 25cm
 
     private boolean isAvailable;
 }

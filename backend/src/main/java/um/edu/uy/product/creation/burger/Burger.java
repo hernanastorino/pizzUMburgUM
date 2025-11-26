@@ -60,22 +60,37 @@ public class Burger extends Creation {
     public double getUnitPrice() {
         double total = 0.0;
 
+        // meatQuantity actúa como el selector de tamaño (1=Small, 2=Medium, 3=Large)
+        // NOTA: Ya no multiplicamos por meatQuantity porque el precioMedium YA INCLUYE el costo de ser doble.
+
+        // Sumar Pan
         if (this.bread != null) {
-            total += this.bread.getPrice();
+            if (this.meatQuantity == 3) total += this.bread.getPriceLarge();
+            else if (this.meatQuantity == 2) total += this.bread.getPriceMedium();
+            else total += this.bread.getPriceSmall();
         }
 
+        // Sumar Carne
         if (this.meat != null) {
-            total += this.meat.getPrice() * this.meatQuantity;
+            if (this.meatQuantity == 3) total += this.meat.getPriceLarge();
+            else if (this.meatQuantity == 2) total += this.meat.getPriceMedium();
+            else total += this.meat.getPriceSmall();
         }
 
+        // Sumar Aderezo
         if (this.condiment != null) {
-            total += this.condiment.getPrice();
+            if (this.meatQuantity == 3) total += this.condiment.getPriceLarge();
+            else if (this.meatQuantity == 2) total += this.condiment.getPriceMedium();
+            else total += this.condiment.getPriceSmall();
         }
 
+        // Sumar Toppings
         if (this.toppings != null && !this.toppings.isEmpty()) {
-            total += this.toppings.stream()
-                    .mapToDouble(Topping::getPrice)
-                    .sum();
+            for (Topping t : this.toppings) {
+                if (this.meatQuantity == 3) total += t.getPriceLarge();
+                else if (this.meatQuantity == 2) total += t.getPriceMedium();
+                else total += t.getPriceSmall();
+            }
         }
 
         return total;

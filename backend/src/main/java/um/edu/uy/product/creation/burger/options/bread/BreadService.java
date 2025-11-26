@@ -20,7 +20,9 @@ public class BreadService {
     public Bread update(Long id, Bread newItem) {
         Bread item = repository.findById(id).orElseThrow(() -> new RuntimeException("Bread not found"));
         item.setName(newItem.getName());
-        item.setPrice(newItem.getPrice());
+        item.setPriceSmall(newItem.getPriceSmall());
+        item.setPriceMedium(newItem.getPriceMedium());
+        item.setPriceLarge(newItem.getPriceLarge());
         item.setAvailable(newItem.isAvailable());
         return repository.save(item);
     }

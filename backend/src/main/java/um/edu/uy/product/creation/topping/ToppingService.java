@@ -29,7 +29,10 @@ public class ToppingService {
     public Topping update(Long id, Topping newInfo) {
         Topping existing = getById(id);
         existing.setName(newInfo.getName());
-        existing.setPrice(newInfo.getPrice());
+        existing.setPriceSmall(newInfo.getPriceSmall());
+        existing.setPriceMedium(newInfo.getPriceMedium());
+        existing.setPriceLarge(newInfo.getPriceLarge());
+        existing.setAvailable(newInfo.isAvailable());
         return toppingRepository.save(existing);
     }
 

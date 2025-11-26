@@ -1,5 +1,6 @@
 package um.edu.uy.product.creation;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -31,6 +32,7 @@ public abstract class Creation { // Abstracta, porque una creación SIEMPRE es P
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id") // La relación "crea"
+    @JsonIgnore
     private User user;
 
     // Relación inversa a PedidoCreacion
@@ -40,6 +42,7 @@ public abstract class Creation { // Abstracta, porque una creación SIEMPRE es P
             cascade = CascadeType.ALL, // Generalmente no queremos borrar una creación si se borra un pedido
             orphanRemoval = false
     )
+    @JsonIgnore
     private Set<CreationInOrder> itemsPedido = new HashSet<>();
 
     private boolean isAvailable;

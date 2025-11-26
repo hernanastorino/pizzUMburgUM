@@ -24,6 +24,7 @@ function Login() {
 
             localStorage.setItem('token', token);
             localStorage.setItem('role', role);
+            localStorage.setItem('email', email);
 
             if (role === 'adminRole') {
                 navigate('/backoffice');
