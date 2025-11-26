@@ -12,6 +12,7 @@ import um.edu.uy.user.dto.UserProfileDto;
 
 @RestController
 @RequestMapping("/api/users")
+@CrossOrigin(origins = "http://localhost:3000") // <--- 1. IMPORTANTE: Permite acceso desde React
 public class UserController {
 
     private final UserService userService;
@@ -19,6 +20,16 @@ public class UserController {
     public UserController(UserService userService) {
         this.userService = userService;
     }
+
+    // --- 2. NUEVO ENDPOINT PARA BUSCAR POR EMAIL ---
+    // El ":.+" es un truco regex para que Spring no corte el ".com" del email
+    @GetMapping("/{email:.+}")
+    public ResponseEntity<UserDTO> getUserByEmail(@PathVariable String email) {
+        // Reutilizamos tu servicio existente que ya sabe buscar por email
+        UserDTO user = userService.findUserByEmail(email);
+        return ResponseEntity.ok(user);
+    }
+    // -----------------------------------------------
 
     @GetMapping("/me")
     @PreAuthorize("isAuthenticated()")
@@ -38,7 +49,6 @@ public class UserController {
         }
     }
 
-    // En UserController.java
     @PutMapping("/{id}/profile")
     public ResponseEntity<User> updateProfile(@PathVariable Long id, @RequestBody UserProfileDto dto) {
         return ResponseEntity.ok(userService.updateUserProfile(id, dto));

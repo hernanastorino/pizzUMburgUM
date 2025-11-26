@@ -35,6 +35,7 @@ public class UserService {
         User savedUser = userRepository.save(clientUser);
 
         return new UserDTO(
+                savedUser.getUserId(),
                 savedUser.getEmail(),
                 savedUser.getRole().name(),
                 savedUser.getName(),
@@ -60,6 +61,7 @@ public class UserService {
         User savedUser = userRepository.save(adminUser);
 
         return new UserDTO(
+                savedUser.getUserId(),
                 savedUser.getEmail(),
                 savedUser.getRole().name(),
                 savedUser.getName(),
@@ -72,6 +74,7 @@ public class UserService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         return new UserDTO(
+                user.getUserId(),
                 user.getEmail(),
                 user.getRole().name(),
                 user.getName(),

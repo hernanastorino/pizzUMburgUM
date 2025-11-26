@@ -1,7 +1,8 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
 
-function MenuItem({ item, selectedId, setSelectedId, nextRoute, pedidoActual }) {
+// Agregamos baseIdKey y baseNameKey con valores por defecto para Pizza
+function MenuItem({ item, selectedId, setSelectedId, nextRoute, pedidoActual, baseIdKey = "doughId", baseNameKey = "doughName" }) {
     const { id, title, description, image, buttons } = item
     const navigate = useNavigate()
 
@@ -10,22 +11,19 @@ function MenuItem({ item, selectedId, setSelectedId, nextRoute, pedidoActual }) 
     const handleClick = (btn) => {
         const buttonId = getButtonId(btn.size)
 
-        // Si hay nextRoute, es navegación (Masa, Salsa, Queso)
         if (nextRoute) {
-            // Construimos el objeto de estado acumulativo
             const nuevoPedido = {
                 ...pedidoActual,
-                // Si estamos en Masa (primer paso), guardamos datos base
+                // Si es el primer paso (no hay pedidoActual), usamos las claves dinámicas
                 ...(pedidoActual ? {} : {
-                    doughId: id,
-                    doughName: title,
-                    sizeKey: btn.size, // "Small", "Medium"
-                    dbSize: btn.dbValue // "15cm", "20cm"
+                    [baseIdKey]: id,       // Aquí guardamos meatId o doughId según corresponda
+                    [baseNameKey]: title,  // Aquí guardamos meatName o doughName
+                    sizeKey: btn.size,
+                    dbSize: btn.dbValue
                 })
             }
             navigate(nextRoute, { state: nuevoPedido })
         } else {
-            // Selección simple (si se usara en otro contexto)
             setSelectedId(buttonId)
         }
     }
@@ -41,14 +39,11 @@ function MenuItem({ item, selectedId, setSelectedId, nextRoute, pedidoActual }) 
                 <div className="order">
                     {buttons.map((btn) => {
                         const buttonId = getButtonId(btn.size)
-                        // Lógica visual básica
-                        const isConfirmed = false;
-
                         return (
                             <div className="btnWrapper" key={btn.size}>
                                 <a
                                     href="#"
-                                    className={`${btn.className} ${isConfirmed ? 'confirmado' : ''}`}
+                                    className={btn.className}
                                     onClick={(e) => {
                                         e.preventDefault()
                                         handleClick(btn)

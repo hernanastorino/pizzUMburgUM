@@ -1,112 +1,94 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import axios from 'axios'
 import MenuItem from '../components/MenuItem'
 import BackButton from '../components/BackButton'
-import carneVaca from '../assets/images/carneVaca.jpg'
-import carnePollo from '../assets/images/carnePollo.jpg'
-import carneSalmon from '../assets/images/carneSalmon.jpg'
-import carneLentejas from '../assets/images/carneLentejas.jpeg'
-import carneSoja from '../assets/images/carneSoja.jpg'
-import carneCerdo from '../assets/images/carneCerdo.jpeg'
 import '../index.css'
 
+// Imagen por defecto
+import carneImg from '../assets/images/carneVaca.jpg'
 
 const buttonStyles = {
-  chica: 'btnMenu2',
-  mediana: 'btnMenu1',
-  grande: 'btnMenu',
+    Small: 'btnMenu2',  // Simple
+    Medium: 'btnMenu1', // Doble
+    Large: 'btnMenu',   // Triple
 }
 
-const carneData = [
-  {
-    id: 1,
-    title: 'Carne de Vaca',
-    description: 'Tipo de carne',
-    image: carneVaca,
-    buttons: [
-      { size: 'chica', text: 'Simple<br><small>150g</small>', price: '$8', className: buttonStyles.chica },
-      { size: 'mediana', text: 'Doble<br><small>300g</small>', price: '$12', className: buttonStyles.mediana },
-      { size: 'grande', text: 'Triple<br><small>450g</small>', price: '$16', className: buttonStyles.grande },
-    ]
-  },
-  {
-    id: 2,
-    title: 'Pollo',
-    description: 'Tipo de carne',
-    image: carnePollo,
-    buttons: [
-      { size: 'chica', text: 'Simple<br><small>150g</small>', price: '$7', className: buttonStyles.chica },
-      { size: 'mediana', text: 'Doble<br><small>300g</small>', price: '$11', className: buttonStyles.mediana },
-      { size: 'grande', text: 'Triple<br><small>450g</small>', price: '$15', className: buttonStyles.grande },
-    ]
-  },
-  {
-    id: 3,
-    title: 'Cerdo',
-    description: 'Tipo de carne',
-    image: carneCerdo,
-    buttons: [
-      { size: 'chica', text: 'Simple<br><small>150g</small>', price: '$7', className: buttonStyles.chica },
-      { size: 'mediana', text: 'Doble<br><small>300g</small>', price: '$11', className: buttonStyles.mediana },
-      { size: 'grande', text: 'Triple<br><small>450g</small>', price: '$15', className: buttonStyles.grande },
-    ]
-  },
-  {
-    id: 4,
-    title: 'Salmón',
-    description: 'Tipo de carne',
-    image: carneSalmon,
-    buttons: [
-      { size: 'chica', text: 'Simple<br><small>150g</small>', price: '$10', className: buttonStyles.chica },
-      { size: 'mediana', text: 'Doble<br><small>300g</small>', price: '$15', className: buttonStyles.mediana },
-      { size: 'grande', text: 'Triple<br><small>450g</small>', price: '$20', className: buttonStyles.grande },
-    ]
-  },
-  {
-    id: 5,
-    title: 'Lentejas',
-    description: 'Vegana',
-    image: carneLentejas,
-    buttons: [
-      { size: 'chica', text: 'Simple<br><small>150g</small>', price: '$6', className: buttonStyles.chica },
-      { size: 'mediana', text: 'Doble<br><small>300g</small>', price: '$10', className: buttonStyles.mediana },
-      { size: 'grande', text: 'Triple<br><small>450g</small>', price: '$14', className: buttonStyles.grande },
-    ]
-  },
-  {
-    id: 6,
-    title: 'Soja',
-    description: 'Vegana',
-    image: carneSoja,
-    buttons: [
-      { size: 'chica', text: 'Simple<br><small>150g</small>', price: '$6', className: buttonStyles.chica },
-      { size: 'mediana', text: 'Doble<br><small>300g</small>', price: '$10', className: buttonStyles.mediana },
-      { size: 'grande', text: 'Triple<br><small>450g</small>', price: '$14', className: buttonStyles.grande },
-    ]
-  },
-]
-
 function BurgerCarne() {
-  const [selectedId, setSelectedId] = useState(null)
+    const [menuData, setMenuData] = useState([])
+    const [loading, setLoading] = useState(true)
+    const [selectedId, setSelectedId] = useState(null)
 
-  return (
-    <>
-      <BackButton to="/menu" />
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const res = await axios.get('http://localhost:8080/api/products/meats')
 
-      <div style={{ padding: '50px', maxWidth: '1200px', margin: '0 auto', paddingTop: '20px' }}>
-        <div className="restaurantMenu">
-          {carneData.map((item) => (
-            <MenuItem
-              key={item.id}
-              item={item}
-              selectedId={selectedId}
-              setSelectedId={setSelectedId}
-              nextRoute="/burger-pan"
-            />
-          ))}
-        </div>
-      </div>
-    </>
-  )
+                const formattedData = res.data.map(item => ({
+                    id: item.meatId, // ID de la BD
+                    title: item.name,
+                    description: 'Selecciona el tamaño',
+                    image: carneImg,
+                    buttons: [
+                        {
+                            size: 'Small', // Clave interna para precio
+                            text: 'Simple<br><small>1 Carne</small>',
+                            price: `$${item.priceSmall}`,
+                            className: buttonStyles.Small,
+                            dbValue: 1 // meatQuantity para la BD
+                        },
+                        {
+                            size: 'Medium',
+                            text: 'Doble<br><small>2 Carnes</small>',
+                            price: `$${item.priceMedium}`,
+                            className: buttonStyles.Medium,
+                            dbValue: 2 // meatQuantity para la BD
+                        },
+                        {
+                            size: 'Large',
+                            text: 'Triple<br><small>3 Carnes</small>',
+                            price: `$${item.priceLarge}`,
+                            className: buttonStyles.Large,
+                            dbValue: 3 // meatQuantity para la BD
+                        },
+                    ]
+                }))
+
+                setMenuData(formattedData)
+                setLoading(false)
+            } catch (err) {
+                console.error("Error cargando carnes", err)
+                setLoading(false)
+            }
+        }
+        fetchData()
+    }, [])
+
+    if (loading) return <div style={{color:'white', textAlign:'center', marginTop:'50px'}}>Cargando carnes...</div>
+
+    return (
+        <>
+            <BackButton to="/menu" />
+            <div style={{ padding: '50px', maxWidth: '1200px', margin: '0 auto' }}>
+                <h2 style={{color: 'white', textAlign: 'center', marginBottom:'30px'}}>Elige tu Carne</h2>
+                <div className="restaurantMenu">
+                    {menuData.map((item) => (
+                        <MenuItem
+                            key={item.id}
+                            item={item}
+                            selectedId={selectedId}
+                            setSelectedId={setSelectedId}
+                            nextRoute="/burger-pan"
+
+                            // --- AGREGAR ESTO ---
+                            baseIdKey="meatId"     // Para que se guarde como meatId
+                            baseNameKey="meatName" // Para que se guarde como meatName
+                            // --------------------
+                        />
+                    ))}
+                </div>
+            </div>
+        </>
+    )
 }
 
 export default BurgerCarne

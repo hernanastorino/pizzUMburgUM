@@ -13,6 +13,8 @@ import um.edu.uy.order.OrderStatus;
 import um.edu.uy.product.beverage.Beverage;
 import um.edu.uy.product.beverage.BeverageRepository;
 import um.edu.uy.product.creation.CreationRepository;
+import um.edu.uy.product.creation.burger.options.condiment.Condiment;
+import um.edu.uy.product.creation.burger.options.condiment.CondimentRepository;
 import um.edu.uy.product.creation.topping.Topping;
 import um.edu.uy.product.creation.topping.ToppingRepository;
 import um.edu.uy.product.creation.burger.Burger;
@@ -53,6 +55,7 @@ public class DataInitializer {
             PasswordEncoder passwordEncoder,
             BreadRepository breadRepository,
             MeatRepository meatRepository,
+            CondimentRepository condimentRepository,
             CheeseRepository cheeseRepository,
             SideRepository sideRepository,
             BeverageRepository beverageRepository,
@@ -127,6 +130,18 @@ public class DataInitializer {
                 ));
             }
 
+            // --- CONDIMENTS (Aderezos) ---
+            // IMPORTANTE: Agrega condimentRepository a los argumentos del método initDatabase arriba
+            if (condimentRepository.count() == 0) {
+                condimentRepository.saveAll(List.of(
+                        Condiment.builder().name("Ketchup").priceSmall(0.0).priceMedium(0.0).priceLarge(0.0).isAvailable(true).build(),
+                        Condiment.builder().name("Mayonesa").priceSmall(0.0).priceMedium(0.0).priceLarge(0.0).isAvailable(true).build(),
+                        Condiment.builder().name("Mostaza").priceSmall(0.0).priceMedium(0.0).priceLarge(0.0).isAvailable(true).build(),
+                        Condiment.builder().name("Barbacoa").priceSmall(10.0).priceMedium(10.0).priceLarge(10.0).isAvailable(true).build(),
+                        Condiment.builder().name("Cheddar Fundido").priceSmall(20.0).priceMedium(30.0).priceLarge(40.0).isAvailable(true).build()
+                ));
+            }
+
             // --- QUESOS (Pizza) ---
             if (cheeseRepository.count() == 0) {
                 cheeseRepository.saveAll(List.of(
@@ -193,6 +208,9 @@ public class DataInitializer {
             // Meat
             Meat mRes = meatRepository.findByName("Carne de Res").orElseGet(() ->
                     meatRepository.save(Meat.builder().name("Carne de Res").priceSmall(150.0).priceMedium(200.0).priceLarge(250.0).isAvailable(true).build()));
+
+            Condiment cKetchup = condimentRepository.findByName("Ketchup").orElseGet(() ->
+                    condimentRepository.save(Condiment.builder().name("Ketchup").priceSmall(0.0).priceMedium(0.0).priceLarge(0.0).isAvailable(true).build()));
 
             // Cheese
             Cheese cCheddar = cheeseRepository.findByName("Cheddar").orElseGet(() ->

@@ -86,7 +86,11 @@ function MasaPizza() {
                             selectedId={selectedId}
                             setSelectedId={setSelectedId}
                             nextRoute="/salsa-pizza"
-                            // No pasamos pedidoActual porque es el primer paso, MenuItem creará el objeto
+
+                            // --- AGREGAR ESTO (Opcional si dejaste los defaults, pero recomendado) ---
+                            baseIdKey="doughId"
+                            baseNameKey="doughName"
+                            // --------------------
                         />
                     ))}
                 </div>

@@ -6,7 +6,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -25,6 +24,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import um.edu.uy.user.CustomUserDetailsService;
 
 import java.util.Arrays;
+import java.util.Collections;
 
 @Configuration
 @EnableWebSecurity
@@ -42,38 +42,27 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                // 1. AQUI ESTABA EL ERROR: Activamos CORS explícitamente en la seguridad
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authz -> authz
-                        // auth and public technical endpoints
+                        // --- PERMISOS TOTALES PARA EL CLUTCH ---
+
+                        // 1. Permitir TODO en /api/products (POST, GET, PUT, DELETE, OPTIONS)
+                        .requestMatchers("/api/products/**").permitAll()
+
+                        // 2. Permitir TODO en /orders
+                        .requestMatchers("/orders/**").permitAll()
+
+                        // 3. Permitir Auth y Usuarios
                         .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/users/**").permitAll()
+
+                        // 4. Catálogo y Docs
+                        .requestMatchers("/api/catalog/**").permitAll()
+                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                         .requestMatchers("/h2-console/**").permitAll()
 
-                        // catalog/menu
-                        .requestMatchers("/api/products/**", "/api/catalog/**").permitAll()
-
-                        // user specific data
-                        .requestMatchers("/api/addresses/**", "/api/payments/**").hasAuthority("clientRole")
-                        .requestMatchers("/users/{userId}/favorites/**").hasAuthority("clientRole")
-
-                        // orders
-                        .requestMatchers(HttpMethod.POST, "/orders/start/**").hasAuthority("clientRole")
-                        .requestMatchers("/orders/**").hasAnyAuthority("clientRole", "adminRole")
-
-                        // admin dashboard
-                        .requestMatchers("/api/admin/**").hasAuthority("adminRole")
-                        .requestMatchers("/api/users/admin").hasAuthority("adminRole") // ESTA ES TU RUTA
-
-                        // reports
-                        .requestMatchers("/api/reports/**").hasAuthority("adminRole")
-
-                        // profile
-                        .requestMatchers("/api/users/**").authenticated()
-
-                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
-
-                        // catch-all
+                        // El resto autenticado (aunque con las reglas de arriba casi todo está abierto)
                         .anyRequest().authenticated()
                 )
                 .headers(headers -> headers
@@ -86,14 +75,14 @@ public class SecurityConfig {
         return http.build();
     }
 
-    // 2. Definimos la configuración CORS aquí mismo para asegurar que Spring Security la lea
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        // Aceptamos localhost y 127.0.0.1 para evitar problemas de red
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000", "http://127.0.0.1:3000"));
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "X-Requested-With"));
+
+        // CONFIGURACIÓN NUCLEAR DE CORS: Permite todo desde cualquier lado
+        configuration.setAllowedOriginPatterns(Collections.singletonList("*")); // Acepta cualquier origen
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
+        configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

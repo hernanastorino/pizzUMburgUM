@@ -1,93 +1,77 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
+import axios from 'axios'
 import MenuItem from '../components/MenuItem'
 import BackButton from '../components/BackButton'
-import quesoCheddar from '../assets/images/cheedar.jpg'
-import quesoMozzarella from '../assets/images/mozarella.jpg'
-import quesoAzul from '../assets/images/quesoAzul.jpg'
-import quesoSuizo from '../assets/images/quesoSuizo.jpg'
-
 import '../index.css'
-
-const buttonStyles = {
-  chica: 'btnMenu2',
-  mediana: 'btnMenu1',
-  grande: 'btnMenu',
-}
-
-const quesoData = [
-  {
-    id: 1,
-    title: 'Cheddar',
-    description: 'Queso clásico',
-    image: quesoCheddar,
-    buttons: [
-      { size: 'normal', text: 'Seleccionar', price: '$0', className: buttonStyles.chica },
-    
-    ]
-  },
-  {
-    id: 2,
-    title: 'Mozzarella',
-    description: 'Queso suave',
-    image: quesoMozzarella,
-    buttons: [
-      { size: 'normal', text: 'Seleccionar', price: '$0', className: buttonStyles.chica },
-    
-    ]
-  },
-  {
-    id: 3,
-    title: 'Queso Azul',
-    description: 'Queso gourmet',
-    image: quesoAzul,
-    buttons: [
-      { size: 'normal', text: 'Seleccionar', price: '$3', className: buttonStyles.chica },
-    
-    ]
-  },
-  {
-    id: 4,
-    title: 'Queso Suizo',
-    description: 'Queso especial',
-    image: quesoSuizo,
-    buttons: [
-      { size: 'normal', text: 'Seleccionar', price: '$2', className: buttonStyles.chica },
-    
-    ]
-  },
-]
+import quesoImg from '../assets/images/cheedar.jpg'
 
 function BurgerQueso() {
-  const [selectedId, setSelectedId] = useState(null)
-  const location = useLocation()
-  const pedidoAnterior = location.state
+    const [condimentData, setCondimentData] = useState([])
+    const [loading, setLoading] = useState(true)
+    const [selectedId, setSelectedId] = useState(null)
 
-  console.log('Pedido anterior:', pedidoAnterior)
+    const location = useLocation()
+    const pedidoAnterior = location.state
 
-  return (
-    <>
-      <BackButton to="/burger-Pan" />
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                // En Burger, el "Queso" o "Aderezo base" lo guardamos como Condiment en el backend
+                const res = await axios.get('http://localhost:8080/api/products/condiments')
 
-      <div style={{ padding: '50px', maxWidth: '1200px', margin: '0 auto', paddingTop: '20px' }}>
-        <div className="restaurantMenu">
-          {quesoData.map((item) => (
-            <MenuItem
-              key={item.id}
-              item={item}
-              selectedId={selectedId}
-              setSelectedId={setSelectedId}
-              nextRoute="/burger-toppings"
-              pedidoActual={{
-                ...pedidoAnterior,
-                queso: item.title
-              }}
-            />
-          ))}
-        </div>
-      </div>
-    </>
-  )
+                const sizeKey = pedidoAnterior?.sizeKey || 'Medium'
+                const priceField = `price${sizeKey}`
+
+                const formatted = res.data.map(item => ({
+                    id: item.condimentId,
+                    title: item.name,
+                    description: 'Aderezo / Queso base',
+                    image: quesoImg,
+                    buttons: [
+                        {
+                            size: 'normal',
+                            text: 'Seleccionar',
+                            price: `$${item[priceField]}`,
+                            className: 'btnMenu2',
+                            dbValue: item.condimentId
+                        },
+                    ]
+                }))
+                setCondimentData(formatted)
+                setLoading(false)
+            } catch (err) {
+                console.error(err)
+                setLoading(false)
+            }
+        }
+        fetchData()
+    }, [pedidoAnterior])
+
+    return (
+        <>
+            <BackButton to="/burger-pan" />
+            <div style={{ padding: '50px', maxWidth: '1200px', margin: '0 auto' }}>
+                <h2 style={{color: 'white', textAlign: 'center', marginBottom:'30px'}}>Elige Aderezo o Queso</h2>
+                <div className="restaurantMenu">
+                    {condimentData.map((item) => (
+                        <MenuItem
+                            key={item.id}
+                            item={item}
+                            selectedId={selectedId}
+                            setSelectedId={setSelectedId}
+                            nextRoute="/burger-toppings"
+                            pedidoActual={{
+                                ...pedidoAnterior,
+                                condimentId: item.id,
+                                condimentName: item.title
+                            }}
+                        />
+                    ))}
+                </div>
+            </div>
+        </>
+    )
 }
 
 export default BurgerQueso

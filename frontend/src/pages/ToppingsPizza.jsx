@@ -16,21 +16,45 @@ function ToppingsPizza() {
     useEffect(() => {
         const fetchToppings = async () => {
             try {
-                const res = await axios.get('http://localhost:8080/api/products/toppings');
+                const token = localStorage.getItem('token');
+
+                const res = await axios.get('http://localhost:8080/api/products/toppings', {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+
+                // --- CORRECCIÓN CLUTCH ---
+                // Si res.data es un String (texto), lo convertimos a JSON real.
+                let data = res.data;
+                if (typeof data === 'string') {
+                    try {
+                        data = JSON.parse(data);
+                    } catch (e) {
+                        console.error("No se pudo parsear el JSON:", e);
+                    }
+                }
+                // -------------------------
+
+                console.log("Datos procesados:", data);
+
+                if (!Array.isArray(data)) {
+                    console.error("ERROR: No es una lista válida", data);
+                    return;
+                }
+
                 const sizeKey = pedidoAnterior?.sizeKey || 'Medium';
                 const priceField = `price${sizeKey}`;
 
-                const formatted = res.data.map(t => ({
-                    id: t.toppingId, // ID real
+                const formatted = data.map(t => ({ // Usamos 'data' en vez de 'res.data'
+                    id: t.toppingId,
                     title: t.name,
                     description: 'Agrega sabor extra',
                     image: pepperoniImg,
-                    priceVal: t[priceField], // Valor numérico para cálculos
-                    price: `$${t[priceField]}` // Texto para mostrar
+                    priceVal: t[priceField],
+                    price: `$${t[priceField]}`
                 }));
                 setToppingsData(formatted);
             } catch (err) {
-                console.error("Error cargando toppings", err);
+                console.error("Error cargando toppings:", err);
             }
         };
         fetchToppings();
@@ -66,7 +90,9 @@ function ToppingsPizza() {
 
 // 2. Buscar usuario por email para obtener su ID
 // Asumo que tu endpoint es /api/users/{email}. Si es por query param (?email=...), cámbialo.
-            const userRes = await axios.get(`http://localhost:8080/api/users/${userEmail}`, {
+            const emailCodificado = encodeURIComponent(userEmail);
+
+            const userRes = await axios.get(`http://localhost:8080/api/users/${emailCodificado}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
 
@@ -107,8 +133,8 @@ function ToppingsPizza() {
                 { headers: { Authorization: `Bearer ${token}` } }
             );
 
-            alert("¡Pizza agregada al carrito!");
-            navigate('/carrito');
+            alert("¡Pizza agregada al pedido! 🍕");
+            navigate('/menu'); // Vuelve al menú para seguir pidiendo
 
         } catch (error) {
             console.error("Error al procesar pedido:", error);

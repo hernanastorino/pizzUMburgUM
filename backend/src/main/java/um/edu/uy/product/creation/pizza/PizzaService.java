@@ -57,6 +57,7 @@ public class PizzaService {
                 .cheese(cheese)
                 .dough(dough)
                 .sauce(sauce)
+                .isAvailable(true)
                 .toppings(new HashSet<>())
                 .build();
 
