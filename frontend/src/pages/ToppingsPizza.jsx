@@ -12,39 +12,25 @@ function ToppingsPizza() {
     const location = useLocation();
     const navigate = useNavigate();
     const pedidoAnterior = location.state;
+    const isFavoriteMode = pedidoAnterior?.isFavoriteMode; // Leemos la bandera
 
     useEffect(() => {
         const fetchToppings = async () => {
             try {
                 const token = localStorage.getItem('token');
-
                 const res = await axios.get('http://localhost:8080/api/products/toppings', {
                     headers: { Authorization: `Bearer ${token}` }
                 });
 
-                // --- CORRECCIÓN CLUTCH ---
-                // Si res.data es un String (texto), lo convertimos a JSON real.
                 let data = res.data;
                 if (typeof data === 'string') {
-                    try {
-                        data = JSON.parse(data);
-                    } catch (e) {
-                        console.error("No se pudo parsear el JSON:", e);
-                    }
-                }
-                // -------------------------
-
-                console.log("Datos procesados:", data);
-
-                if (!Array.isArray(data)) {
-                    console.error("ERROR: No es una lista válida", data);
-                    return;
+                    try { data = JSON.parse(data); } catch (e) { console.error(e); }
                 }
 
                 const sizeKey = pedidoAnterior?.sizeKey || 'Medium';
                 const priceField = `price${sizeKey}`;
 
-                const formatted = data.map(t => ({ // Usamos 'data' en vez de 'res.data'
+                const formatted = data.map(t => ({
                     id: t.toppingId,
                     title: t.name,
                     description: 'Agrega sabor extra',
@@ -69,41 +55,22 @@ function ToppingsPizza() {
         });
     };
 
-    const handleAgregarAlCarrito = async () => {
+    const handleFinalizar = async () => {
         try {
-            // 1. Obtener User ID (Asumimos que tenemos endpoint 'me' o lo guardamos en login)
-            // Para este clutch, vamos a obtener el ID llamando a /me con el token
             const token = localStorage.getItem('token');
-            if (!token) {
-                alert("Debes iniciar sesión");
-                navigate('/login');
-                return;
-            }
+            const email = localStorage.getItem('email');
+            if (!token || !email) { alert("Sesión expirada"); navigate('/login'); return; }
 
-            // PEGAR ESTO
-// 1. Obtener email (Asegúrate de haberlo guardado en el Login con localStorage.setItem('email', email))
-            const userEmail = localStorage.getItem('email');
-            if (!userEmail) {
-                alert("No se encontró el email del usuario. Por favor inicia sesión de nuevo.");
-                return;
-            }
-
-// 2. Buscar usuario por email para obtener su ID
-// Asumo que tu endpoint es /api/users/{email}. Si es por query param (?email=...), cámbialo.
-            const emailCodificado = encodeURIComponent(userEmail);
-
-            const userRes = await axios.get(`http://localhost:8080/api/users/${emailCodificado}`, {
+            const userRes = await axios.get(`http://localhost:8080/api/users/${encodeURIComponent(email)}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
-
-// Ajusta 'userId' o 'id' según cómo se llame el campo en tu entidad User de Java
             const userId = userRes.data.userId || userRes.data.id;
 
-            // 2. Crear la Pizza en BD
+            // Crear la Pizza en BD
             const pizzaBody = {
                 userId: userId,
-                name: `Pizza ${pedidoAnterior.masaName} ${pedidoAnterior.dbSize}`, // Nombre autogenerado
-                size: pedidoAnterior.dbSize, // "15cm", "20cm", etc
+                name: `Pizza ${pedidoAnterior.masaName} ${pedidoAnterior.dbSize}`,
+                size: pedidoAnterior.dbSize,
                 doughId: pedidoAnterior.doughId,
                 cheeseId: pedidoAnterior.cheeseId,
                 sauceId: pedidoAnterior.sauceId,
@@ -115,30 +82,37 @@ function ToppingsPizza() {
                 pizzaBody,
                 { headers: { Authorization: `Bearer ${token}` } }
             );
-
             const createdPizzaId = pizzaRes.data.id;
 
-            // 3. Obtener/Crear Orden Pendiente
-            const orderRes = await axios.post(
-                `http://localhost:8080/orders/start/user/${userId}`,
-                {},
-                { headers: { Authorization: `Bearer ${token}` } }
-            );
-            const orderId = orderRes.data.id;
-
-            // 4. Agregar Pizza a la Orden
-            await axios.post(
-                `http://localhost:8080/orders/${orderId}/items/creations`,
-                { productId: createdPizzaId, quantity: 1 },
-                { headers: { Authorization: `Bearer ${token}` } }
-            );
-
-            alert("¡Pizza agregada al pedido! 🍕");
-            navigate('/menu'); // Vuelve al menú para seguir pidiendo
+            // --- LÓGICA DIVERGENTE ---
+            if (isFavoriteMode) {
+                // 1. MODO FAVORITO: Guardar en tabla de favoritos
+                await axios.post(
+                    `http://localhost:8080/users/${userId}/favorites/${createdPizzaId}`,
+                    {},
+                    { headers: { Authorization: `Bearer ${token}` } }
+                );
+                alert("¡Guardada en tus Favoritos! ⭐");
+                navigate('/favoritos'); // Volver a la lista de favoritos
+            } else {
+                // 2. MODO CARRITO: Agregar a la orden
+                const orderRes = await axios.post(
+                    `http://localhost:8080/orders/start/user/${userId}`,
+                    {},
+                    { headers: { Authorization: `Bearer ${token}` } }
+                );
+                await axios.post(
+                    `http://localhost:8080/orders/${orderRes.data.id}/items/creations`,
+                    { productId: createdPizzaId, quantity: 1 },
+                    { headers: { Authorization: `Bearer ${token}` } }
+                );
+                alert("¡Pizza agregada al pedido! 🍕");
+                navigate('/menu');
+            }
 
         } catch (error) {
-            console.error("Error al procesar pedido:", error);
-            alert("Hubo un error al agregar al carrito. Revisa la consola.");
+            console.error("Error procesando:", error);
+            alert("Hubo un error.");
         }
     };
 
@@ -148,15 +122,17 @@ function ToppingsPizza() {
         <>
             <BackButton to="/queso-pizza" />
 
-            {/* Botón final ahora llama a la API */}
             <NextButton
-                onClick={handleAgregarAlCarrito}
-                show={true} // Siempre mostrar para permitir pizzas sin toppings extra
-                text="Agregar al Carrito 🛒"
+                onClick={handleFinalizar}
+                show={true}
+                // Texto dinámico del botón
+                text={isFavoriteMode ? "Guardar Favorito ⭐" : "Agregar al Carrito 🛒"}
             />
 
             <div style={{ padding: '50px', maxWidth: '1200px', margin: '0 auto' }}>
-                <h2 style={{color: 'white', textAlign: 'center'}}>Elige tus Toppings</h2>
+                <h2 style={{color: 'white', textAlign: 'center'}}>
+                    {isFavoriteMode ? "Dale el toque final a tu Favorita" : "Elige tus Toppings"}
+                </h2>
                 <div className="restaurantMenu">
                     {toppingsData.map((item) => {
                         const isSelected = isToppingSelected(item.id);

@@ -12,6 +12,7 @@ function BurgerToppings() {
     const location = useLocation()
     const navigate = useNavigate()
     const pedidoAnterior = location.state
+    const isFavoriteMode = pedidoAnterior?.isFavoriteMode; // Leemos la bandera
 
     useEffect(() => {
         const fetchToppings = async () => {
@@ -21,7 +22,6 @@ function BurgerToppings() {
                     headers: { Authorization: `Bearer ${token}` }
                 })
 
-                // Parseo seguro por si viene como String (misma lógica que en Pizza)
                 let data = res.data
                 if (typeof data === 'string') {
                     try { data = JSON.parse(data) } catch (e) { console.error(e) }
@@ -55,30 +55,23 @@ function BurgerToppings() {
         })
     }
 
-    const handleAgregarAlCarrito = async () => {
+    const handleFinalizar = async () => {
         try {
             const token = localStorage.getItem('token')
             const email = localStorage.getItem('email')
+            if (!token || !email) { alert("Sesión expirada"); navigate('/login'); return; }
 
-            if (!token || !email) {
-                alert("Sesión expirada")
-                navigate('/login')
-                return
-            }
-
-            // 1. Obtener User ID
             const userRes = await axios.get(`http://localhost:8080/api/users/${encodeURIComponent(email)}`, {
                 headers: { Authorization: `Bearer ${token}` }
             })
             const userId = userRes.data.userId || userRes.data.id
 
-            // 2. Crear la Burger en BD
-            // OJO: dbSize aquí es un número (1, 2 o 3) que viene de BurgerCarne
+            // Crear Burger
             const burgerBody = {
                 userId: userId,
                 name: `Burger ${pedidoAnterior.meatName} x${pedidoAnterior.dbSize}`,
-                meatQuantity: pedidoAnterior.dbSize, // 1, 2, o 3
-                meatId: pedidoAnterior.meatId, // Esto viene del paso 1
+                meatQuantity: pedidoAnterior.dbSize,
+                meatId: pedidoAnterior.meatId,
                 breadId: pedidoAnterior.breadId,
                 condimentId: pedidoAnterior.condimentId,
                 toppingIds: selectedToppings.map(t => t.id)
@@ -91,27 +84,33 @@ function BurgerToppings() {
             )
             const createdBurgerId = burgerRes.data.id
 
-            // 3. Obtener Orden
-            const orderRes = await axios.post(
-                `http://localhost:8080/orders/start/user/${userId}`,
-                {},
-                { headers: { Authorization: `Bearer ${token}` } }
-            )
-            const orderId = orderRes.data.id
-
-            // 4. Agregar a la Orden
-            await axios.post(
-                `http://localhost:8080/orders/${orderId}/items/creations`,
-                { productId: createdBurgerId, quantity: 1 },
-                { headers: { Authorization: `Bearer ${token}` } }
-            )
-
-            alert("¡Hamburguesa agregada al pedido! 🍔")
-            navigate('/menu')
+            // --- LÓGICA DIVERGENTE ---
+            if (isFavoriteMode) {
+                await axios.post(
+                    `http://localhost:8080/users/${userId}/favorites/${createdBurgerId}`,
+                    {},
+                    { headers: { Authorization: `Bearer ${token}` } }
+                );
+                alert("¡Guardada en tus Favoritos! ⭐");
+                navigate('/favoritos');
+            } else {
+                const orderRes = await axios.post(
+                    `http://localhost:8080/orders/start/user/${userId}`,
+                    {},
+                    { headers: { Authorization: `Bearer ${token}` } }
+                )
+                await axios.post(
+                    `http://localhost:8080/orders/${orderRes.data.id}/items/creations`,
+                    { productId: createdBurgerId, quantity: 1 },
+                    { headers: { Authorization: `Bearer ${token}` } }
+                )
+                alert("¡Hamburguesa agregada al pedido! 🍔");
+                navigate('/menu');
+            }
 
         } catch (error) {
             console.error("Error procesando burger:", error)
-            alert("Error al crear la hamburguesa.")
+            alert("Error al guardar.")
         }
     }
 
@@ -122,13 +121,16 @@ function BurgerToppings() {
             <BackButton to="/burger-queso" />
 
             <NextButton
-                onClick={handleAgregarAlCarrito}
+                onClick={handleFinalizar}
                 show={true}
-                text="Agregar al Carrito 🛒"
+                // Texto dinámico del botón
+                text={isFavoriteMode ? "Guardar Favorito ⭐" : "Agregar al Carrito 🛒"}
             />
 
             <div style={{ padding: '50px', maxWidth: '1200px', margin: '0 auto' }}>
-                <h2 style={{color: 'white', textAlign: 'center'}}>Extras para tu Burger</h2>
+                <h2 style={{color: 'white', textAlign: 'center'}}>
+                    {isFavoriteMode ? "Dale el toque final a tu Favorita" : "Extras para tu Burger"}
+                </h2>
                 <div className="restaurantMenu">
                     {toppingsData.map((item) => {
                         const isSelected = isToppingSelected(item.id)

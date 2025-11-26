@@ -1,95 +1,170 @@
-// src/pages/Favoritos.jsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import FavoritoItem from '../components/FavoritoItem';
-import styles from '../styles/Backoffice.module.css';
+import styles from '../styles/Backoffice.module.css'; // Reusamos estilos de contenedor
 
 const Favoritos = () => {
-  // Datos de ejemplo - estos vendrían del backend o localStorage
-  const [favoritos, setFavoritos] = useState([
-    {
-      id: 1,
-      nombre: 'Creacion 1',
-      tipo: 'pizza', // 'pizza' o 'hamburguesa'
-      icon: '🍕',
-      detalles: {
-        tamaño: '25cm',
-        masa: 'Napolitana',
-        salsa: 'Tomate',
-        queso: 'Muzzarella',
-        toppings: ['Jamón', 'Champiñones', 'Aceitunas'],
-        precioTotal: 380
-      }
-    },
-    {
-      id: 2,
-      nombre: 'Creacion 2',
-      tipo: 'hamburguesa',
-      icon: '🍔',
-      detalles: {
-        tamaño: '2 carnes',
-        carne: 'Carne de Vaca',
-        pan: 'Pan Integral',
-        toppings: ['Lechuga', 'Tomate', 'Queso Cheddar'],
-        aderezos: ['Ketchup', 'Mayonesa'],
-        precioTotal: 450
-      }
-    },
-    {
-      id: 3,
-      nombre: 'Creacion 4',
-      tipo: 'pizza',
-      icon: '🍕',
-      detalles: {
-        tamaño: '20cm',
-        masa: 'Integral',
-        salsa: 'Pomodoro',
-        queso: 'Muzzarella',
-        toppings: ['Champiñones', 'Pimientos', 'Aceitunas'],
-        precioTotal: 295
-      }
-    }
-  ]);
+    const [favoritos, setFavoritos] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const navigate = useNavigate();
 
-  const handleUpdateFavorito = (updatedFavorito) => {
-    setFavoritos(prev =>
-      prev.map(fav => fav.id === updatedFavorito.id ? updatedFavorito : fav)
-    );
-  };
+    useEffect(() => {
+        fetchFavoritos();
+    }, []);
 
-  const handleDeleteFavorito = (favoritoId) => {
-    setFavoritos(prev => prev.filter(fav => fav.id !== favoritoId));
-  };
+    const fetchFavoritos = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            const email = localStorage.getItem('email');
 
-  return (
-    <div className={styles.pageContainer}>
-      <main className={styles.content}>
-        <div className={styles.categoriesContainer}>
-          {favoritos.length === 0 ? (
-            <div style={{
-              textAlign: 'center',
-              color: 'white',
-              fontSize: '20px',
-              marginTop: '50px'
-            }}>
-              <p>No tienes favoritos guardados aún</p>
-              <p style={{ fontSize: '16px', marginTop: '10px', opacity: 0.7 }}>
-                Crea tu primera pizza o hamburguesa personalizada y guárdala como favorito
-              </p>
-            </div>
-          ) : (
-            favoritos.map(favorito => (
-              <FavoritoItem
-                key={favorito.id}
-                favorito={favorito}
-                onUpdate={handleUpdateFavorito}
-                onDelete={handleDeleteFavorito}
-              />
-            ))
-          )}
+            if (!token || !email) { setLoading(false); return; }
+
+            // 1. Obtener ID Usuario
+            const userRes = await axios.get(`http://localhost:8080/api/users/${encodeURIComponent(email)}`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            const userId = userRes.data.userId || userRes.data.id;
+
+            // 2. Obtener Favoritos
+            const favRes = await axios.get(`http://localhost:8080/users/${userId}/favorites`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+
+            // 3. Mapear datos
+            const mapped = favRes.data.map(fav => ({
+                id: fav.id, // ID del favorito
+                creationId: fav.creationId, // ID del producto real
+                nombre: fav.nombre,
+                tipo: fav.tipo, // 'pizza' o 'hamburguesa'
+                icon: fav.tipo === 'pizza' ? '🍕' : '🍔',
+                detalles: {
+                    ...fav.detalles,
+                    precioTotal: fav.precioTotal
+                }
+            }));
+
+            setFavoritos(mapped);
+            setLoading(false);
+
+        } catch (error) {
+            console.error("Error cargando favoritos:", error);
+            setLoading(false);
+        }
+    };
+
+    // --- ACCIONES ---
+
+    const handleCreateNew = () => {
+        // AQUÍ INICIA EL MODO FAVORITO
+        navigate('/menu', { state: { isFavoriteMode: true } });
+    };
+
+    const handleAddToCart = async (favorito) => {
+        try {
+            const token = localStorage.getItem('token');
+            const email = localStorage.getItem('email');
+
+            // 1. ID Usuario
+            const userRes = await axios.get(`http://localhost:8080/api/users/${encodeURIComponent(email)}`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            const userId = userRes.data.userId || userRes.data.id;
+
+            // 2. Obtener Orden
+            const orderRes = await axios.post(
+                `http://localhost:8080/orders/start/user/${userId}`,
+                {},
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+            const orderId = orderRes.data.id;
+
+            // 3. Agregar Item
+            await axios.post(
+                `http://localhost:8080/orders/${orderId}/items/creations`,
+                { productId: favorito.creationId, quantity: 1 },
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+
+            alert(`¡${favorito.nombre} agregada al carrito!`);
+
+        } catch (error) {
+            console.error("Error agregando al carrito:", error);
+            alert("No se pudo agregar al carrito.");
+        }
+    };
+
+    const handleDeleteFavorito = async (favoritoId) => {
+        try {
+            const token = localStorage.getItem('token');
+            const email = localStorage.getItem('email');
+            const userRes = await axios.get(`http://localhost:8080/api/users/${encodeURIComponent(email)}`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            const userId = userRes.data.userId || userRes.data.id;
+
+            // Buscamos el objeto local para sacar el creationId necesario para el endpoint actual
+            const favToDelete = favoritos.find(f => f.id === favoritoId);
+            if(!favToDelete) return;
+
+            await axios.delete(`http://localhost:8080/users/${userId}/favorites/${favToDelete.creationId}`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+
+            setFavoritos(prev => prev.filter(fav => fav.id !== favoritoId));
+
+        } catch (error) {
+            console.error("Error borrando favorito:", error);
+        }
+    };
+
+    const handleUpdateFavorito = async (updatedFav) => {
+        // Simulación de actualización en frontend
+        setFavoritos(prev => prev.map(f => f.id === updatedFav.id ? updatedFav : f));
+        alert("Edición guardada (Nota: Para cambios profundos de ingredientes, crea un nuevo favorito)");
+    };
+
+    if (loading) return <div style={{color:'white', padding:'50px', textAlign:'center'}}>Cargando favoritos...</div>;
+
+    return (
+        <div className={styles.pageContainer}>
+            <main className={styles.content}>
+
+                {/* BOTÓN CREAR NUEVO */}
+                <div style={{display:'flex', justifyContent:'center', marginBottom:'20px'}}>
+                    <button
+                        onClick={handleCreateNew}
+                        style={{
+                            background: '#4CAF50', color: 'white', padding: '10px 20px',
+                            border:'none', borderRadius:'8px', fontSize:'16px', cursor:'pointer',
+                            boxShadow: '0 4px 10px rgba(0,0,0,0.3)', fontWeight: 'bold'
+                        }}
+                    >
+                        + Crear Nueva Favorita
+                    </button>
+                </div>
+
+                <div className={styles.categoriesContainer}>
+                    {favoritos.length === 0 ? (
+                        <div style={{ textAlign: 'center', color: 'white', marginTop: '50px' }}>
+                            <p style={{fontSize:'20px'}}>No tienes favoritos guardados aún</p>
+                            <p style={{opacity:0.7}}>Haz clic arriba para crear tu primera obra maestra.</p>
+                        </div>
+                    ) : (
+                        favoritos.map(favorito => (
+                            <FavoritoItem
+                                key={favorito.id}
+                                favorito={favorito}
+                                onUpdate={handleUpdateFavorito}
+                                onDelete={handleDeleteFavorito}
+                                onAddToCart={() => handleAddToCart(favorito)}
+                            />
+                        ))
+                    )}
+                </div>
+            </main>
         </div>
-      </main>
-    </div>
-  );
+    );
 };
 
 export default Favoritos;

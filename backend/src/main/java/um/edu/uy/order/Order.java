@@ -29,7 +29,7 @@ public class Order {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id", referencedColumnName = "userId")
-    private User client; // La relación "realiza"
+    private User client;
 
     @Enumerated(EnumType.STRING)
     private OrderStatus state;
@@ -38,15 +38,17 @@ public class Order {
     private Double total;
 
     @Column(nullable = false)
-    private LocalDateTime date; // Es bueno guardar la fecha del pedido
+    private LocalDateTime date;
+
+    // --- CORRECCIÓN: Permitimos que sean NULL al inicio ---
+    @ManyToOne
+    @JoinColumn(name = "address_id") // Quitamos nullable = false
+    private Address address;
 
     @ManyToOne
-    @JoinColumn(name = "address_id", nullable = false)
-    private Address address; // Relación "se_envia"
-
-    @ManyToOne
-    @JoinColumn(name = "payment_method_id", nullable = false)
-    private PaymentMethod paymentMethod; // Relación "es_pago"
+    @JoinColumn(name = "payment_method_id") // Quitamos nullable = false
+    private PaymentMethod paymentMethod;
+    // -----------------------------------------------------
 
     @OneToMany(
             mappedBy = "order",
@@ -60,5 +62,4 @@ public class Order {
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<SideInOrder> itemsSide = new HashSet<>();
-
 }

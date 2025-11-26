@@ -116,4 +116,18 @@ public class OrderController {
     public ResponseEntity<List<Order>> getOrdersByUser(@PathVariable Long userId) {
         return ResponseEntity.ok(orderService.getOrdersByUser(userId));
     }
+
+    @GetMapping
+    public ResponseEntity<List<Order>> getAllOrders(Authentication authentication) {
+        boolean isAdmin = authentication.getAuthorities().contains(new SimpleGrantedAuthority("adminRole"));
+        if (!isAdmin) return ResponseEntity.status(403).build();
+
+        List<Order> orders = orderService.findAllOrders();
+
+        List<Order> filteredOrders = orders.stream()
+                .filter(o -> o.getState() != OrderStatus.PENDING)
+                .toList();
+
+        return ResponseEntity.ok(filteredOrders);
+    }
 }

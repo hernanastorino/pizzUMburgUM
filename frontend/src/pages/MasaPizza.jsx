@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 import MenuItem from '../components/MenuItem';
 import BackButton from '../components/BackButton';
 import '../index.css';
-
-// Imágenes por defecto (puedes mejorar esto con un mapa de imágenes)
 import masaImg from '../assets/images/masaNapolitana.jpg';
 
 const buttonStyles = {
@@ -13,7 +12,6 @@ const buttonStyles = {
     Large: 'btnMenu',
 };
 
-// Mapeo de tamaño interno a texto visual y valor para la BD
 const sizeMap = {
     Small: { label: 'Chica<br><small>15cm</small>', dbValue: '15cm' },
     Medium: { label: 'Mediana<br><small>20cm</small>', dbValue: '20cm' },
@@ -25,14 +23,17 @@ function MasaPizza() {
     const [loading, setLoading] = useState(true);
     const [selectedId, setSelectedId] = useState(null);
 
+    const location = useLocation();
+    // Recibimos la bandera del menú
+    const isFavoriteMode = location.state?.isFavoriteMode;
+
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const res = await axios.get('http://localhost:8080/api/products/doughs');
 
-                // Transformar datos de BD al formato visual
                 const formattedData = res.data.map(item => ({
-                    id: item.doughId, // ID real de la BD
+                    id: item.doughId,
                     title: item.name,
                     description: 'Masa fresca artesanal',
                     image: masaImg,
@@ -77,7 +78,9 @@ function MasaPizza() {
         <>
             <BackButton to="/menu" />
             <div style={{ padding: '50px', maxWidth: '1200px', margin: '0 auto' }}>
-                <h2 style={{color: 'white', textAlign: 'center', marginBottom: '30px'}}>Elige tu Masa</h2>
+                <h2 style={{color: 'white', textAlign: 'center', marginBottom: '30px'}}>
+                    {isFavoriteMode ? "Arma tu Favorita: Elige Masa" : "Elige tu Masa"}
+                </h2>
                 <div className="restaurantMenu">
                     {menuData.map((item) => (
                         <MenuItem
@@ -87,10 +90,11 @@ function MasaPizza() {
                             setSelectedId={setSelectedId}
                             nextRoute="/salsa-pizza"
 
-                            // --- AGREGAR ESTO (Opcional si dejaste los defaults, pero recomendado) ---
+                            // INYECTAMOS LA BANDERA EN EL PEDIDO
+                            pedidoActual={{ isFavoriteMode: isFavoriteMode }}
+
                             baseIdKey="doughId"
                             baseNameKey="doughName"
-                            // --------------------
                         />
                     ))}
                 </div>

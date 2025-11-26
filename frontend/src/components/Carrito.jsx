@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from 'axios';
 import OrderConfirmModal from "../components/OrderConfirmModal";
@@ -6,74 +6,57 @@ import styles from "../styles/Carrito.module.css";
 
 const Carrito = () => {
     const navigate = useNavigate();
+
+    // --- STATE MANAGEMENT ---
     const [cartItems, setCartItems] = useState([]);
     const [orderId, setOrderId] = useState(null);
     const [total, setTotal] = useState(0);
     const [loading, setLoading] = useState(true);
 
-    // Estados visuales
-    const [selectedDireccion, setSelectedDireccion] = useState(null);
-    const [selectedMetodoPago, setSelectedMetodoPago] = useState(null);
-    const [showOrderModal, setShowOrderModal] = useState(false);
-
-    // --- FIX 1: Add missing state ---
-    const [numeroPedido, setNumeroPedido] = useState(null);
-
+    // User Data State
     const [addresses, setAddresses] = useState([]);
     const [payments, setPayments] = useState([]);
 
-    // --- FIX 2: Define mock data (or use your real fetched data 'addresses'/'payments') ---
-    // For now, let's keep these mocks to satisfy the linter and matching your JSX below.
-    // Ideally, you should replace uses of 'direcciones' with 'addresses' and 'metodosPago' with 'payments'
-    // once your fetchUserData works.
-    const direcciones = [{ id: 1, nombre: "Casa", direccion: "Av. Libertador 1234" }];
-    const metodosPago = [{ id: 1, tipo: "Visa", numero: "**** 1234" }];
+    // Selection State
+    const [selectedDireccion, setSelectedDireccion] = useState(null);
+    const [selectedMetodoPago, setSelectedMetodoPago] = useState(null);
 
-    // Inside fetchCart or a new useEffect
-    const fetchUserData = async (userId, token) => {
-        try {
-            // Fetch Addresses
-            const addrRes = await axios.get(`http://localhost:8080/api/addresses/user/${userId}`, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            setAddresses(addrRes.data);
-            // Auto-select first if available
-            if (addrRes.data.length > 0) setSelectedDireccion(addrRes.data[0]);
-            // Fallback to mock if empty (optional logic)
-            else setSelectedDireccion(direcciones[0]);
+    // Modal State
+    const [showOrderModal, setShowOrderModal] = useState(false);
+    const [numeroPedido, setNumeroPedido] = useState(null);
 
-            // Fetch Payments
-            const payRes = await axios.get(`http://localhost:8080/api/payments/user/${userId}`, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            setPayments(payRes.data);
-            if (payRes.data.length > 0) setSelectedMetodoPago(payRes.data[0]);
-            else setSelectedMetodoPago(metodosPago[0]);
-
-        } catch (e) {
-            console.error("Error loading user info", e);
-        }
-    };
-
+    // --- INITIAL LOAD ---
     useEffect(() => {
-        fetchCart();
+        fetchCartAndUserData();
     }, []);
 
-    const fetchCart = async () => {
+    const fetchCartAndUserData = async () => {
         try {
             const token = localStorage.getItem('token');
             const email = localStorage.getItem('email');
 
             if (!token || !email) { setLoading(false); return; }
 
+            // 1. Get User ID
             const userRes = await axios.get(`http://localhost:8080/api/users/${encodeURIComponent(email)}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             const userId = userRes.data.userId || userRes.data.id;
 
-            // Call user data fetch
-            fetchUserData(userId, token);
+            // 2. Load User Addresses & Payments (Parallel)
+            const [addrRes, payRes] = await Promise.all([
+                axios.get(`http://localhost:8080/api/addresses/user/${userId}`, { headers: { Authorization: `Bearer ${token}` } }),
+                axios.get(`http://localhost:8080/api/payments/user/${userId}`, { headers: { Authorization: `Bearer ${token}` } })
+            ]);
 
+            setAddresses(addrRes.data);
+            setPayments(payRes.data);
+
+            // Auto-select first options if available
+            if (addrRes.data.length > 0 && !selectedDireccion) setSelectedDireccion(addrRes.data[0]);
+            if (payRes.data.length > 0 && !selectedMetodoPago) setSelectedMetodoPago(payRes.data[0]);
+
+            // 3. Get/Create Pending Order (Cart)
             const orderRes = await axios.post(
                 `http://localhost:8080/orders/start/user/${userId}`,
                 {},
@@ -84,19 +67,22 @@ const Carrito = () => {
             setOrderId(order.id);
             setTotal(order.total);
 
+            // 4. Process Items for Display
             const rawItems = [];
 
-            // 1. CREACIONES
+            // --- A. CREATIONS (Pizzas & Burgers) ---
             const listaCreaciones = order.creations || order.itemsCreation || [];
             if (Array.isArray(listaCreaciones)) {
                 rawItems.push(...listaCreaciones.map(i => {
                     const creation = i.creation || {};
-                    let nombreDisplay = creation.name || i.name || "Producto Personalizado";
 
+                    // Name Logic
+                    let nombreDisplay = creation.name || i.name || "Producto Personalizado";
                     if (nombreDisplay.includes("undefined")) {
                         nombreDisplay = creation.dough ? "Pizza Personalizada" : "Burger Personalizada";
                     }
 
+                    // Details Logic
                     const detalles = [];
                     if (creation.size) detalles.push(`Tamaño: ${creation.size}`);
                     if (creation.dough) detalles.push(creation.dough.name);
@@ -122,7 +108,7 @@ const Carrito = () => {
                 }));
             }
 
-            // 2. BEBIDAS
+            // --- B. BEVERAGES ---
             const listaBebidas = order.beverages || order.itemsBeverage || [];
             if (Array.isArray(listaBebidas)) {
                 rawItems.push(...listaBebidas.map(i => {
@@ -139,7 +125,7 @@ const Carrito = () => {
                 }));
             }
 
-            // 3. SIDES
+            // --- C. SIDES ---
             const listaSides = order.sides || order.itemsSide || [];
             if (Array.isArray(listaSides)) {
                 rawItems.push(...listaSides.map(i => {
@@ -156,7 +142,7 @@ const Carrito = () => {
                 }));
             }
 
-            // Ordenamiento estable
+            // Sort to prevent jumping items
             rawItems.sort((a, b) => {
                 const typePriority = { 'creation': 1, 'beverage': 2, 'side': 3 };
                 if (typePriority[a.tipo] !== typePriority[b.tipo]) {
@@ -169,19 +155,21 @@ const Carrito = () => {
             setLoading(false);
 
         } catch (error) {
-            console.error("Error cargando carrito:", error);
+            console.error("Error loading cart data:", error);
             setLoading(false);
         }
     };
 
+    // --- ACTIONS ---
+
     const updateQuantity = async (item, delta) => {
         const newQuantity = item.cantidad + delta;
-
         if (newQuantity < 0) return;
 
         try {
             const token = localStorage.getItem('token');
 
+            // Optimistic UI Update
             setCartItems(prev => prev.map(i =>
                 i.uniqueId === item.uniqueId ? { ...i, cantidad: newQuantity } : i
             ).filter(i => i.cantidad > 0));
@@ -195,12 +183,13 @@ const Carrito = () => {
                 headers: { Authorization: `Bearer ${token}` }
             });
 
-            fetchCart();
+            // Reload to sync totals
+            fetchCartAndUserData();
 
         } catch (error) {
-            console.error("Error actualizando cantidad", error);
+            console.error("Error updating quantity", error);
             alert("Error al actualizar. Intenta de nuevo.");
-            fetchCart();
+            fetchCartAndUserData();
         }
     };
 
@@ -223,7 +212,7 @@ const Carrito = () => {
                 null,
                 {
                     params: {
-                        addressId: selectedDireccion.id || selectedDireccion.addressId, // Handle potential ID field naming diff
+                        addressId: selectedDireccion.addressId || selectedDireccion.id,
                         paymentId: selectedMetodoPago.id
                     },
                     headers: { Authorization: `Bearer ${token}` }
@@ -235,16 +224,18 @@ const Carrito = () => {
 
         } catch (error) {
             console.error("Error confirming order", error);
-            alert("Hubo un error al procesar el pedido. Intenta nuevamente.");
+            alert("Hubo un error al procesar el pedido.");
         }
     };
 
-    if (loading) return <div style={{color:'white', padding:'50px', textAlign:'center'}}>Cargando...</div>;
+    if (loading) return <div style={{color:'white', padding:'50px', textAlign:'center'}}>Cargando tu pedido...</div>;
 
     return (
         <div className={styles.pageContainer}>
             <div className={styles.mainContent}>
                 <div className={styles.carritoGrid}>
+
+                    {/* LEFT COLUMN: ITEMS */}
                     <div className={styles.leftColumn}>
                         <div className={styles.cardWrapper}>
                             <div className={styles.cardBorder}></div>
@@ -258,8 +249,12 @@ const Carrito = () => {
                                         {cartItems.map((item) => (
                                             <div key={item.uniqueId} className={styles.cartItem}>
                                                 <div className={styles.itemInfo}>
-                                                    <div className={styles.itemName} style={{fontWeight:'bold'}}>{item.nombre}</div>
-                                                    <div style={{fontSize:'0.8rem', color:'#aaa'}}>{item.descripcion}</div>
+                                                    <div className={styles.itemName} style={{fontWeight:'bold', fontSize:'1.1rem'}}>
+                                                        {item.nombre}
+                                                    </div>
+                                                    <div style={{fontSize:'0.85rem', color:'#ccc', marginTop:'4px'}}>
+                                                        {item.descripcion}
+                                                    </div>
                                                     <div className={styles.itemPrice}>${item.precio}</div>
                                                 </div>
 
@@ -274,7 +269,7 @@ const Carrito = () => {
                                                         {item.cantidad === 1 ? '🗑️' : '-'}
                                                     </button>
 
-                                                    <span className={styles.quantity} style={{fontSize: '1.2em', fontWeight: 'bold', minWidth:'20px', textAlign:'center'}}>
+                                                    <span className={styles.quantity} style={{fontSize: '1.2em', fontWeight: 'bold', minWidth:'25px', textAlign:'center'}}>
                                                         {item.cantidad}
                                                     </span>
 
@@ -301,20 +296,69 @@ const Carrito = () => {
                         </div>
                     </div>
 
+                    {/* RIGHT COLUMN: CHECKOUT INFO */}
                     <div className={styles.rightColumn}>
                         <div className={styles.cardWrapper}>
                             <div className={styles.cardBorder}></div>
                             <div className={styles.card}>
-                                <h2 className={styles.cardTitle}>📍 Envío y Pago</h2>
-                                <button className={styles.dropdownButton}>
-                                    {selectedDireccion ? selectedDireccion.nombre : direcciones[0].nombre}
-                                </button>
-                                <button className={styles.dropdownButton} style={{marginTop:'10px'}}>
-                                    {selectedMetodoPago ? (selectedMetodoPago.cardName || selectedMetodoPago.tipo) : metodosPago[0].tipo}
-                                </button>
+                                <h2 className={styles.cardTitle}>📍 Envío</h2>
+                                {addresses.length > 0 ? (
+                                    <select
+                                        className={styles.dropdownButton}
+                                        onChange={(e) => {
+                                            const val = parseInt(e.target.value);
+                                            const found = addresses.find(a => (a.addressId || a.id) === val);
+                                            setSelectedDireccion(found);
+                                        }}
+                                        value={selectedDireccion ? (selectedDireccion.addressId || selectedDireccion.id) : ''}
+                                    >
+                                        {addresses.map(a => (
+                                            <option key={a.addressId || a.id} value={a.addressId || a.id}>
+                                                {a.name} ({a.street} {a.doorNumber})
+                                            </option>
+                                        ))}
+                                    </select>
+                                ) : (
+                                    <button
+                                        className={styles.dropdownButton}
+                                        onClick={() => navigate('/pagosYEnvios', {state: {from: '/carrito'}})}
+                                        style={{background: '#ff9800', color: 'white'}}
+                                    >
+                                        + Agregar Dirección
+                                    </button>
+                                )}
+
+                                <h2 className={styles.cardTitle} style={{marginTop:'20px'}}>💳 Pago</h2>
+                                {payments.length > 0 ? (
+                                    <select
+                                        className={styles.dropdownButton}
+                                        onChange={(e) => {
+                                            const val = parseInt(e.target.value);
+                                            const found = payments.find(p => p.id === val);
+                                            setSelectedMetodoPago(found);
+                                        }}
+                                        value={selectedMetodoPago ? selectedMetodoPago.id : ''}
+                                    >
+                                        {payments.map(p => (
+                                            <option key={p.id} value={p.id}>
+                                                {p.cardName || p.tipo} (**** {p.cardNumber ? p.cardNumber.slice(-4) : '****'})
+                                            </option>
+                                        ))}
+                                    </select>
+                                ) : (
+                                    <button
+                                        className={styles.dropdownButton}
+                                        onClick={() => navigate('/pagosYEnvios', {state: {from: '/carrito'}})}
+                                        style={{background: '#ff9800', color: 'white'}}
+                                    >
+                                        + Agregar Método de Pago
+                                    </button>
+                                )}
                             </div>
                         </div>
-                        <button className={styles.pagarButton} onClick={handlePagar}>Confirmar Pedido</button>
+                        <button className={styles.pagarButton} onClick={handlePagar}>
+                            Confirmar Pedido
+                        </button>
                     </div>
                 </div>
             </div>

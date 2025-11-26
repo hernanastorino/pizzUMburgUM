@@ -1,238 +1,246 @@
-// src/pages/PedidosAdmin.jsx
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import styles from '../styles/PedidosAdmin.module.css';
 
 const PedidosAdmin = () => {
-  const [pedidos, setPedidos] = useState([]);
-  const [expandedPedido, setExpandedPedido] = useState(null);
+    const [pedidos, setPedidos] = useState([]);
+    const [expandedPedido, setExpandedPedido] = useState(null);
+    const [loading, setLoading] = useState(true);
 
-  // Pedidos de ejemplo (movidos fuera del useEffect)
-  const pedidosEjemplo = [
-    {
-      id: 1,
-      estado: 'pendiente',
-      fecha: new Date('2025-11-25T10:30:00'),
-      total: 2850,
-      items: [
-        { nombre: 'Pizza Margherita', cantidad: 2, precio: 950 },
-        { nombre: 'Coca-Cola 1.5L', cantidad: 1, precio: 450 },
-        { nombre: 'Papas Fritas', cantidad: 1, precio: 500 }
-      ]
-    },
-    {
-      id: 2,
-      estado: 'preparandose',
-      fecha: new Date('2025-11-25T09:15:00'),
-      total: 4200,
-      items: [
-        { nombre: 'Hamburguesa Completa', cantidad: 3, precio: 1200 },
-        { nombre: 'Ensalada César', cantidad: 1, precio: 800 }
-      ]
-    },
-    {
-      id: 3,
-      estado: 'enviandote',
-      fecha: new Date('2025-11-25T08:45:00'),
-      total: 1850,
-      items: [
-        { nombre: 'Sushi Roll x8', cantidad: 1, precio: 1200 },
-        { nombre: 'Sopa Miso', cantidad: 1, precio: 450 }
-      ]
-    },
-    {
-      id: 4,
-      estado: 'entregado',
-      fecha: new Date('2025-11-24T19:30:00'),
-      total: 3400,
-      items: [
-        { nombre: 'Pasta Carbonara', cantidad: 2, precio: 1100 },
-        { nombre: 'Tiramisú', cantidad: 2, precio: 600 }
-      ]
-    }
-  ];
+    // --- 1. CARGAR PEDIDOS ---
+    useEffect(() => {
+        fetchPedidos();
+    }, []);
 
-  useEffect(() => {
     const fetchPedidos = async () => {
-      try {
-        const response = await fetch("http://localhost:8080/api/orders");
-        if (!response.ok) {
-          throw new Error('Error en la respuesta');
+        try {
+            const token = localStorage.getItem('token');
+            // Ahora este endpoint devuelve la Entidad completa con todos los detalles
+            const response = await axios.get("http://localhost:8080/orders", {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+
+            const pedidosFormateados = response.data.map(order => {
+                const itemsUnificados = [];
+
+                // --- LÓGICA DE DETALLE IDÉNTICA AL CARRITO ---
+
+                // A. Creaciones (Pizzas/Burgers)
+                // Buscamos en itemsCreation (formato entidad)
+                if (order.itemsCreation) {
+                    order.itemsCreation.forEach(i => {
+                        const creation = i.creation || {};
+
+                        // 1. Nombre Bonito
+                        let nombreDisplay = creation.name || i.name || "Producto";
+                        if (nombreDisplay.includes('undefined')) {
+                            nombreDisplay = creation.dough ? "Pizza Personalizada" : "Burger Personalizada";
+                        }
+
+                        // 2. Construir Descripción Detallada
+                        const detalles = [];
+                        if (creation.size) detalles.push(creation.size); // Ej: 25cm
+                        if (creation.dough) detalles.push(creation.dough.name);
+                        if (creation.sauce) detalles.push(creation.sauce.name);
+                        if (creation.cheese) detalles.push(creation.cheese.name);
+                        if (creation.meat) detalles.push(creation.meat.name);
+                        if (creation.bread) detalles.push(creation.bread.name);
+
+                        if (creation.toppings && creation.toppings.length > 0) {
+                            const toppingsNames = creation.toppings.map(t => t.name).join(", ");
+                            detalles.push(`Extras: ${toppingsNames}`);
+                        }
+                        if (creation.condiment) detalles.push(`Aderezo: ${creation.condiment.name}`);
+
+                        itemsUnificados.push({
+                            nombre: nombreDisplay,
+                            descripcion: detalles.join(" • ") || "Sin detalles extra", // Lo mostramos bonito
+                            precio: i.creationSubtotal || 0,
+                            cantidad: i.creationQuantity || i.CreationQuantity || 1
+                        });
+                    });
+                }
+
+                // B. Bebidas
+                if (order.itemsBeverage) {
+                    order.itemsBeverage.forEach(i => {
+                        itemsUnificados.push({
+                            nombre: i.beverage?.name || "Bebida",
+                            descripcion: "Bebida fría",
+                            precio: i.beverageSubtotal || 0,
+                            cantidad: i.beverageQuantity || 1
+                        });
+                    });
+                }
+
+                // C. Sides
+                if (order.itemsSide) {
+                    order.itemsSide.forEach(i => {
+                        itemsUnificados.push({
+                            nombre: i.side?.name || "Acompañamiento",
+                            descripcion: "Extra",
+                            precio: i.sideSubtotal || 0,
+                            cantidad: i.sideQuantity || 1
+                        });
+                    });
+                }
+
+                return {
+                    id: order.id,
+                    estado: order.state,
+                    fecha: order.date,
+                    total: order.total,
+                    // Obtenemos nombre del cliente de forma segura
+                    cliente: order.client ? `${order.client.name} ${order.client.surname}` : "Cliente",
+                    items: itemsUnificados
+                };
+            });
+
+            // Ordenar: Más recientes primero
+            setPedidos(pedidosFormateados.sort((a, b) => b.id - a.id));
+            setLoading(false);
+
+        } catch (error) {
+            console.error("Error al cargar pedidos:", error);
+            setLoading(false);
         }
-        const data = await response.json();
-        setPedidos(data);
-      } catch (error) {
-        console.error("Error al cargar pedidos:", error);
-        // Usar datos de ejemplo si falla
-        setPedidos(pedidosEjemplo);
-      }
     };
 
-    // Comentar para usar solo datos de ejemplo
-    // fetchPedidos();
-    
-    // Descomentar para usar datos de ejemplo directamente
-    setPedidos(pedidosEjemplo);
-  }, []);
-
-  const getEstadoInfo = (estado) => {
-    const estados = {
-      pendiente: { emoji: '⏳', texto: 'Pendiente' },
-      preparandose: { emoji: '👨‍🍳', texto: 'Preparándose' },
-      enviandote: { emoji: '🚚', texto: 'Enviándose' },
-      entregado: { emoji: '✅', texto: 'Entregado' }
+    // --- 2. GESTIÓN DE ESTADOS ---
+    const getEstadoInfo = (estado) => {
+        const estados = {
+            'CONFIRMED':   { emoji: '⏳', texto: 'Confirmado', color: '#fbbf24' },
+            'PREPARING':   { emoji: '👨‍🍳', texto: 'En Cocina', color: '#60a5fa' },
+            'SENT':        { emoji: '🛵', texto: 'En Camino', color: '#a78bfa' },
+            'DELIVERED':   { emoji: '✅', texto: 'Entregado', color: '#4ade80' },
+            'CANCELLED':   { emoji: '❌', texto: 'Cancelado', color: '#ef4444' }
+        };
+        return estados[estado] || { emoji: '📦', texto: estado, color: '#ccc' };
     };
 
-    return estados[estado] || { emoji: '📦', texto: estado };
-  };
-
-  const getSiguienteEstado = (estadoActual) => {
-    const flujoEstados = {
-      pendiente: 'preparandose',
-      preparandose: 'enviandote',
-      enviandote: 'entregado',
-      entregado: null // Ya está en el estado final
+    const getSiguienteEstadoTexto = (estadoActual) => {
+        const mapa = {
+            'CONFIRMED': 'Preparando 👨‍🍳',
+            'PREPARING': 'En Camino 🛵',
+            'SENT': 'Entregado ✅',
+            'DELIVERED': null
+        };
+        return mapa[estadoActual];
     };
 
-    return flujoEstados[estadoActual];
-  };
+    const avanzarEstado = async (pedidoId, e) => {
+        e.stopPropagation();
+        try {
+            const token = localStorage.getItem('token');
+            await axios.post(`http://localhost:8080/orders/${pedidoId}/advance`, {}, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            fetchPedidos(); // Recargar para ver cambio
+        } catch (error) {
+            console.error('Error al avanzar estado:', error);
+            alert("Error al avanzar estado (Verifica permisos de Admin)");
+        }
+    };
 
-  const avanzarEstado = async (pedidoId, estadoActual, e) => {
-    e.stopPropagation(); // Evita que se expanda/colapse el pedido
+    const toggleExpand = (id) => {
+        setExpandedPedido(expandedPedido === id ? null : id);
+    };
 
-    const siguienteEstado = getSiguienteEstado(estadoActual);
-    
-    if (!siguienteEstado) {
-      alert('Este pedido ya fue entregado');
-      return;
-    }
+    if (loading) return <div style={{color:'white', padding:'50px', textAlign:'center'}}>Cargando panel...</div>;
 
-    try {
-      // Aquí harías el PUT al backend
-      const response = await fetch(`http://localhost:8080/api/orders/${pedidoId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ estado: siguienteEstado })
-      });
+    return (
+        <div className={styles.container}>
+            <div className={styles.containerInner}>
+                <h1 className={styles.title}>📦 Gestión de Pedidos</h1>
 
-      if (!response.ok) {
-        throw new Error('Error al actualizar estado');
-      }
+                <div className={styles.pedidosList}>
+                    {pedidos.length === 0 ? (
+                        <div className={styles.emptyState}>
+                            <div className={styles.emptyIcon}>📭</div>
+                            <p className={styles.emptyText}>No hay pedidos activos</p>
+                        </div>
+                    ) : (
+                        pedidos.map((pedido) => {
+                            const estadoInfo = getEstadoInfo(pedido.estado);
+                            const isExpanded = expandedPedido === pedido.id;
+                            const textoSiguiente = getSiguienteEstadoTexto(pedido.estado);
 
-      // Actualizar el estado localmente
-      setPedidos(prevPedidos =>
-        prevPedidos.map(pedido =>
-          pedido.id === pedidoId
-            ? { ...pedido, estado: siguienteEstado }
-            : pedido
-        )
-      );
+                            return (
+                                <div key={pedido.id} className={styles.pedidoCard}>
+                                    <div className={styles.pedidoBorder}></div>
 
-      console.log(`Pedido #${pedidoId} avanzado a: ${siguienteEstado}`);
-    } catch (error) {
-      console.error('Error al avanzar estado:', error);
-      
-      // Si falla el backend, actualizar localmente de todas formas (para demo)
-      setPedidos(prevPedidos =>
-        prevPedidos.map(pedido =>
-          pedido.id === pedidoId
-            ? { ...pedido, estado: siguienteEstado }
-            : pedido
-        )
-      );
-    }
-  };
-
-  const toggleExpand = (id) => {
-    setExpandedPedido(expandedPedido === id ? null : id);
-  };
-
-  return (
-    <div className={styles.container}>
-      <div className={styles.containerInner}>
-        <h1 className={styles.title}>📦 Pedidos del Sistema</h1>
-
-        <div className={styles.pedidosList}>
-          {pedidos.length === 0 ? (
-            <div className={styles.emptyState}>
-              <div className={styles.emptyIcon}>📭</div>
-              <p className={styles.emptyText}>No hay pedidos en el sistema</p>
-              <p className={styles.emptySubtext}>Los pedidos aparecerán aquí cuando se realicen</p>
-            </div>
-          ) : (
-            pedidos.map((pedido) => {
-              const estadoInfo = getEstadoInfo(pedido.estado);
-              const isExpanded = expandedPedido === pedido.id;
-              const siguienteEstado = getSiguienteEstado(pedido.estado);
-
-              return (
-                <div key={pedido.id} className={styles.pedidoCard}>
-                  <div className={styles.pedidoBorder}></div>
-                  
-                  <div className={styles.pedidoContent}>
-                    <div 
-                      className={styles.pedidoHeader}
-                      onClick={() => toggleExpand(pedido.id)}
-                    >
-                      <div className={styles.headerLeft}>
+                                    <div className={styles.pedidoContent}>
+                                        {/* CABECERA DEL PEDIDO */}
+                                        <div className={styles.pedidoHeader} onClick={() => toggleExpand(pedido.id)}>
+                                            <div className={styles.headerLeft}>
                         <span className={`${styles.arrow} ${isExpanded ? styles.arrowRotated : ''}`}>
                           ▶
                         </span>
-                        <div className={styles.pedidoInfo}>
-                          <h3 className={styles.pedidoNumero}>Pedido #{pedido.id}</h3>
-                          <div className={styles.estadoContainer}>
-                            <span className={styles.estadoEmoji}>{estadoInfo.emoji}</span>
-                            <span className={styles.estadoTexto}>{estadoInfo.texto}</span>
-                          </div>
-                        </div>
-                      </div>
-                      <span className={styles.totalPedido}>
-                        Total: ${pedido.total?.toLocaleString() || '0'}
+                                                <div className={styles.pedidoInfo}>
+                                                    <h3 className={styles.pedidoNumero}>
+                                                        Pedido #{pedido.id}
+                                                    </h3>
+                                                    <div className={styles.estadoContainer}>
+                                                        <span className={styles.estadoEmoji}>{estadoInfo.emoji}</span>
+                                                        <span className={styles.estadoTexto} style={{color: estadoInfo.color}}>
+                                {estadoInfo.texto}
+                            </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <span className={styles.totalPedido}>
+                        ${pedido.total?.toLocaleString()}
                       </span>
-                    </div>
+                                        </div>
 
-                    {isExpanded && (
-                      <div className={styles.itemsContainer}>
-                        {pedido.items && pedido.items.map((item, index) => (
-                          <div key={index} className={styles.itemCard}>
-                            <div className={styles.itemInfo}>
-                              <p className={styles.itemNombre}>{item.nombre}</p>
-                              <p className={styles.itemDescripcion}>
-                                Cantidad: {item.cantidad} × ${item.precio}
-                              </p>
-                            </div>
-                            <p className={styles.itemPrecio}>
-                              ${((item.cantidad || 0) * (item.precio || 0)).toLocaleString()}
-                            </p>
-                          </div>
-                        ))}
+                                        {/* DETALLE EXPANDIBLE */}
+                                        {isExpanded && (
+                                            <div className={styles.itemsContainer}>
+                                                {pedido.items.map((item, index) => (
+                                                    <div key={index} className={styles.itemCard}>
+                                                        <div className={styles.itemInfo}>
+                                                            <p className={styles.itemNombre}>
+                                <span style={{fontWeight:'bold', marginRight:'8px'}}>
+                                  {item.cantidad}x
+                                </span>
+                                                                {item.nombre}
+                                                            </p>
+                                                            {/* DESCRIPCIÓN DETALLADA */}
+                                                            <p className={styles.itemDescripcion} style={{color: '#aaa', fontSize:'0.9rem'}}>
+                                                                {item.descripcion}
+                                                            </p>
+                                                        </div>
+                                                        <p className={styles.itemPrecio}>
+                                                            ${item.precio}
+                                                        </p>
+                                                    </div>
+                                                ))}
 
-                        <div className={styles.accionesContainer}>
-                          {siguienteEstado ? (
-                            <button
-                              className={styles.btnAvanzar}
-                              onClick={(e) => avanzarEstado(pedido.id, pedido.estado, e)}
-                            >
-                              ➡️ Avanzar a {getEstadoInfo(siguienteEstado).texto}
-                            </button>
-                          ) : (
-                            <div className={styles.estadoFinal}>
-                              ✅ Pedido completado
-                            </div>
-                          )}
-                        </div>
-                      </div>
+                                                <div className={styles.accionesContainer}>
+                                                    {textoSiguiente ? (
+                                                        <button
+                                                            className={styles.btnAvanzar}
+                                                            onClick={(e) => avanzarEstado(pedido.id, e)}
+                                                        >
+                                                            {textoSiguiente}
+                                                        </button>
+                                                    ) : (
+                                                        <div className={styles.estadoFinal} style={{color:'#4ade80', fontWeight:'bold'}}>
+                                                            ✅ Pedido Finalizado
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            );
+                        })
                     )}
-                  </div>
                 </div>
-              );
-            })
-          )}
+            </div>
         </div>
-      </div>
-    </div>
-  );
+    );
 };
 
 export default PedidosAdmin;

@@ -1,8 +1,7 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
 
-// Agregamos baseIdKey y baseNameKey con valores por defecto para Pizza
-function MenuItem({ item, selectedId, setSelectedId, nextRoute, pedidoActual, baseIdKey = "doughId", baseNameKey = "doughName" }) {
+function MenuItem({ item, selectedId, setSelectedId, nextRoute, pedidoActual, baseIdKey, baseNameKey }) {
     const { id, title, description, image, buttons } = item
     const navigate = useNavigate()
 
@@ -12,16 +11,24 @@ function MenuItem({ item, selectedId, setSelectedId, nextRoute, pedidoActual, ba
         const buttonId = getButtonId(btn.size)
 
         if (nextRoute) {
+            // CORRECCIÓN: Lógica simplificada y robusta
             const nuevoPedido = {
-                ...pedidoActual,
-                // Si es el primer paso (no hay pedidoActual), usamos las claves dinámicas
-                ...(pedidoActual ? {} : {
-                    [baseIdKey]: id,       // Aquí guardamos meatId o doughId según corresponda
-                    [baseNameKey]: title,  // Aquí guardamos meatName o doughName
+                ...pedidoActual, // 1. Mantenemos lo que ya traíamos (ej: isFavoriteMode)
+
+                // 2. Si nos pasaron una clave base (ej: "doughId" o "meatId"), guardamos los datos de este item AHORA.
+                // Esto arregla el bug: Antes solo lo hacía si pedidoActual estaba vacío.
+                ...(baseIdKey ? {
+                    [baseIdKey]: id,
+                    [baseNameKey]: title,
                     sizeKey: btn.size,
                     dbSize: btn.dbValue
-                })
+                } : {})
             }
+
+            // 3. Si es un paso intermedio (Salsa/Queso), solo necesitamos pasar el ID específico si el componente padre lo maneja
+            // (En tu caso SalsaPizza/QuesoPizza ya manejan su propia lógica de guardado en 'pedidoActual' antes de llamar a MenuItem,
+            // así que esto es seguro para los pasos intermedios también).
+
             navigate(nextRoute, { state: nuevoPedido })
         } else {
             setSelectedId(buttonId)
