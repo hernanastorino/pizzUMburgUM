@@ -53,6 +53,7 @@ public class UserService {
 
         adminUser.setName(request.name());
         adminUser.setSurname(request.surname());
+        adminUser.setPhone(request.phone());
 
         adminUser.setRole(Role.adminRole);
 

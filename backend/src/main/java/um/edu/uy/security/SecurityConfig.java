@@ -43,8 +43,7 @@ public class SecurityConfig {
                         .requestMatchers("/h2-console/**").permitAll()
 
                         // catalog/menu (public view, admin edit)
-                        .requestMatchers(HttpMethod.GET, "/api/products/**", "/api/catalog/**").permitAll()
-                        .requestMatchers("/api/products/**", "/api/catalog/**").hasAuthority("adminRole")
+                        .requestMatchers("/api/products/**", "/api/catalog/**").permitAll()
 
                         // user specific data (favorites, addresses, payments)
                         .requestMatchers("/api/addresses/**", "/api/payments/**").hasAuthority("clientRole")

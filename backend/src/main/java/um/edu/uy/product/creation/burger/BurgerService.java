@@ -70,6 +70,7 @@ public class BurgerService {
             });
         }
 
+        burger.setSubtotal(burger.calculateSubtotal());
         return burgerRepository.save(burger);
     }
 
@@ -103,6 +104,7 @@ public class BurgerService {
                 .toppings(new HashSet<>(b.getToppings()))
                 .build();
 
+        copy.setSubtotal(copy.calculateSubtotal());
         return burgerRepository.save(copy);
     }
 
@@ -130,6 +132,7 @@ public class BurgerService {
             });
         }
 
+        burger.setSubtotal(burger.calculateSubtotal());
         return burgerRepository.save(burger);
     }
 

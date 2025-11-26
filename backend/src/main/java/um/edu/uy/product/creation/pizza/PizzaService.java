@@ -68,6 +68,7 @@ public class PizzaService {
             });
         }
 
+        pizza.setSubtotal(pizza.calculateSubtotal());
         return pizzaRepository.save(pizza);
     }
 
@@ -96,6 +97,7 @@ public class PizzaService {
             });
         }
 
+        pizza.setSubtotal(pizza.calculateSubtotal());
         return pizzaRepository.save(pizza);
     }
 
