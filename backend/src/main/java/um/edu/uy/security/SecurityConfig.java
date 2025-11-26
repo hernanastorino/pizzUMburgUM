@@ -24,7 +24,6 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import um.edu.uy.user.CustomUserDetailsService;
 
 import java.util.Arrays;
-import java.util.Collections;
 
 @Configuration
 @EnableWebSecurity
@@ -45,24 +44,37 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authz -> authz
-                        // --- PERMISOS TOTALES PARA EL CLUTCH ---
-
-                        // 1. Permitir TODO en /api/products (POST, GET, PUT, DELETE, OPTIONS)
-                        .requestMatchers("/api/products/**").permitAll()
-
-                        // 2. Permitir TODO en /orders
-                        .requestMatchers("/orders/**").permitAll()
-
-                        // 3. Permitir Auth y Usuarios
+                        // 1. ACCESO PÚBLICO
                         .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/api/users/**").permitAll()
-
-                        // 4. Catálogo y Docs
-                        .requestMatchers("/api/catalog/**").permitAll()
-                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                         .requestMatchers("/h2-console/**").permitAll()
+                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/catalog/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/products/**").permitAll()
 
-                        // El resto autenticado (aunque con las reglas de arriba casi todo está abierto)
+                        // 2. CLIENTES (Y Admin para pruebas de flujo)
+                        .requestMatchers(HttpMethod.POST, "/api/products/pizzas").hasAnyAuthority("clientRole", "adminRole")
+                        .requestMatchers(HttpMethod.POST, "/api/products/burgers").hasAnyAuthority("clientRole", "adminRole")
+
+                        .requestMatchers("/api/addresses/**").hasAuthority("clientRole")
+                        .requestMatchers("/api/payments/**").hasAuthority("clientRole")
+                        .requestMatchers("/users/{userId}/favorites/**").hasAuthority("clientRole")
+
+                        // 3. ADMINISTRADORES
+                        .requestMatchers(HttpMethod.POST, "/api/products/**").hasAuthority("adminRole")
+                        .requestMatchers(HttpMethod.PUT, "/api/products/**").hasAuthority("adminRole")
+                        .requestMatchers(HttpMethod.DELETE, "/api/products/**").hasAuthority("adminRole")
+                        .requestMatchers("/api/users/admin").hasAuthority("adminRole")
+                        .requestMatchers(HttpMethod.GET, "/orders").hasAuthority("adminRole")
+                        .requestMatchers(HttpMethod.POST, "/orders/{id}/advance").hasAuthority("adminRole")
+
+                        // 4. ZONA DE PEDIDOS Y CARRITO (Compartida)
+                        // CORRECCIÓN: Agregamos /api/orders/** para cubrir el ItemController
+                        .requestMatchers("/orders/**").hasAnyAuthority("clientRole", "adminRole")
+                        .requestMatchers("/api/orders/**").hasAnyAuthority("clientRole", "adminRole") // <--- NUEVA LÍNEA IMPORTANTE
+
+                        // 5. PERFIL
+                        .requestMatchers("/api/users/**").authenticated()
+
                         .anyRequest().authenticated()
                 )
                 .headers(headers -> headers
@@ -78,11 +90,9 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-
-        // CONFIGURACIÓN NUCLEAR DE CORS: Permite todo desde cualquier lado
-        configuration.setAllowedOriginPatterns(Collections.singletonList("*")); // Acepta cualquier origen
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000", "http://127.0.0.1:3000"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
-        configuration.setAllowedHeaders(Arrays.asList("*"));
+        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "X-Requested-With"));
         configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
