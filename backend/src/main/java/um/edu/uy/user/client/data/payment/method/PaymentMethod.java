@@ -24,10 +24,10 @@ public class PaymentMethod {
     private String ownerName;
 
     @Column(nullable = false, unique = true)
-    private String cardNumber; //Recordar encriptar esto excepto los ultimos 4 numeros!!
+    private String cardNumber;
 
     @Column(nullable = false)
-    private String cvv; //Recordar encriptar esto!!
+    private String cvv;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")

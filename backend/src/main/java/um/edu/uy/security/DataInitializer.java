@@ -191,10 +191,10 @@ public class DataInitializer {
             if (pmCard == null) {
                 PaymentMethod newPm = PaymentMethod.builder()
                         .user(clientA)
-                        .cardName("Visa Débito")
-                        .cardNumber("1234567812345678")
-                        .cvv("123")
-                        .ownerName("Cliente A Demo")
+                        .cardName("Tarjeta Trabajo")
+                        .cardNumber("4527 7829 7699 5315")
+                        .cvv("676")
+                        .ownerName("Nombre en Tarjeta")
                         .build();
                 paymentMethodRepository.save(newPm);
             }
