@@ -4,13 +4,11 @@ import MenuItem from '../components/MenuItem'
 import BackButton from '../components/BackButton'
 import styles from '../styles/Pizza.module.css' 
 
-// 1. Define button styles for this page
 const buttonStyles = {
   regular: 'btnMenu2',
   grande: 'btnMenu1',
 }
 
-// 2. Define menu data for this page
 const menuData = [
   {
     id: 1,
@@ -34,15 +32,13 @@ const menuData = [
   },
 ]
 
-function Sides() { // <-- Changed from Acompanamiento
-  // 3. This page manages its own independent state
+function Sides() {
   const [selectedId, setSelectedId] = useState(null)
 
   return (
     <>
       <BackButton to="/menu" />
 
-      {/* Nav Menu */}
       <div className="menu">
         <nav>
           <input type="checkbox" id="check" />
@@ -50,12 +46,10 @@ function Sides() { // <-- Changed from Acompanamiento
           <label className="logo">PizzUM & BurgUM</label>
           <ul>
             <li><Link to="/" className="active">Inicio</Link></li>
-            {/* ... other nav links ... */}
           </ul>
         </nav>
       </div>
 
-      {/* 4. Render the menu items */}
       <div className={styles.restaurantMenu}>
         {menuData.map((item) => (
           <MenuItem
@@ -70,4 +64,4 @@ function Sides() { // <-- Changed from Acompanamiento
   )
 }
 
-export default Sides // <-- CORRECTED EXPORT
+export default Sides

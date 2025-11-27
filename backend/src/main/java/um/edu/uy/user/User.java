@@ -37,7 +37,7 @@ public class User implements UserDetails {
     private String surname;
     private String phone;
 
-    @Enumerated(EnumType.STRING) // This tells JPA to store the role as a String
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role;
 

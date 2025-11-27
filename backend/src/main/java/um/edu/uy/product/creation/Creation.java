@@ -12,14 +12,14 @@ import java.util.HashSet;
 
 @Entity
 @Table(name = "Creation")
-@Inheritance(strategy = InheritanceType.JOINED) // Estrategia de herencia: una tabla por clase
-@DiscriminatorColumn(name = "CREATION_TYPE") // Columna que dice si es "PIZZA" o "HAMBURGUESA"
+@Inheritance(strategy = InheritanceType.JOINED)
+@DiscriminatorColumn(name = "CREATION_TYPE")
 @Getter
 @Setter
-@SuperBuilder //esto es para que el builder tenga en cuenta la herencia
+@SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
-public abstract class Creation { // Abstracta, porque una creación SIEMPRE es Pizza o Hamburguesa
+public abstract class Creation {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,15 +31,14 @@ public abstract class Creation { // Abstracta, porque una creación SIEMPRE es P
     private Double subtotal;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "user_id") // La relación "crea"
+    @JoinColumn(name = "user_id")
     @JsonIgnore
     private User user;
 
-    // Relación inversa a PedidoCreacion
-    // Una Creación puede estar en muchas "líneas de pedido"
+
     @OneToMany(
-            mappedBy = "creation", // "creacion" es el nombre del campo en PedidoCreacion
-            cascade = CascadeType.ALL, // Generalmente no queremos borrar una creación si se borra un pedido
+            mappedBy = "creation",
+            cascade = CascadeType.ALL,
             orphanRemoval = false
     )
     @JsonIgnore

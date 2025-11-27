@@ -11,12 +11,8 @@ function MenuItem({ item, selectedId, setSelectedId, nextRoute, pedidoActual, ba
         const buttonId = getButtonId(btn.size)
 
         if (nextRoute) {
-            // CORRECCIÓN: Lógica simplificada y robusta
             const nuevoPedido = {
-                ...pedidoActual, // 1. Mantenemos lo que ya traíamos (ej: isFavoriteMode)
-
-                // 2. Si nos pasaron una clave base (ej: "doughId" o "meatId"), guardamos los datos de este item AHORA.
-                // Esto arregla el bug: Antes solo lo hacía si pedidoActual estaba vacío.
+                ...pedidoActual,
                 ...(baseIdKey ? {
                     [baseIdKey]: id,
                     [baseNameKey]: title,
@@ -24,10 +20,6 @@ function MenuItem({ item, selectedId, setSelectedId, nextRoute, pedidoActual, ba
                     dbSize: btn.dbValue
                 } : {})
             }
-
-            // 3. Si es un paso intermedio (Salsa/Queso), solo necesitamos pasar el ID específico si el componente padre lo maneja
-            // (En tu caso SalsaPizza/QuesoPizza ya manejan su propia lógica de guardado en 'pedidoActual' antes de llamar a MenuItem,
-            // así que esto es seguro para los pasos intermedios también).
 
             navigate(nextRoute, { state: nuevoPedido })
         } else {

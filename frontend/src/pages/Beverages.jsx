@@ -4,13 +4,11 @@ import MenuItem from '../components/MenuItem'
 import BackButton from '../components/BackButton'
 import styles from '../styles/Pizza.module.css'
 
-// 1. Define button styles
 const buttonStyles = {
   ml500: 'btnMenu2',
   l1_5: 'btnMenu1',
 }
 
-// 2. Define menu data
 const menuData = [
   {
     id: 1,
@@ -33,29 +31,24 @@ const menuData = [
   },
 ]
 
-function Beverages() { // <-- Changed from Bebidas
-  // 3. This page manages its own state
+function Beverages() {
   const [selectedId, setSelectedId] = useState(null)
 
   return (
     <>
       <BackButton to="/menu" />
 
-      {/* Nav Menu */}
       <div className="menu">
         <nav>
-          {/* ... (Same nav as above) ... */}
            <input type="checkbox" id="check" />
           <label htmlFor="check" className="checkbtn">☰</label>
           <label className="logo">PizzUM & BurgUM</label>
           <ul>
             <li><Link to="/" className="active">Inicio</Link></li>
-            {/* ... other nav links ... */}
           </ul>
         </nav>
       </div>
 
-      {/* 4. Render the menu items */}
       <div className={styles.restaurantMenu}>
         {menuData.map((item) => (
           <MenuItem
@@ -70,4 +63,4 @@ function Beverages() { // <-- Changed from Bebidas
   )
 }
 
-export default Beverages // <-- CORRECTED EXPORT
+export default Beverages

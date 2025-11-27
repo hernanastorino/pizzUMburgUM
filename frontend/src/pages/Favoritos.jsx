@@ -65,13 +65,18 @@ const Favoritos = () => {
             const token = localStorage.getItem('token');
             const email = localStorage.getItem('email');
 
-            // 1. ID Usuario
+            if (!token || !email) {
+                alert("Por favor inicia sesión.");
+                return;
+            }
+
+            // 1. Obtener ID Usuario
             const userRes = await axios.get(`http://localhost:8080/api/users/${encodeURIComponent(email)}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             const userId = userRes.data.userId || userRes.data.id;
 
-            // 2. Obtener Orden
+            // 2. Obtener Orden Activa
             const orderRes = await axios.post(
                 `http://localhost:8080/orders/start/user/${userId}`,
                 {},
@@ -79,18 +84,25 @@ const Favoritos = () => {
             );
             const orderId = orderRes.data.id;
 
+            console.log("Agregando favorito:", favorito.nombre, "ID Creación:", favorito.creationId);
+
             // 3. Agregar Item
             await axios.post(
                 `http://localhost:8080/orders/${orderId}/items/creations`,
-                { productId: favorito.creationId, quantity: 1 },
+                {
+                    productId: favorito.creationId, // Asegúrate que esto no sea null
+                    quantity: 1
+                },
                 { headers: { Authorization: `Bearer ${token}` } }
             );
 
-            alert(`¡${favorito.nombre} agregada al carrito!`);
+            alert(`¡${favorito.nombre} agregada al carrito! 🛒`);
 
         } catch (error) {
             console.error("Error agregando al carrito:", error);
-            alert("No se pudo agregar al carrito.");
+            // Mostrar mensaje específico si el backend nos dice qué pasó
+            const mensaje = error.response?.data?.message || error.response?.data || "Error desconocido";
+            alert(`No se pudo agregar: ${mensaje}`);
         }
     };
 

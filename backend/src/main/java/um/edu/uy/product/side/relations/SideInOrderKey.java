@@ -7,7 +7,7 @@ import lombok.*;
 import java.io.Serializable;
 import java.util.Objects;
 
-@Embeddable // Indica a JPA que esta clase se "incrustará" en otra entidad
+@Embeddable
 @Getter
 @Setter
 @Builder
@@ -21,9 +21,6 @@ public class SideInOrderKey implements Serializable {
     @Column(name = "side_id")
     private Long sideId;
 
-
-    // ¡MUY IMPORTANTE! JPA necesita equals() y hashCode()
-    // para gestionar claves compuestas.
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

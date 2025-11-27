@@ -1,30 +1,24 @@
-// src/components/Subcategory.jsx
 import React, { useState } from 'react';
 import OptionItem from './OptionItem';
 import styles from '../styles/Backoffice.module.css';
 
-// 1. Recibimos la prop 'onAdd' que viene desde Backoffice -> CategoryItem
 const Subcategory = ({ subcategory, onUpdate, onDelete, onDeleteOption, onAdd }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [isEditingName, setIsEditingName] = useState(!subcategory.name || subcategory.name === 'Nueva Subcategoría');
     const [name, setName] = useState(subcategory.name || '');
 
-    // TÍTULOS DE COLUMNAS
     const [title1, setTitle1] = useState(subcategory.customTitles?.[0] || '');
     const [title2, setTitle2] = useState(subcategory.customTitles?.[1] || '');
     const [title3, setTitle3] = useState(subcategory.customTitles?.[2] || '');
     const [editingTitle, setEditingTitle] = useState(null);
 
-    // 2. Modificamos el manejador del botón "+"
     const handleAddOption = (e) => {
         e.stopPropagation();
 
-        // Si tenemos la función onAdd (que abre el modal), la usamos.
         if (onAdd) {
             onAdd();
-            setIsOpen(true); // Abrimos la lista para ver el nuevo item cuando se agregue
+            setIsOpen(true);
         } else {
-            // Fallback por seguridad (comportamiento antiguo)
             const newOption = { id: Date.now(), name: '' };
             onUpdate({ ...subcategory, options: [...subcategory.options, newOption] });
             setIsOpen(true);
@@ -94,12 +88,11 @@ const Subcategory = ({ subcategory, onUpdate, onDelete, onDeleteOption, onAdd })
                 </div>
 
                 <div className={styles.subcategoryRight}>
-                    {/* Este botón ahora abrirá tu Modal de Base de Datos */}
                     <button
                         className={styles.subcategoryAddOption}
                         onClick={handleAddOption}
                         title="Agregar opción a Base de Datos"
-                        style={{backgroundColor: '#4CAF50', color: 'white'}} // Un toque de color para resaltar que es funcional
+                        style={{backgroundColor: '#4CAF50', color: 'white'}}
                     >
                         +
                     </button>
@@ -112,10 +105,8 @@ const Subcategory = ({ subcategory, onUpdate, onDelete, onDeleteOption, onAdd })
                 <div className={styles.subcategoryContent}>
                     <div className={styles.subcategoryInner}>
 
-                        {/* ENCABEZADO ALINEADO */}
                         {subcategory.customTitles && (
                             <div className={styles.optionsHeader}>
-                                {/* COLUMNA 1 */}
                                 {editingTitle === 'title1' ? (
                                     <input
                                         value={title1}
@@ -134,7 +125,6 @@ const Subcategory = ({ subcategory, onUpdate, onDelete, onDeleteOption, onAdd })
                   </span>
                                 )}
 
-                                {/* COLUMNA 2 */}
                                 {editingTitle === 'title2' ? (
                                     <input
                                         value={title2}
@@ -153,7 +143,6 @@ const Subcategory = ({ subcategory, onUpdate, onDelete, onDeleteOption, onAdd })
                   </span>
                                 )}
 
-                                {/* COLUMNA 3 */}
                                 {editingTitle === 'title3' ? (
                                     <input
                                         value={title3}

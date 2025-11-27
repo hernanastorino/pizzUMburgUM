@@ -12,7 +12,7 @@ function ToppingsPizza() {
     const location = useLocation();
     const navigate = useNavigate();
     const pedidoAnterior = location.state;
-    const isFavoriteMode = pedidoAnterior?.isFavoriteMode; // Leemos la bandera
+    const isFavoriteMode = pedidoAnterior?.isFavoriteMode;
 
     useEffect(() => {
         const fetchToppings = async () => {
@@ -66,7 +66,6 @@ function ToppingsPizza() {
             });
             const userId = userRes.data.userId || userRes.data.id;
 
-            // Crear la Pizza en BD
             const pizzaBody = {
                 userId: userId,
                 name: `Pizza ${pedidoAnterior.masaName} ${pedidoAnterior.dbSize}`,
@@ -84,18 +83,15 @@ function ToppingsPizza() {
             );
             const createdPizzaId = pizzaRes.data.id;
 
-            // --- LÓGICA DIVERGENTE ---
             if (isFavoriteMode) {
-                // 1. MODO FAVORITO: Guardar en tabla de favoritos
                 await axios.post(
                     `http://localhost:8080/users/${userId}/favorites/${createdPizzaId}`,
                     {},
                     { headers: { Authorization: `Bearer ${token}` } }
                 );
                 alert("¡Guardada en tus Favoritos! ⭐");
-                navigate('/favoritos'); // Volver a la lista de favoritos
+                navigate('/favoritos');
             } else {
-                // 2. MODO CARRITO: Agregar a la orden
                 const orderRes = await axios.post(
                     `http://localhost:8080/orders/start/user/${userId}`,
                     {},
@@ -125,7 +121,6 @@ function ToppingsPizza() {
             <NextButton
                 onClick={handleFinalizar}
                 show={true}
-                // Texto dinámico del botón
                 text={isFavoriteMode ? "Guardar Favorito ⭐" : "Agregar al Carrito 🛒"}
             />
 

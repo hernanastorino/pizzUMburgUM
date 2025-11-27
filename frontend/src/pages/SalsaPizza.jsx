@@ -12,16 +12,15 @@ function SalsaPizza() {
     const [selectedId, setSelectedId] = useState(null);
 
     const location = useLocation();
-    const pedidoAnterior = location.state; // Trae { masaId, sizeKey, dbSize, ... }
+    const pedidoAnterior = location.state;
 
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const res = await axios.get('http://localhost:8080/api/products/sauces');
 
-                // Usamos el tamaño elegido en el paso anterior para mostrar el precio correcto
-                const sizeKey = pedidoAnterior?.sizeKey || 'Medium'; // Default por seguridad
-                const priceField = `price${sizeKey}`; // priceSmall, priceMedium...
+                const sizeKey = pedidoAnterior?.sizeKey || 'Medium';
+                const priceField = `price${sizeKey}`;
 
                 const formatted = res.data.map(item => ({
                     id: item.sauceId,
@@ -32,7 +31,7 @@ function SalsaPizza() {
                         {
                             size: 'normal',
                             text: 'Seleccionar',
-                            price: `$${item[priceField]}`, // Precio dinámico según tamaño pizza
+                            price: `$${item[priceField]}`,
                             className: 'btnMenu',
                             dbValue: item.sauceId
                         },

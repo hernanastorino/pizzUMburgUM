@@ -21,35 +21,28 @@ const Pedidos = () => {
                 return;
             }
 
-            // 1. Obtener ID del Usuario
             const userRes = await axios.get(`http://localhost:8080/api/users/${encodeURIComponent(email)}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             const userId = userRes.data.userId || userRes.data.id;
 
-            // 2. Obtener Historial de Órdenes
             const ordersRes = await axios.get(`http://localhost:8080/orders/user/${userId}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
 
-            // 3. Transformar datos para la vista
             const ordersMapped = ordersRes.data
-                // Filtramos PENDING porque es el carrito activo, no un pedido realizado
                 .filter(order => order.state !== 'PENDING')
                 .map(order => {
                     const items = [];
 
-                    // Procesar Creaciones (Pizzas/Burgers)
                     if (order.itemsCreation) {
                         order.itemsCreation.forEach(i => {
                             const creation = i.creation || {};
 
-                            // Generar descripción bonita
                             const detalles = [];
                             if (creation.size) detalles.push(creation.size);
                             if (creation.dough) detalles.push(creation.dough.name);
                             if (creation.meat) detalles.push(creation.meat.name);
-                            // ... puedes agregar más detalles si quieres
 
                             let nombre = creation.name || "Producto Personalizado";
                             if (nombre.includes('undefined')) nombre = creation.dough ? "Pizza a medida" : "Burger a medida";
@@ -63,7 +56,6 @@ const Pedidos = () => {
                         });
                     }
 
-                    // Procesar Bebidas
                     if (order.itemsBeverage) {
                         order.itemsBeverage.forEach(i => {
                             items.push({
@@ -74,7 +66,6 @@ const Pedidos = () => {
                         });
                     }
 
-                    // Procesar Sides
                     if (order.itemsSide) {
                         order.itemsSide.forEach(i => {
                             items.push({
@@ -87,13 +78,12 @@ const Pedidos = () => {
 
                     return {
                         id: order.id,
-                        estado: order.state, // CONFIRMED, PREPARING, SENT, DELIVERED
+                        estado: order.state,
                         total: order.total,
                         items: items
                     };
                 });
 
-            // Ordenar por ID descendente (lo más nuevo primero)
             setPedidos(ordersMapped.sort((a, b) => b.id - a.id));
             setLoading(false);
 
@@ -104,13 +94,12 @@ const Pedidos = () => {
     };
 
     const getEstadoInfo = (estado) => {
-        // Mapeo de estados del Backend (Java Enum) a Frontend Visual
         const estados = {
-            'CONFIRMED':   { texto: 'Confirmado',   color: '#fbbf24', emoji: '⏳' }, // Amarillo
-            'PREPARING':   { texto: 'Preparando',   color: '#60a5fa', emoji: '👨‍🍳' }, // Azul
-            'SENT':        { texto: 'En Camino',    color: '#a78bfa', emoji: '🛵' }, // Violeta
-            'DELIVERED':   { texto: 'Entregado',    color: '#4ade80', emoji: '✅' }, // Verde
-            'CANCELLED':   { texto: 'Cancelado',    color: '#ef4444', emoji: '❌' }  // Rojo
+            'CONFIRMED':   { texto: 'Confirmado',   color: '#fbbf24', emoji: '⏳' },
+            'PREPARING':   { texto: 'Preparando',   color: '#60a5fa', emoji: '👨‍🍳' },
+            'SENT':        { texto: 'En Camino',    color: '#a78bfa', emoji: '🛵' },
+            'DELIVERED':   { texto: 'Entregado',    color: '#4ade80', emoji: '✅' },
+            'CANCELLED':   { texto: 'Cancelado',    color: '#ef4444', emoji: '❌' }
         };
         return estados[estado] || { texto: estado, color: '#ccc', emoji: '❓' };
     };

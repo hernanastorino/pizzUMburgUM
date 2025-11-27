@@ -14,7 +14,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "Pizza")
-@DiscriminatorValue("PIZZA") // Valor que se guarda en la columna "creation_type"
+@DiscriminatorValue("PIZZA")
 @Getter
 @Setter
 @SuperBuilder
@@ -23,30 +23,27 @@ import java.util.Set;
 @PrimaryKeyJoinColumn(name = "creationId")
 public class Pizza extends Creation {
 
-    /*@Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long pizzaId;*/
 
     private String size;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "dough_id", referencedColumnName = "doughId")
-    private Dough dough; // La relación "lleva_masa"
+    private Dough dough;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "cheese_type_id", referencedColumnName = "cheeseId")
-    private Cheese cheese; // La relación "lleva_queso"
+    private Cheese cheese;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "sauce_type_id", referencedColumnName = "sauceId")
-    private Sauce sauce; // La relación "lleva_salsa"
+    private Sauce sauce;
 
     @Builder.Default
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
-            name = "Pizza_Topping", // Nombre de la tabla intermedia
-            joinColumns = @JoinColumn(name = "creation_id", referencedColumnName = "creationId"), // FK a esta entidad (Pizza)
-            inverseJoinColumns = @JoinColumn(name = "topping_id") // FK a la otra entidad (Topping)
+            name = "Pizza_Topping",
+            joinColumns = @JoinColumn(name = "creation_id", referencedColumnName = "creationId"),
+            inverseJoinColumns = @JoinColumn(name = "topping_id")
     )
     private Set<Topping> toppings = new HashSet<>();
 
@@ -59,34 +56,28 @@ public class Pizza extends Creation {
     public double getUnitPrice() {
         double total = 0.0;
 
-        // Determinar el tamaño para saber qué precio cobrar
-        // 1 = Small (15cm), 2 = Medium (20cm), 3 = Large (25cm)
         int sizeTier = 1;
         if ("20cm".equals(this.size)) sizeTier = 2;
         if ("25cm".equals(this.size)) sizeTier = 3;
 
-        // Sumar Masa
         if (this.dough != null) {
             if (sizeTier == 3) total += this.dough.getPriceLarge();
             else if (sizeTier == 2) total += this.dough.getPriceMedium();
             else total += this.dough.getPriceSmall();
         }
 
-        // Sumar Queso
         if (this.cheese != null) {
             if (sizeTier == 3) total += this.cheese.getPriceLarge();
             else if (sizeTier == 2) total += this.cheese.getPriceMedium();
             else total += this.cheese.getPriceSmall();
         }
 
-        // Sumar Salsa
         if (this.sauce != null) {
             if (sizeTier == 3) total += this.sauce.getPriceLarge();
             else if (sizeTier == 2) total += this.sauce.getPriceMedium();
             else total += this.sauce.getPriceSmall();
         }
 
-        // Sumar Toppings
         if (this.toppings != null && !this.toppings.isEmpty()) {
             for (Topping t : this.toppings) {
                 if (sizeTier == 3) total += t.getPriceLarge();

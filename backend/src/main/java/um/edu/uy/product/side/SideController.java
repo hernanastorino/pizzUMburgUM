@@ -9,7 +9,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/products/sides")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:3000") // <--- AGREGADO
+@CrossOrigin(origins = "http://localhost:3000")
 public class SideController {
 
     private final SideService sideService;

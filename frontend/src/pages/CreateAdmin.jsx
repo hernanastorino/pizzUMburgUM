@@ -2,12 +2,11 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import BackButton from '../components/BackButton';
-import styles from '../styles/Register.module.css'; // Usamos los estilos que ya tienes
+import styles from '../styles/Register.module.css';
 
 function CreateAdmin() {
     const navigate = useNavigate();
 
-    // Estado inicial vacío
     const [formData, setFormData] = useState({
         name: '',
         surname: '',
@@ -30,7 +29,6 @@ function CreateAdmin() {
         setError(null);
         setSuccess(null);
 
-        // 1. Validar que tengamos token (el admin debe estar logueado)
         const token = localStorage.getItem('token');
         if (!token) {
             setError("No hay sesión activa. Por favor inicia sesión nuevamente.");
@@ -38,24 +36,21 @@ function CreateAdmin() {
         }
 
         try {
-            // 2. Llamada a la API
-            console.log("Enviando datos:", formData); // Para depuración
+            console.log("Enviando datos:", formData);
 
             const response = await axios.post(
                 'http://127.0.0.1:8080/api/users/admin',
                 formData,
                 {
                     headers: {
-                        'Authorization': `Bearer ${token}`, // Header Clave
+                        'Authorization': `Bearer ${token}`,
                         'Content-Type': 'application/json'
                     }
                 }
             );
 
-            // 3. Éxito
             setSuccess('¡Admin creado exitosamente! Redirigiendo...');
 
-            // Limpiar form
             setFormData({ name: '', surname: '', email: '', password: '' });
 
             setTimeout(() => {
@@ -65,10 +60,7 @@ function CreateAdmin() {
         } catch (err) {
             console.error('Error completo:', err);
 
-            // 4. Manejo de errores específico para que no te quedes ciego
             if (err.response) {
-                // El servidor respondió con un error (ej. 400 Bad Request o 403 Forbidden)
-                // A veces el mensaje viene en err.response.data (string) o err.response.data.message
                 const serverMsg = typeof err.response.data === 'string'
                     ? err.response.data
                     : err.response.data.message || JSON.stringify(err.response.data);
@@ -79,7 +71,6 @@ function CreateAdmin() {
                     setError(`Error del servidor: ${serverMsg}`);
                 }
             } else if (err.request) {
-                // No hubo respuesta (servidor apagado o error de red)
                 setError("No hubo respuesta del servidor. Verifica que el backend esté corriendo en puerto 8080.");
             } else {
                 setError("Error desconocido al preparar la petición.");
@@ -89,7 +80,6 @@ function CreateAdmin() {
 
     return (
         <>
-            {/* Usamos tu Navbar de Admin en App.js, así que aquí solo necesitamos volver */}
             <BackButton to="/backoffice" />
 
             <div className={styles.container}>
@@ -141,7 +131,6 @@ function CreateAdmin() {
                             Crear Administrador
                         </button>
 
-                        {/* Mensajes de Error/Éxito */}
                         {error && (
                             <div style={{ color: 'red', marginTop: '10px', textAlign: 'center', background: 'rgba(255,0,0,0.1)', padding: '5px', borderRadius: '4px' }}>
                                 <strong>Ups:</strong> {error}

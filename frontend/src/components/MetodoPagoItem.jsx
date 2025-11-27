@@ -1,4 +1,3 @@
-// src/components/MetodoPagoItem.jsx
 import React, { useState } from 'react';
 import styles from '../styles/PagosYEnvios.module.css';
 

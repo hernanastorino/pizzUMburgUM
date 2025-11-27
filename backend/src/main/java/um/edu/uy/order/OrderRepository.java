@@ -10,12 +10,12 @@ import java.util.Optional;
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long> {
 
-    // Buscar todos los pedidos de un cliente
+    // busca todos los pedidos de un cliente
     List<Order> findByClient_UserId(Long userId);
 
-    // Buscar el pedido en curso del carrito
+    // busca el pedido en carrito
     Optional<Order> findByClient_UserIdAndState(Long userId, OrderStatus state);
 
-    // Para DGI
+    // para DGI
     List<Order> findAllByDateBetween(LocalDateTime startDate, LocalDateTime endDate);
 }

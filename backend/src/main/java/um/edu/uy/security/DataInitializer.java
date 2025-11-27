@@ -53,7 +53,7 @@ public class DataInitializer {
             PaymentMethodRepository paymentMethodRepository) {
 
         return args -> {
-            // 1. USUARIOS
+            // 1. Usuarios
             User adminUser, clientA, clientB;
 
             if (userRepository.findByRole(Role.adminRole).isEmpty()) {
@@ -85,7 +85,7 @@ public class DataInitializer {
 
             clientA = userRepository.findByEmail("clienta@pizzum.com").orElseThrow();
 
-            // 2. CATÁLOGO (Ingredientes necesarios para armar productos)
+            // 2. Catalogo
             if (breadRepository.count() == 0) {
                 breadRepository.saveAll(List.of(
                         Bread.builder().name("Pan Brioche").priceSmall(50.0).priceMedium(60.0).priceLarge(70.0).isAvailable(true).build(),
@@ -164,7 +164,7 @@ public class DataInitializer {
                 ));
             }
 
-            // 3. DATOS DE CLIENTE (Opcional, para facilitar pruebas)
+            // 3. Datos de cliente
             User finalClientA = clientA;
             Address addrHome = addressRepository.findAll().stream()
                     .filter(a -> a.getUser().getUserId().equals(finalClientA.getUserId()))
@@ -199,8 +199,7 @@ public class DataInitializer {
                 paymentMethodRepository.save(newPm);
             }
 
-            // --- FIN: NO CREAMOS ÓRDENES NI FAVORITOS POR DEFECTO ---
-            System.out.println("¡INICIALIZACIÓN FINALIZADA! Backend listo.");
+            System.out.println("Backend Listo");
         };
     }
 }

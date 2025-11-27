@@ -20,9 +20,8 @@ public class PizzaOptionsController {
     private final DoughService doughService;
     private final CheeseService cheeseService;
     private final SauceService sauceService;
-    // ¡OJO! Aquí NO debe haber nada de ToppingService
 
-    // --- DOUGHS (Masas) ---
+    // doughs
     @GetMapping("/doughs")
     public List<Dough> getAllDoughs() { return doughService.findAll(); }
 
@@ -38,7 +37,7 @@ public class PizzaOptionsController {
         return ResponseEntity.noContent().build();
     }
 
-    // --- CHEESES (Quesos) ---
+    // cheeses
     @GetMapping("/cheeses")
     public List<Cheese> getAllCheeses() { return cheeseService.findAll(); }
 
@@ -54,7 +53,7 @@ public class PizzaOptionsController {
         return ResponseEntity.noContent().build();
     }
 
-    // --- SAUCES (Salsas) ---
+    // sauces
     @GetMapping("/sauces")
     public List<Sauce> getAllSauces() { return sauceService.findAll(); }
 

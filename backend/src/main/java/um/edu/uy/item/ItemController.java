@@ -1,8 +1,10 @@
-package um.edu.uy.order;
+package um.edu.uy.item;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import um.edu.uy.order.Order;
+import um.edu.uy.order.OrderRepository;
 import um.edu.uy.product.beverage.relations.BeverageInOrder;
 import um.edu.uy.product.beverage.relations.BeverageInOrderKey;
 import um.edu.uy.product.beverage.relations.BeverageInOrderRepository;
@@ -46,9 +48,7 @@ public class ItemController {
                 beverageRepo.deleteById(key);
             } else {
                 BeverageInOrder item = beverageRepo.findById(key).orElseThrow();
-                // CORRECCIÓN: setBeverageQuantity
                 item.setBeverageQuantity(req.quantity);
-                // Actualizamos subtotal manualmente o confiamos en @PreUpdate si existe (aquí lo hago manual por seguridad)
                 item.setBeverageSubtotal(item.getBeverage().getPrice() * req.quantity);
                 beverageRepo.save(item);
             }
@@ -59,7 +59,6 @@ public class ItemController {
                 sideRepo.deleteById(key);
             } else {
                 SideInOrder item = sideRepo.findById(key).orElseThrow();
-                // CORRECCIÓN: setSideQuantity
                 item.setSideQuantity(req.quantity);
                 item.setSideSubtotal(item.getSide().getPrice() * req.quantity);
                 sideRepo.save(item);
@@ -75,14 +74,14 @@ public class ItemController {
         Order order = orderRepo.findById(orderId).orElseThrow();
         double total = 0.0;
 
-        // Sumar Creaciones
+        // sumar Creaciones
         total += order.getItemsCreation().stream().mapToDouble(CreationInOrder::getCreationSubtotal).sum();
 
-        // Sumar Bebidas (CORRECCIÓN: getBeverageQuantity)
+        // sumar Bebidas
         total += order.getItemsBeverage().stream()
                 .mapToDouble(i -> i.getBeverage().getPrice() * i.getBeverageQuantity()).sum();
 
-        // Sumar Sides (CORRECCIÓN: getSideQuantity)
+        // sumar Sides
         total += order.getItemsSide().stream()
                 .mapToDouble(i -> i.getSide().getPrice() * i.getSideQuantity()).sum();
 

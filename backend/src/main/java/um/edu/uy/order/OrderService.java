@@ -47,7 +47,6 @@ public class OrderService {
     private final SideRepository sideRepository;
     private final CreationRepository creationRepository;
 
-    // --- MÉTODOS DE SEGURIDAD Y BÚSQUEDA ---
 
     public Order getOrderById(Long id, String userEmail, boolean isAdmin) {
         Order order = orderRepository.findById(id)
@@ -92,7 +91,6 @@ public class OrderService {
         return orderRepository.save(newOrder);
     }
 
-    // --- LOGICA DE AGREGAR ITEMS (Llamada desde el Controller) ---
 
     @Transactional
     public Order addBeverageToOrder(Long orderId, Long beverageId, Integer quantity, String userEmail, boolean isAdmin) {
@@ -124,7 +122,6 @@ public class OrderService {
         Creation creation = creationRepository.findById(creationId)
                 .orElseThrow(() -> new RuntimeException("Creation not found"));
 
-        // Validar que la creación pertenezca al usuario (opcional, pero recomendado)
         if (!creation.getUser().getEmail().equals(userEmail)) {
             throw new RuntimeException("You can only add your own creations");
         }
@@ -132,7 +129,6 @@ public class OrderService {
         return addOrUpdateCreationInternal(order, creation, quantity);
     }
 
-    // --- LÓGICA INTERNA DE ACTUALIZACIÓN DE TOTALES Y RELACIONES ---
 
     private Order addBeverageInternal(Order order, Beverage beverage, int quantity) {
         BeverageInOrderKey key = new BeverageInOrderKey(order.getId(), beverage.getBeverageId());
@@ -247,7 +243,6 @@ public class OrderService {
         order.setTotal(total);
     }
 
-    // --- CHECKOUT Y GESTIÓN DE ESTADOS ---
 
     @Transactional
     public Order confirmOrder(Long orderId, Long addressId, Long paymentId, String userEmail, boolean isAdmin) {
@@ -314,7 +309,6 @@ public class OrderService {
         List<Order> orders = orderRepository.findAllByDateBetween(startOfDay, endOfDay);
 
         return orders.stream()
-                // solo nos interesan las ordenes que generaron venta real (excluimos PENDING (carrito) y CANCELLED)
                 .filter(o -> o.getState() != OrderStatus.PENDING && o.getState() != OrderStatus.CANCELLED)
                 .map(OrderResponse::new)
                 .toList();

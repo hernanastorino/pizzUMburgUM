@@ -42,11 +42,9 @@ public class PaymentMethodService {
     public PaymentMethod updateSmart(@PathVariable Long id, @RequestBody PaymentMethod newInfo) {
         PaymentMethod oldPayment = paymentMethodRepository.findById(id).orElseThrow();
 
-        // Si cambia el número de tarjeta, ES OTRA TARJETA.
         boolean coreChanges = !oldPayment.getCardNumber().equals(newInfo.getCardNumber());
 
         if (coreChanges) {
-            // Crear nueva
             PaymentMethod newPayment = PaymentMethod.builder()
                     .user(oldPayment.getUser())
                     .cardName(newInfo.getCardName())
@@ -56,10 +54,8 @@ public class PaymentMethodService {
                     .build();
             return paymentMethodRepository.save(newPayment);
         } else {
-            // Editar existente (Ej: corregir el nombre del dueño o el alias)
             oldPayment.setCardName(newInfo.getCardName());
             oldPayment.setOwnerName(newInfo.getOwnerName());
-            // El número y CVV no se tocan en edición
             return paymentMethodRepository.save(oldPayment);
         }
     }

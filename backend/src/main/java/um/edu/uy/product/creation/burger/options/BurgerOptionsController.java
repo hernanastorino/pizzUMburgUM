@@ -15,14 +15,14 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/products")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:3000") // <--- IMPORTANTE: CORS ACTIVADO
+@CrossOrigin(origins = "http://localhost:3000")
 public class BurgerOptionsController {
 
     private final BreadService breadService;
     private final MeatService meatService;
     private final CondimentService condimentService;
 
-    // --- BREADS (Panes) ---
+    // breads
     @GetMapping("/breads")
     public List<Bread> getAllBreads() { return breadService.findAll(); }
 
@@ -38,7 +38,7 @@ public class BurgerOptionsController {
         return ResponseEntity.noContent().build();
     }
 
-    // --- MEATS (Carnes) ---
+    // meats
     @GetMapping("/meats")
     public List<Meat> getAllMeats() { return meatService.findAll(); }
 
@@ -54,7 +54,7 @@ public class BurgerOptionsController {
         return ResponseEntity.noContent().build();
     }
 
-    // --- CONDIMENTS (Aderezos) ---
+    // condiments
     @GetMapping("/condiments")
     public List<Condiment> getAllCondiments() { return condimentService.findAll(); }
 

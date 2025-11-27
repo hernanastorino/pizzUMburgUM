@@ -5,6 +5,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface BurgerRepository extends JpaRepository<Burger, Long> {
-    // Encontrar una burger en el pedido actual
 
 }

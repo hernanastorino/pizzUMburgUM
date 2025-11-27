@@ -1,6 +1,5 @@
 package um.edu.uy.order;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import um.edu.uy.product.beverage.relations.BeverageInOrder;
@@ -40,15 +39,13 @@ public class Order {
     @Column(nullable = false)
     private LocalDateTime date;
 
-    // --- CORRECCIÓN: Permitimos que sean NULL al inicio ---
     @ManyToOne
-    @JoinColumn(name = "address_id") // Quitamos nullable = false
+    @JoinColumn(name = "address_id")
     private Address address;
 
     @ManyToOne
-    @JoinColumn(name = "payment_method_id") // Quitamos nullable = false
+    @JoinColumn(name = "payment_method_id")
     private PaymentMethod paymentMethod;
-    // -----------------------------------------------------
 
     @OneToMany(
             mappedBy = "order",

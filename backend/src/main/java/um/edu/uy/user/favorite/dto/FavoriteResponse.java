@@ -11,12 +11,12 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public record FavoriteResponse(
-        Long id, // ID del favorito
+        Long id,
         Long creationId,
         String nombre,
-        String tipo, // 'pizza' o 'hamburguesa'
+        String tipo,
         Double precioTotal,
-        Map<String, Object> detalles, // Mapa dinámico para el frontend
+        Map<String, Object> detalles,
         LocalDateTime favoredOn
 ) {
     public FavoriteResponse(FavoriteCreation fav) {
@@ -25,7 +25,7 @@ public record FavoriteResponse(
                 fav.getCreation().getCreationId(),
                 fav.getCreation().getName(),
                 determineType(fav.getCreation()),
-                fav.getCreation().getUnitPrice(), // Calculamos precio actual
+                fav.getCreation().getUnitPrice(),
                 extractDetails(fav.getCreation()),
                 fav.getCreatedOn()
         );
@@ -46,7 +46,6 @@ public record FavoriteResponse(
             map.put("toppings", p.getToppings().stream().map(Topping::getName).toList());
         }
         else if (creation instanceof Burger b) {
-            // Traducir cantidad de carne a texto visual
             String sizeText = switch (b.getMeatQuantity()) {
                 case 1 -> "1 carne";
                 case 2 -> "2 carnes";
@@ -56,7 +55,7 @@ public record FavoriteResponse(
             map.put("tamaño", sizeText);
             map.put("tipoCarne", b.getMeat() != null ? b.getMeat().getName() : "");
             map.put("pan", b.getBread() != null ? b.getBread().getName() : "");
-            map.put("queso", b.getCondiment() != null ? b.getCondiment().getName() : ""); // Usamos condiment como queso/aderezo base
+            map.put("queso", b.getCondiment() != null ? b.getCondiment().getName() : "");
             map.put("toppings", b.getToppings().stream().map(Topping::getName).toList());
         }
         return map;

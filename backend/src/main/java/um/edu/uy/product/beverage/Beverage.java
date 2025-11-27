@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "Beverage") //solo para cambiar nombre de clase en base de datos
+@Table(name = "Beverage")
 @Getter
 @Setter
 @Builder

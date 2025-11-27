@@ -1,4 +1,4 @@
-package um.edu.uy.security; // Put this in your config package
+package um.edu.uy.security;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -17,7 +17,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 
 @Component
-@RequiredArgsConstructor // Injects final fields
+@RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
@@ -32,40 +32,33 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         final String authHeader = request.getHeader("Authorization");
         final String jwt;
-        final String userEmail; // Our username is the email
+        final String userEmail;
 
-        // 1. Check for Bearer token
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            filterChain.doFilter(request, response); // Pass to next filter
+            filterChain.doFilter(request, response);
             return;
         }
-        jwt = authHeader.substring(7); // "Bearer ".length()
+        jwt = authHeader.substring(7);
 
         try {
-            // 3. Extract email from token
             userEmail = jwtService.extractUsername(jwt);
 
-            // 4. If email exists and user is not already authenticated
             if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);
 
-                // 5. If token is valid, update Spring Security Context
                 if (jwtService.isTokenValid(jwt, userDetails)) {
                     UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                             userDetails,
-                            null, // We don't need credentials
+                            null,
                             userDetails.getAuthorities()
                     );
                     authToken.setDetails(
                             new WebAuthenticationDetailsSource().buildDetails(request)
                     );
-                    // This is the line that "logs in" the user for this request
                     SecurityContextHolder.getContext().setAuthentication(authToken);
                 }
             }
         } catch (Exception e) {
-            // Handle token validation exceptions (expired, malformed, etc.)
-            // For now, we just let it pass to the next filter, which will deny access
         }
 
         filterChain.doFilter(request, response);

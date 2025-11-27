@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import BackButton from '../components/BackButton'
 import NextButton from '../components/NextButton'
-import papasImage from '../assets/images/fries.jpg' // Imagen genérica
+import papasImage from '../assets/images/fries.jpg'
 import '../index.css'
 
 function Acompaniamiento() {
@@ -68,7 +68,6 @@ function Acompaniamiento() {
             )
             const orderId = orderRes.data.id
 
-            // Endpoint de Sides
             await Promise.all(selectedItems.map(item =>
                 axios.post(
                     `http://localhost:8080/orders/${orderId}/items/sides`,

@@ -24,7 +24,6 @@ public class SideInOrder {
     @JsonIgnore
     private Order order;
 
-    // Define la relación con bebida
     @ManyToOne(fetch = FetchType.EAGER)
     @MapsId("sideId")
     @JoinColumn(name = "side_id")

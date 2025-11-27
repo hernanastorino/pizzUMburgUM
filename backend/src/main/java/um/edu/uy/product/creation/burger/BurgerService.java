@@ -78,16 +78,15 @@ public class BurgerService {
 
         Burger original = getBurgerById(id);
 
-        // Verificar si forma parte de un pedido PENDING
         boolean isUsedInPendingOrder =
                 !creationInOrderRepository.findPendingOrdersUsingCreation(id).isEmpty();
 
         if (!isUsedInPendingOrder) {
-            // Caso A: Burger NO está en un carrito -> modificar en la base directamente
+            // modificar en la base directamente
             return updateExistingBurger(original, req);
         }
 
-        // Caso B: está en un carrito -> crear una copia nueva
+        // crear una copia nueva
         Burger copy = duplicateBurger(original);
 
         return updateExistingBurger(copy, req);

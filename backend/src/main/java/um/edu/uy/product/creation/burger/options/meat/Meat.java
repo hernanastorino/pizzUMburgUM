@@ -19,9 +19,9 @@ public class Meat {
     @Column(nullable = false)
     private String name;
 
-    private Double priceSmall;  // 1 Carne
-    private Double priceMedium; // 2 Carnes
-    private Double priceLarge;  // 3 Carnes
+    private Double priceSmall;
+    private Double priceMedium;
+    private Double priceLarge;
 
     private boolean isAvailable;
 }

@@ -23,9 +23,7 @@ const PerfilAdmin = () => {
   };
 
   const handleLogout = () => {
-    // Si luego usas tokens o datos, aquí los limpiás
-    // localStorage.clear();
-    navigate("/"); // Redirige al INDEX
+    navigate("/");
   };
 
   return (
@@ -36,7 +34,6 @@ const PerfilAdmin = () => {
 
         <div className={styles.form}>
 
-          {/* Campo de Nombre */}
           <input
             type="text"
             name="nombre"
@@ -46,7 +43,6 @@ const PerfilAdmin = () => {
             onChange={handleChange}
           />
 
-          {/* Campo de Apellido */}
           <input
             type="text"
             name="apellido"
@@ -56,7 +52,6 @@ const PerfilAdmin = () => {
             onChange={handleChange}
           />
 
-          {/* Campo de Email */}
           <input
             type="email"
             name="email"
@@ -66,7 +61,6 @@ const PerfilAdmin = () => {
             onChange={handleChange}
           />
 
-          {/* Campo de Contraseña */}
           <div className={styles.passwordContainer}>
             <input
               type={showPassword ? "text" : "password"}
@@ -105,8 +99,7 @@ const PerfilAdmin = () => {
             </button>
           </div>
 
-          {/* Botón Cerrar Sesión */}
-          <button 
+          <button
             type="button"
             className={`${styles.button} ${styles.logoutButton}`} 
             onClick={handleLogout}

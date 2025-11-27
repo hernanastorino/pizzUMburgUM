@@ -1,4 +1,3 @@
-// src/components/OrderConfirmModal.jsx
 import React from 'react';
 import styles from '../styles/OrderConfirmModal.module.css';
 

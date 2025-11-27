@@ -11,7 +11,7 @@ import Backoffice from './pages/Backoffice';
 import Favoritos from './pages/Favoritos';
 import PagosYEnvios from './pages/PagosYEnvios';
 import Perfil from './pages/Perfil';
-import PerfilAdmin from './pages/PerfilAdmin'; // AGREGADO
+import PerfilAdmin from './pages/PerfilAdmin';
 import Pedidos from './pages/Pedidos';
 import PedidosAdmin from './pages/PedidosAdmin';
 import Acompaniamiento from './pages/Acompaniamiento';
@@ -35,14 +35,12 @@ import SimpleNavbar from './components/SimpleNavbar';
 import Footer from './components/Footer';
 import ProtectedRoute from './components/ProtectedRoute';
 
-// Componente helper para renderizar la navbar correcta
 const NavbarSwitch = () => {
     const role = localStorage.getItem('role');
     return role === 'adminRole' ? <AdminNavbar /> : <Navbar />;
 };
 
 function App() {
-    // Aplicar la imagen de fondo al body
     useEffect(() => {
         document.body.style.backgroundImage = `url(${borrosoImage})`
         document.body.style.backgroundSize = 'cover'
@@ -54,10 +52,8 @@ function App() {
     return (
         <BrowserRouter>
             <Routes>
-                {/* Landing Page - SIN Navbar ni Footer */}
                 <Route path="/" element={<LandingPage />} />
                 
-                {/* Páginas públicas con navbar simple (solo logo) */}
                 <Route path="/login" element={
                     <>
                         <SimpleNavbar />
@@ -74,7 +70,6 @@ function App() {
                     </>
                 } />
 
-                {/* --- ADMIN ROUTES --- */}
                 <Route element={<ProtectedRoute allowedRoles={['adminRole']} />}>
                     <Route path="/backoffice" element={
                         <>
@@ -92,7 +87,6 @@ function App() {
                         </>
                     } />
 
-                    {/* RUTA PARA PEDIDOS ADMIN */}
                     <Route path="/pedidos-admin" element={
                         <>
                             <AdminNavbar />
@@ -101,7 +95,6 @@ function App() {
                         </>
                     } />
 
-                    {/* RUTA PARA PERFIL ADMIN */}
                     <Route path="/perfil-admin" element={
                         <>
                             <AdminNavbar />
@@ -111,7 +104,6 @@ function App() {
                     } />
                 </Route>
 
-                {/* --- SHARED ROUTE: MENU (Admin y Client pueden acceder) --- */}
                 <Route element={<ProtectedRoute allowedRoles={['adminRole', 'clientRole']} />}>
                     <Route path="/menu" element={
                         <>
@@ -121,7 +113,6 @@ function App() {
                         </>
                     } />
 
-                    {/* Rutas de creación de productos - Admin y Client */}
                     <Route path="/masa-pizza" element={
                         <>
                             <NavbarSwitch />
@@ -211,7 +202,6 @@ function App() {
                     } />
                 </Route>
 
-                {/* --- CLIENT ONLY ROUTES --- */}
                 <Route element={<ProtectedRoute allowedRoles={['clientRole']} />}>
                     <Route path="/favoritos" element={
                         <>

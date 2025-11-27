@@ -15,14 +15,11 @@ const DireccionItem = ({ direccion, onUpdate, onDelete, onDeleteDirecto }) => {
   });
 
   const handleSave = () => {
-    // Verificar si TODOS los campos están vacíos
     if (!form.nombre.trim() && !form.direccion.trim() && !form.numero.trim() && !form.aptPiso.trim() && !form.observaciones.trim()) {
-      // Si TODO está vacío, eliminar DIRECTAMENTE sin modal
       onDeleteDirecto(direccion.id);
       return;
     }
 
-    // Si hay ALGO escrito (aunque sea solo un campo), guardar normalmente
     onUpdate({ ...form, id: direccion.id });
     setEditing(false);
   };

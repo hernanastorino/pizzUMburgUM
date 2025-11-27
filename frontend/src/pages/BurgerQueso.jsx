@@ -17,7 +17,6 @@ function BurgerQueso() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                // En Burger, el "Queso" o "Aderezo base" lo guardamos como Condiment en el backend
                 const res = await axios.get('http://localhost:8080/api/products/condiments')
 
                 const sizeKey = pedidoAnterior?.sizeKey || 'Medium'

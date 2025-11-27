@@ -42,13 +42,11 @@ const LandingPage = () => {
         </div>
       </div>
 
-      {/* Imagen de fondo */}
-      <div 
+      <div
         className={styles['hero-background']} 
         style={{ backgroundImage: `url(${background})` }}
       ></div>
 
-      {/* Botones superiores */}
       <div className={styles['top-left-button']}>
         <button className={styles['sesion-button']} onClick={() => navigate('/login')}>
           <span>Iniciar Sesión</span>
@@ -61,7 +59,6 @@ const LandingPage = () => {
         </button>
       </div>
 
-      {/* Social Media Buttons */}
       <ul className={styles['example-2']}>
         <li className={styles['icon-content']}>
           <a href="https://wa.me/59899999999" target="_blank" rel="noopener noreferrer" data-social="whatsapp" aria-label="Whatsapp">
@@ -92,10 +89,8 @@ const LandingPage = () => {
         </li>
       </ul>
 
-      {/* Espaciador */}
       <div className={styles['content-spacer']}></div>
 
-      {/* Footer - Importado como componente */}
       <Footer />
 
     </div>

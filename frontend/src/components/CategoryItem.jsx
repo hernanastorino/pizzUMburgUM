@@ -3,7 +3,6 @@ import Subcategory from './Subcategory';
 import ConfirmModal from './ConfirmModal';
 import styles from '../styles/Backoffice.module.css';
 
-// 1. Agregamos onAddClick a las props recibidas
 const CategoryItem = ({ category, onUpdate, onAddClick }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [modal, setModal] = useState({ open: false, type: null, id: null, subId: null });
@@ -77,7 +76,6 @@ const CategoryItem = ({ category, onUpdate, onAddClick }) => {
                                     onUpdate={handleUpdateSubcategory}
                                     onDelete={() => confirmDeleteSubcategory(sub.id)}
                                     onDeleteOption={confirmDeleteOption}
-                                    // 2. Pasamos la función hacia abajo para que el botón esté en la subcategoría
                                     onAdd={() => onAddClick(sub.id, sub.name)}
                                 />
                             ))}

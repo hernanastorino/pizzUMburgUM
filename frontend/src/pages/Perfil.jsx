@@ -25,9 +25,7 @@ const Perfil = () => {
   };
 
   const handleLogout = () => {
-    // Si luego usas tokens o datos, aquí los limpiás
-    // localStorage.clear();
-    navigate("/"); // Redirige al INDEX
+    navigate("/");
   };
 
   return (
@@ -38,7 +36,6 @@ const Perfil = () => {
 
           <div className={styles.form}>
 
-            {/* Campo de Nombre */}
             <input
               type="text"
               name="nombre"
@@ -48,7 +45,6 @@ const Perfil = () => {
               onChange={handleChange}
             />
 
-            {/* Campo de Apellido */}
             <input
               type="text"
               name="apellido"
@@ -58,7 +54,6 @@ const Perfil = () => {
               onChange={handleChange}
             />
 
-            {/* Campo de Email */}
             <input
               type="email"
               name="email"
@@ -68,7 +63,6 @@ const Perfil = () => {
               onChange={handleChange}
             />
 
-            {/* Campo de Contraseña */}
             <div className={styles.passwordContainer}>
               <input
                 type={showPassword ? "text" : "password"}
@@ -107,7 +101,6 @@ const Perfil = () => {
               </button>
             </div>
 
-            {/* Campo de Fecha de Nacimiento */}
             <input
               type="date"
               name="fechaNacimiento"
@@ -117,7 +110,6 @@ const Perfil = () => {
               onChange={handleChange}
             />
 
-            {/* Campo de Documento */}
             <input
               type="text"
               name="documento"
@@ -127,8 +119,7 @@ const Perfil = () => {
               onChange={handleChange}
             />
 
-            {/* Botón Cerrar Sesión */}
-            <button 
+            <button
               type="button"
               className={`${styles.button} ${styles.logoutButton}`} 
               onClick={handleLogout}

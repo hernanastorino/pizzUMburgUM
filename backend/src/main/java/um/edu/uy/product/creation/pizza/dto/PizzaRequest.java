@@ -5,7 +5,6 @@ import java.util.Set;
 public record PizzaRequest(
         Long userId,
         String name,
-        //Double subtotal,
         String size,
         Long doughId,
         Long cheeseId,

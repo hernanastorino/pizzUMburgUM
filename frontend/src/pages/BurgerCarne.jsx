@@ -24,37 +24,17 @@ function BurgerCarne() {
         const fetchData = async () => {
             try {
                 const res = await axios.get('http://localhost:8080/api/products/meats')
-
                 const formattedData = res.data.map(item => ({
                     id: item.meatId,
                     title: item.name,
                     description: 'Selecciona el tamaño',
                     image: carneImg,
                     buttons: [
-                        {
-                            size: 'Small',
-                            text: 'Simple<br><small>1 Carne</small>',
-                            price: `$${item.priceSmall}`,
-                            className: buttonStyles.Small,
-                            dbValue: 1
-                        },
-                        {
-                            size: 'Medium',
-                            text: 'Doble<br><small>2 Carnes</small>',
-                            price: `$${item.priceMedium}`,
-                            className: buttonStyles.Medium,
-                            dbValue: 2
-                        },
-                        {
-                            size: 'Large',
-                            text: 'Triple<br><small>3 Carnes</small>',
-                            price: `$${item.priceLarge}`,
-                            className: buttonStyles.Large,
-                            dbValue: 3
-                        },
+                        { size: 'Small', text: 'Simple<br><small>1 Carne</small>', price: `$${item.priceSmall}`, className: buttonStyles.Small, dbValue: 1 },
+                        { size: 'Medium', text: 'Doble<br><small>2 Carnes</small>', price: `$${item.priceMedium}`, className: buttonStyles.Medium, dbValue: 2 },
+                        { size: 'Large', text: 'Triple<br><small>3 Carnes</small>', price: `$${item.priceLarge}`, className: buttonStyles.Large, dbValue: 3 },
                     ]
                 }))
-
                 setMenuData(formattedData)
                 setLoading(false)
             } catch (err) {
@@ -83,11 +63,10 @@ function BurgerCarne() {
                             setSelectedId={setSelectedId}
                             nextRoute="/burger-pan"
 
-                            // INYECTAMOS LA BANDERA AQUÍ TAMBIÉN
+                            // DATOS CRUCIALES:
                             pedidoActual={{ isFavoriteMode: isFavoriteMode }}
-
-                            baseIdKey="meatId"
-                            baseNameKey="meatName"
+                            baseIdKey="meatId"       // <--- ESTO NO PUEDE FALTAR
+                            baseNameKey="meatName"   // <--- ESTO TAMPOCO
                         />
                     ))}
                 </div>
@@ -95,5 +74,4 @@ function BurgerCarne() {
         </>
     )
 }
-
 export default BurgerCarne

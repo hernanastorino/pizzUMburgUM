@@ -19,7 +19,6 @@ function BurgerPan() {
             try {
                 const res = await axios.get('http://localhost:8080/api/products/breads')
 
-                // Usamos el tamaño elegido (Small/Medium/Large) para mostrar el precio correcto del pan
                 const sizeKey = pedidoAnterior?.sizeKey || 'Medium'
                 const priceField = `price${sizeKey}`
 

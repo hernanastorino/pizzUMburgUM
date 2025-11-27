@@ -66,7 +66,6 @@ function BurgerToppings() {
             })
             const userId = userRes.data.userId || userRes.data.id
 
-            // Crear Burger
             const burgerBody = {
                 userId: userId,
                 name: `Burger ${pedidoAnterior.meatName} x${pedidoAnterior.dbSize}`,
@@ -84,7 +83,6 @@ function BurgerToppings() {
             )
             const createdBurgerId = burgerRes.data.id
 
-            // --- LÓGICA DIVERGENTE ---
             if (isFavoriteMode) {
                 await axios.post(
                     `http://localhost:8080/users/${userId}/favorites/${createdBurgerId}`,
@@ -123,7 +121,6 @@ function BurgerToppings() {
             <NextButton
                 onClick={handleFinalizar}
                 show={true}
-                // Texto dinámico del botón
                 text={isFavoriteMode ? "Guardar Favorito ⭐" : "Agregar al Carrito 🛒"}
             />
 

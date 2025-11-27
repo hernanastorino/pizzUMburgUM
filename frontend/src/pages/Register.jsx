@@ -1,12 +1,12 @@
 import React, { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom' // Import useNavigate
-import axios from 'axios' // Import axios
+import { Link, useNavigate } from 'react-router-dom'
+import axios from 'axios'
 import BackButton from '../components/BackButton'
 import styles from '../styles/Register.module.css'
 
 function Register() {
-    const navigate = useNavigate(); // Hook for redirection
-    const [error, setError] = useState(null); // State for error messages
+    const navigate = useNavigate();
+    const [error, setError] = useState(null);
 
     const [formData, setFormData] = useState({
         name: '',
@@ -32,16 +32,13 @@ function Register() {
         setError(null)
 
         try {
-            // 1. Send data to Spring Boot
-            // Note: We only send the fields that the Backend supports right now.
             await axios.post('http://localhost:8080/api/auth/register', {
                 email: formData.email,
                 password: formData.password,
                 name: formData.name,
-                surname: formData.lastname // Map 'lastname' (React) to 'surname' (Java)
+                surname: formData.lastname
             });
 
-            // 2. On success, redirect to Login so they can get a Token
             alert('¡Registro exitoso! Por favor inicia sesión.');
             navigate('/login');
 
@@ -84,8 +81,6 @@ function Register() {
                             />
                         </div>
 
-                        {/* These fields exist in the form but NOT in the database yet.
-                We keep them in the UI, but they won't be saved until you update the User entity. */}
                         <input
                             type="date" name="birthDate" placeholder="Fecha de Nacimiento"
                             className={styles.input}
@@ -115,7 +110,6 @@ function Register() {
 
                         <p className={styles.footer}>
                             ¿Ya tenés cuenta?
-                            {/* Changed /sesion to /login to match your App.js routes */}
                             <Link to="/login" className={styles.link}>
                                 Iniciar Sesión
                             </Link>

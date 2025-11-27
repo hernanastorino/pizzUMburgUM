@@ -39,7 +39,6 @@ function Login() {
     }
 
     return (
-        // ... (Keep the rest of your JSX exactly the same) ...
         <>
             <BackButton to="/" />
             <div className={styles.container}>

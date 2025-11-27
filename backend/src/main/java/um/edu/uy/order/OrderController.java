@@ -30,13 +30,11 @@ public class OrderController {
         }
     }
 
-    // Iniciar carrito o recuperar existente
     @PostMapping("/start/user/{userId}")
     public ResponseEntity<Order> startOrder(@PathVariable Long userId) {
         return ResponseEntity.ok(orderService.createOrderForUser(userId));
     }
 
-    // --- AGREGAR ITEMS ---
 
     @PostMapping("/{id}/items/beverages")
     public ResponseEntity<OrderResponse> addBeverage(@PathVariable Long id,
@@ -71,7 +69,6 @@ public class OrderController {
         return ResponseEntity.ok(new OrderResponse(updatedOrder));
     }
 
-    // --- FLUJO DE ESTADOS ---
 
     @PostMapping("/{id}/confirm")
     public ResponseEntity<?> confirmOrder(@PathVariable Long id,

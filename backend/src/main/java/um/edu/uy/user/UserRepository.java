@@ -9,6 +9,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByRole(Role role);
     Optional<User> findFirstByRole(Role role);
 
-    // Para BPS
+    // para BPS
     long countByRole(Role role);
 }

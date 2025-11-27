@@ -32,7 +32,6 @@ const Backoffice = () => {
                 if (!Array.isArray(list)) return [];
 
                 return list
-                    // CORRECCIÓN 1: Leemos 'available' (Java) o 'isAvailable' (seguridad)
                     .filter(item => item && (item.available !== false && item.isAvailable !== false))
                     .map(item => ({
                         id: item.id || item.breadId || item.meatId || item.cheeseId || item.toppingId || item.sideId || item.beverageId || item.doughId || item.sauceId || item.condimentId,
@@ -40,7 +39,6 @@ const Backoffice = () => {
                         price15: item.priceSmall || item.price || 0,
                         price20: item.priceMedium || item.price || 0,
                         price25: item.priceLarge || item.price || 0,
-                        // Guardamos el estado correcto normalizando a 'isAvailable' para uso interno de React
                         isAvailable: (item.available !== undefined) ? item.available : item.isAvailable,
                         endpoint: endpointName
                     }));
@@ -97,11 +95,10 @@ const Backoffice = () => {
         try {
             const endpoint = ENDPOINT_MAP[selectedSubCatId];
 
-            // CORRECCIÓN 2: Enviamos 'available: true' para que Java lo entienda
             let body = {
                 name: formData.name,
-                available: true,   // <--- ESTO ES LO QUE JAVA ESPERA
-                isAvailable: true  // <--- Enviamos este también por si acaso
+                available: true,
+                isAvailable: true  //por las dudas
             };
 
             if (isSinglePrice) {

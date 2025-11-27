@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import BackButton from '../components/BackButton'
 import NextButton from '../components/NextButton'
-import bebidasImage from '../assets/images/beverages.jpg' // Imagen genérica
+import bebidasImage from '../assets/images/beverages.jpg'
 import '../index.css'
 
 function Bebidas() {
@@ -16,7 +16,6 @@ function Bebidas() {
         const fetchBebidas = async () => {
             try {
                 const res = await axios.get('http://localhost:8080/api/products/beverages')
-                // Mapeamos la respuesta del backend a la estructura visual
                 const formatted = res.data.map(item => ({
                     id: item.id,
                     title: item.name,
@@ -36,7 +35,6 @@ function Bebidas() {
     }, [])
 
     const handleItemClick = (item) => {
-        // Permite selección múltiple (toggle)
         setSelectedItems((prev) => {
             if (prev.find(i => i.id === item.id)) {
                 return prev.filter(i => i.id !== item.id)
@@ -58,13 +56,11 @@ function Bebidas() {
                 return
             }
 
-            // 1. Obtener ID de Usuario
             const userRes = await axios.get(`http://localhost:8080/api/users/${encodeURIComponent(email)}`, {
                 headers: { Authorization: `Bearer ${token}` }
             })
             const userId = userRes.data.userId || userRes.data.id
 
-            // 2. Obtener/Iniciar Orden
             const orderRes = await axios.post(
                 `http://localhost:8080/orders/start/user/${userId}`,
                 {},
@@ -72,8 +68,6 @@ function Bebidas() {
             )
             const orderId = orderRes.data.id
 
-            // 3. Agregar cada bebida seleccionada a la orden
-            // Usamos Promise.all para enviarlas todas juntas
             await Promise.all(selectedItems.map(item =>
                 axios.post(
                     `http://localhost:8080/orders/${orderId}/items/beverages`,
@@ -110,7 +104,6 @@ function Bebidas() {
             <div style={{ padding: '50px', maxWidth: '1200px', margin: '0 auto', paddingTop: '20px' }}>
                 <h2 style={{color:'white', textAlign:'center', marginBottom:'20px'}}>Elige tus Bebidas</h2>
 
-                {/* Resumen de selección */}
                 <div style={{
                     background: 'rgba(142, 45, 226, 0.3)',
                     padding: '20px',

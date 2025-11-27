@@ -18,14 +18,12 @@ public class CreationInOrder {
     @EmbeddedId
     private CreationInOrderKey id;
 
-    // Define la relación con Pedido
     @ManyToOne(fetch = FetchType.EAGER)
     @MapsId("orderId") //
     @JoinColumn(name = "order_id")
     @JsonIgnore
     private Order order;
 
-    // Define la relación con Creacion
     @ManyToOne(fetch = FetchType.EAGER)
     @MapsId("creationId") //
     @JoinColumn(name = "creation_id")

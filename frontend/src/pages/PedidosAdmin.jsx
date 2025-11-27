@@ -7,7 +7,6 @@ const PedidosAdmin = () => {
     const [expandedPedido, setExpandedPedido] = useState(null);
     const [loading, setLoading] = useState(true);
 
-    // --- 1. CARGAR PEDIDOS ---
     useEffect(() => {
         fetchPedidos();
     }, []);
@@ -15,7 +14,6 @@ const PedidosAdmin = () => {
     const fetchPedidos = async () => {
         try {
             const token = localStorage.getItem('token');
-            // Ahora este endpoint devuelve la Entidad completa con todos los detalles
             const response = await axios.get("http://localhost:8080/orders", {
                 headers: { Authorization: `Bearer ${token}` }
             });
@@ -23,21 +21,15 @@ const PedidosAdmin = () => {
             const pedidosFormateados = response.data.map(order => {
                 const itemsUnificados = [];
 
-                // --- LÓGICA DE DETALLE IDÉNTICA AL CARRITO ---
-
-                // A. Creaciones (Pizzas/Burgers)
-                // Buscamos en itemsCreation (formato entidad)
                 if (order.itemsCreation) {
                     order.itemsCreation.forEach(i => {
                         const creation = i.creation || {};
 
-                        // 1. Nombre Bonito
                         let nombreDisplay = creation.name || i.name || "Producto";
                         if (nombreDisplay.includes('undefined')) {
                             nombreDisplay = creation.dough ? "Pizza Personalizada" : "Burger Personalizada";
                         }
 
-                        // 2. Construir Descripción Detallada
                         const detalles = [];
                         if (creation.size) detalles.push(creation.size); // Ej: 25cm
                         if (creation.dough) detalles.push(creation.dough.name);
@@ -54,14 +46,13 @@ const PedidosAdmin = () => {
 
                         itemsUnificados.push({
                             nombre: nombreDisplay,
-                            descripcion: detalles.join(" • ") || "Sin detalles extra", // Lo mostramos bonito
+                            descripcion: detalles.join(" • ") || "Sin detalles extra",
                             precio: i.creationSubtotal || 0,
                             cantidad: i.creationQuantity || i.CreationQuantity || 1
                         });
                     });
                 }
 
-                // B. Bebidas
                 if (order.itemsBeverage) {
                     order.itemsBeverage.forEach(i => {
                         itemsUnificados.push({
@@ -73,7 +64,6 @@ const PedidosAdmin = () => {
                     });
                 }
 
-                // C. Sides
                 if (order.itemsSide) {
                     order.itemsSide.forEach(i => {
                         itemsUnificados.push({
@@ -90,13 +80,11 @@ const PedidosAdmin = () => {
                     estado: order.state,
                     fecha: order.date,
                     total: order.total,
-                    // Obtenemos nombre del cliente de forma segura
                     cliente: order.client ? `${order.client.name} ${order.client.surname}` : "Cliente",
                     items: itemsUnificados
                 };
             });
 
-            // Ordenar: Más recientes primero
             setPedidos(pedidosFormateados.sort((a, b) => b.id - a.id));
             setLoading(false);
 
@@ -106,7 +94,6 @@ const PedidosAdmin = () => {
         }
     };
 
-    // --- 2. GESTIÓN DE ESTADOS ---
     const getEstadoInfo = (estado) => {
         const estados = {
             'CONFIRMED':   { emoji: '⏳', texto: 'Confirmado', color: '#fbbf24' },
@@ -135,7 +122,7 @@ const PedidosAdmin = () => {
             await axios.post(`http://localhost:8080/orders/${pedidoId}/advance`, {}, {
                 headers: { Authorization: `Bearer ${token}` }
             });
-            fetchPedidos(); // Recargar para ver cambio
+            fetchPedidos();
         } catch (error) {
             console.error('Error al avanzar estado:', error);
             alert("Error al avanzar estado (Verifica permisos de Admin)");
@@ -170,7 +157,6 @@ const PedidosAdmin = () => {
                                     <div className={styles.pedidoBorder}></div>
 
                                     <div className={styles.pedidoContent}>
-                                        {/* CABECERA DEL PEDIDO */}
                                         <div className={styles.pedidoHeader} onClick={() => toggleExpand(pedido.id)}>
                                             <div className={styles.headerLeft}>
                         <span className={`${styles.arrow} ${isExpanded ? styles.arrowRotated : ''}`}>
@@ -205,7 +191,6 @@ const PedidosAdmin = () => {
                                 </span>
                                                                 {item.nombre}
                                                             </p>
-                                                            {/* DESCRIPCIÓN DETALLADA */}
                                                             <p className={styles.itemDescripcion} style={{color: '#aaa', fontSize:'0.9rem'}}>
                                                                 {item.descripcion}
                                                             </p>

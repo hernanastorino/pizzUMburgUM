@@ -28,7 +28,6 @@ public class FavoriteCreationService {
         Creation creation = creationRepo.findById(creationId)
                 .orElseThrow(() -> new RuntimeException("Creation not found: " + creationId));
 
-        // Si ya existe, lo devolvemos sin duplicar
         if (favoriteCreationRepo.existsByUserUserIdAndCreationCreationId(userId, creationId)) {
             FavoriteCreation existing = favoriteCreationRepo.findByUserUserIdAndCreationCreationId(userId, creationId)
                     .orElseThrow(() -> new RuntimeException("Favorite creation not found"));
@@ -48,8 +47,6 @@ public class FavoriteCreationService {
 
     @Transactional
     public void removeFavorite(Long userId, Long creationId) {
-        // Borramos por creationId que es lo que manda el frontend generalmente
-        // OJO: Si prefieres borrar por favoriteId, cambia la firma del método y del repo.
         if (!favoriteCreationRepo.existsByUserUserIdAndCreationCreationId(userId, creationId)) {
             throw new RuntimeException("Favorite not found");
         }

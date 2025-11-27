@@ -13,7 +13,6 @@ const OptionItem = ({ option, onUpdate, onDelete }) => {
 
     if (!option || !option.id) return null;
 
-    // Guardar cambios (PUT)
     const save = async () => {
         try {
             const token = localStorage.getItem('token');
@@ -23,7 +22,6 @@ const OptionItem = ({ option, onUpdate, onDelete }) => {
 
             let body = {
                 name: name,
-                // CORRECCIÓN CLAVE: Enviamos 'available' para que Jackson no lo ponga en false
                 available: true,
                 isAvailable: true
             };
@@ -92,7 +90,6 @@ const OptionItem = ({ option, onUpdate, onDelete }) => {
 
     return (
         <div className={styles.optionItem}>
-            {/* COLUMNA 1 — NOMBRE */}
             {isEditing ? (
                 <input
                     className={styles.optionInput}
@@ -106,7 +103,6 @@ const OptionItem = ({ option, onUpdate, onDelete }) => {
                 <span className={styles.optionName}>{option.name}</span>
             )}
 
-            {/* COLUMNA 2 — PRECIO 15 */}
             {isEditing ? (
                 <input
                     className={styles.optionInputPrice}
@@ -125,7 +121,6 @@ const OptionItem = ({ option, onUpdate, onDelete }) => {
         </span>
             )}
 
-            {/* COLUMNA 3 — PRECIO 20 */}
             {isEditing ? (
                 <input
                     className={styles.optionInputPrice}
@@ -146,7 +141,6 @@ const OptionItem = ({ option, onUpdate, onDelete }) => {
         </span>
             )}
 
-            {/* COLUMNA 4 — PRECIO 25 */}
             {isEditing ? (
                 <input
                     className={styles.optionInputPrice}
@@ -167,7 +161,6 @@ const OptionItem = ({ option, onUpdate, onDelete }) => {
         </span>
             )}
 
-            {/* COLUMNA 5 — BOTONES */}
             <div className={styles.optionActions}>
                 <button
                     className={`${styles.optionEdit} ${isEditing ? styles.optionEditActive : ''}`}

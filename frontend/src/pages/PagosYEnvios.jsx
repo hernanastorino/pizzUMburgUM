@@ -20,7 +20,6 @@ const PagosYEnvios = () => {
     const [showModalPago, setShowModalPago] = useState(false);
     const [itemToDelete, setItemToDelete] = useState(null);
 
-    // 1. Fetch Initial Data
     useEffect(() => {
         fetchData();
     }, []);
@@ -32,19 +31,16 @@ const PagosYEnvios = () => {
 
             if (!token || !email) return;
 
-            // Get User ID
             const userRes = await axios.get(`http://localhost:8080/api/users/${encodeURIComponent(email)}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             const uid = userRes.data.userId || userRes.data.id;
             setUserId(uid);
 
-            // Get Addresses
             const addrRes = await axios.get(`http://localhost:8080/api/addresses/user/${uid}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
 
-            // Map API response to Frontend format if needed
             const mappedAddr = addrRes.data.map(a => ({
                 id: a.addressId,
                 nombre: a.name,
@@ -55,11 +51,10 @@ const PagosYEnvios = () => {
             }));
             setDirecciones(mappedAddr);
 
-            // Get Payments
             const payRes = await axios.get(`http://localhost:8080/api/payments/user/${uid}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
-            setMetodosPago(payRes.data); // Payment structure matches mostly
+            setMetodosPago(payRes.data);
 
             setLoading(false);
         } catch (error) {
@@ -68,10 +63,8 @@ const PagosYEnvios = () => {
         }
     };
 
-    // --- HANDLERS FOR ADDRESSES ---
 
     const handleAddDireccion = () => {
-        // Add a temporary item with negative ID to indicate it's new
         setDirecciones(prev => [...prev, {
             id: -Date.now(), // temp ID
             nombre: '',
@@ -79,7 +72,7 @@ const PagosYEnvios = () => {
             numero: '',
             aptPiso: '',
             observaciones: '',
-            isNew: true // Flag to know it needs POST
+            isNew: true
         }]);
     };
 
@@ -87,7 +80,6 @@ const PagosYEnvios = () => {
         try {
             const token = localStorage.getItem('token');
 
-            // Map frontend format back to backend format
             const payload = {
                 name: dx.nombre,
                 street: dx.direccion,
@@ -97,21 +89,17 @@ const PagosYEnvios = () => {
             };
 
             if (dx.id < 0) {
-                // CREATE (POST)
                 await axios.post(`http://localhost:8080/api/addresses/user/${userId}`, payload, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
             } else {
-                // UPDATE (PUT)
                 await axios.put(`http://localhost:8080/api/addresses/${dx.id}`, payload, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
             }
 
-            // Reload data to get real IDs
             fetchData();
 
-            // Redirect if came from cart
             if (fromCarrito) setTimeout(() => navigate('/carrito'), 500);
 
         } catch (error) {
@@ -126,7 +114,6 @@ const PagosYEnvios = () => {
     };
 
     const handleDeleteDireccionDirecto = (id) => {
-        // For cancelling a new unsaved item
         setDirecciones(prev => prev.filter(d => d.id !== id));
     };
 
@@ -145,16 +132,15 @@ const PagosYEnvios = () => {
         }
     };
 
-    // --- HANDLERS FOR PAYMENTS ---
 
     const handleAddPago = () => {
         setMetodosPago(prev => [...prev, {
             id: -Date.now(),
             tipo: '',
-            numero: '', // Note: Backend expects 'cardNumber'
-            titular: '', // Backend: 'ownerName'
+            numero: '',
+            titular: '',
             cvv: '',
-            vencimiento: '', // Backend doesn't seem to store expiry based on your Entity, but let's keep it in UI
+            vencimiento: '',
             isNew: true
         }]);
     };
@@ -168,16 +154,13 @@ const PagosYEnvios = () => {
                 cardNumber: mx.numero,
                 ownerName: mx.titular,
                 cvv: mx.cvv
-                // Note: If your backend entity doesn't have expiry, we can't save it yet.
             };
 
             if (mx.id < 0) {
-                // CREATE
                 await axios.post(`http://localhost:8080/api/payments/user/${userId}`, payload, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
             } else {
-                // UPDATE
                 await axios.put(`http://localhost:8080/api/payments/${mx.id}`, payload, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
@@ -222,7 +205,6 @@ const PagosYEnvios = () => {
         <div className={perfilStyles.perfilWrapper}>
             <div className={perfilStyles.perfilGrid}>
 
-                {/* DIRECCIONES */}
                 <div className={perfilStyles.itemCard}>
                     <div className={perfilStyles.cardHeader}>
                         <div className={perfilStyles.cardHeaderLeft}>
@@ -244,7 +226,6 @@ const PagosYEnvios = () => {
                     </div>
                 </div>
 
-                {/* PAGOS */}
                 <div className={perfilStyles.itemCard}>
                     <div className={perfilStyles.cardHeader}>
                         <div className={perfilStyles.cardHeaderLeft}>
@@ -257,7 +238,6 @@ const PagosYEnvios = () => {
                         {metodosPago.map(m => (
                             <MetodoPagoItem
                                 key={m.id}
-                                // Map backend fields to component props if necessary, or adjust component
                                 metodo={{
                                     ...m,
                                     tipo: m.cardName || m.tipo,

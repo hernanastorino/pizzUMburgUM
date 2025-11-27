@@ -30,7 +30,7 @@ function QuesoPizza() {
                             size: 'normal',
                             text: 'Seleccionar',
                             price: `$${item[priceField]}`,
-                            className: 'btnMenu2', // Botón más chico
+                            className: 'btnMenu2',
                             dbValue: item.cheeseId
                         },
                     ]

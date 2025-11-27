@@ -14,7 +14,6 @@
 }
 
 
-/* Navbar */
 .menu {
   background-color: #fff;
   padding: 20px 50px;
@@ -51,7 +50,6 @@ nav ul li a:hover {
   color: #8e2de2;
 }
 
-/* Menu title */
 .menuTitle {
   text-align: center;
   font-family: 'Angel Club', sans-serif;
@@ -62,7 +60,6 @@ nav ul li a:hover {
   margin: 10px 0 20px 0;
 }
 
-/* Buttons */
 .categoryButtons,
 .secondaryButtons {
   display: grid;
@@ -76,7 +73,6 @@ nav ul li a:hover {
   padding: 10px 0;
 }
 
-/* Shared button styles */
 .categoryBtn,
 .secondaryBtn {
   position: relative;
@@ -108,7 +104,6 @@ nav ul li a:hover {
   min-width: unset;
 }
 
-/* Button glow and hover */
 .categoryBtn::before,
 .secondaryBtn::before {
   content: "";
@@ -161,7 +156,6 @@ nav ul li a:hover {
   background: rgba(0, 0, 0, 0.35);
 }
 
-/* Back button */
 .backButton {
   position: fixed;
   top: 90px;
@@ -184,7 +178,6 @@ nav ul li a:hover {
   transform: translateY(-2px);
 }
 
-/* Footer */
 .footer {
   background-color: #1B0D4E;
   color: white;

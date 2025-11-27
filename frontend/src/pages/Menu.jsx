@@ -11,11 +11,9 @@ function Menu() {
     const navigate = useNavigate()
     const location = useLocation()
 
-    // Detectamos si venimos en modo creación de favorito
     const isFavoriteMode = location.state?.isFavoriteMode;
 
     const handleNavigate = (path) => {
-        // Propagamos la bandera al siguiente paso
         navigate(path, { state: { isFavoriteMode } });
     };
 
@@ -43,7 +41,6 @@ function Menu() {
                 </button>
             </div>
 
-            {/* Si estamos creando favorito, ocultamos lo que no se puede guardar como favorito (bebidas/sides) */}
             {!isFavoriteMode && (
                 <div className={styles.secondaryButtons}>
                     <button

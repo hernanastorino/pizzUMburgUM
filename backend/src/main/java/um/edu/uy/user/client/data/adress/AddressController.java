@@ -13,13 +13,11 @@ public class AddressController {
 
     private final AddressService addressService;
 
-    // 1. GET
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<Address>> getAddressByUser(@PathVariable Long userId) {
         return ResponseEntity.ok(addressService.getActiveAddressesByUser(userId));
     }
 
-    // POST
     @PostMapping("/user/{userId}")
     public ResponseEntity<Address> createAddress(
             @PathVariable Long userId,
@@ -29,14 +27,12 @@ public class AddressController {
         return ResponseEntity.ok(created);
     }
 
-    // PUT — smart update
     @PutMapping("/{id}")
     public ResponseEntity<Address> updateAddress(@PathVariable Long id, @RequestBody Address newInfo) {
         Address updated = addressService.updateSmart(id, newInfo);
         return ResponseEntity.ok(updated);
     }
 
-    // DELETE
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteAddressById(@PathVariable Long id) {
         addressService.softDelete(id);

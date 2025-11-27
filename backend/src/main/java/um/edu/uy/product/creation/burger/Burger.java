@@ -24,10 +24,6 @@ import java.util.Set;
 @PrimaryKeyJoinColumn(name = "creationId")
 public class Burger extends Creation {
 
-    /*@Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long burgerId;*/
-
     private int meatQuantity;
 
     @ManyToOne(fetch = FetchType.EAGER)
@@ -45,9 +41,9 @@ public class Burger extends Creation {
     @Builder.Default
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
-            name = "Burger_Topping", // Nombre de la tabla intermedia
-            joinColumns = @JoinColumn(name = "creation_id", referencedColumnName = "creationId"), // FK a esta entidad (Pizza)
-            inverseJoinColumns = @JoinColumn(name = "topping_id") // FK a la otra entidad (Topping)
+            name = "Burger_Topping",
+            joinColumns = @JoinColumn(name = "creation_id", referencedColumnName = "creationId"),
+            inverseJoinColumns = @JoinColumn(name = "topping_id")
     )
     private Set<Topping> toppings = new HashSet<>();
 
@@ -60,31 +56,24 @@ public class Burger extends Creation {
     public double getUnitPrice() {
         double total = 0.0;
 
-        // meatQuantity actúa como el selector de tamaño (1=Small, 2=Medium, 3=Large)
-        // NOTA: Ya no multiplicamos por meatQuantity porque el precioMedium YA INCLUYE el costo de ser doble.
-
-        // Sumar Pan
         if (this.bread != null) {
             if (this.meatQuantity == 3) total += this.bread.getPriceLarge();
             else if (this.meatQuantity == 2) total += this.bread.getPriceMedium();
             else total += this.bread.getPriceSmall();
         }
 
-        // Sumar Carne
         if (this.meat != null) {
             if (this.meatQuantity == 3) total += this.meat.getPriceLarge();
             else if (this.meatQuantity == 2) total += this.meat.getPriceMedium();
             else total += this.meat.getPriceSmall();
         }
 
-        // Sumar Aderezo
         if (this.condiment != null) {
             if (this.meatQuantity == 3) total += this.condiment.getPriceLarge();
             else if (this.meatQuantity == 2) total += this.condiment.getPriceMedium();
             else total += this.condiment.getPriceSmall();
         }
 
-        // Sumar Toppings
         if (this.toppings != null && !this.toppings.isEmpty()) {
             for (Topping t : this.toppings) {
                 if (this.meatQuantity == 3) total += t.getPriceLarge();

@@ -20,9 +20,9 @@ public class Sauce {
     @Column(nullable = false)
     private String name;
 
-    private Double priceSmall;  // 15cm
-    private Double priceMedium; // 20cm
-    private Double priceLarge;  // 25cm
+    private Double priceSmall;
+    private Double priceMedium;
+    private Double priceLarge;
 
     private boolean isAvailable;
 }

@@ -39,7 +39,6 @@ const AddOptionModal = ({ isOpen, onClose, onSave, subCategoryName, categoryId }
 
     if (!isOpen) return null;
 
-    // --- ESTILOS VISUALES ---
     const modalOverlay = {
         position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
         backgroundColor: 'rgba(0, 0, 0, 0.6)',
@@ -58,23 +57,21 @@ const AddOptionModal = ({ isOpen, onClose, onSave, subCategoryName, categoryId }
         color: '#333'
     };
 
-    // ESTILO PARA INPUT NORMAL (Con color negro forzado)
     const inputStyle = {
         width: '100%',
         boxSizing: 'border-box',
         marginBottom: '15px',
-        color: 'black',       // <--- FUERZA TEXTO NEGRO
-        backgroundColor: 'white', // Asegura fondo blanco
-        border: '1px solid #ccc'  // Borde visible
+        color: 'black',
+        backgroundColor: 'white',
+        border: '1px solid #ccc'
     };
 
-    // ESTILO PARA INPUTS FLEXIBLES (Con color negro forzado)
     const flexInputStyle = {
         flex: 1,
         width: '0',
         minWidth: '80px',
         boxSizing: 'border-box',
-        color: 'black',       // <--- FUERZA TEXTO NEGRO
+        color: 'black',
         backgroundColor: 'white',
         border: '1px solid #ccc'
     };
@@ -97,7 +94,7 @@ const AddOptionModal = ({ isOpen, onClose, onSave, subCategoryName, categoryId }
                             required
                             value={formData.name}
                             onChange={handleChange}
-                            style={inputStyle} // Aplica el estilo con color negro
+                            style={inputStyle}
                         />
                     </div>
 

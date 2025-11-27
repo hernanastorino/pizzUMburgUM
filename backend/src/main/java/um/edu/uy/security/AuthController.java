@@ -1,4 +1,3 @@
-// src/main/java/um/edu/uy/security/AuthController.java
 package um.edu.uy.security;
 
 import org.springframework.http.ResponseEntity;
@@ -33,22 +32,14 @@ public class AuthController {
         this.userDetailsService = userDetailsService;
     }
 
-    /**
-     * Handles new CLIENT registrations.
-     */
     @PostMapping("/register")
     public ResponseEntity<UserDTO> register(@RequestBody RegisterRequest request) {
-        // The userService sets the role to ROLE_CLIENT by default
         UserDTO userDto = userService.registerClient(request);
         return ResponseEntity.ok(userDto);
     }
 
-    /**
-     * Handles login for ALL users (Clients and Admins).
-     */
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request) {
-        // 1. Authenticate
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.email(),
@@ -56,16 +47,9 @@ public class AuthController {
                 )
         );
 
-        // 2. Fetch user details
         final UserDetails userDetails = userDetailsService.loadUserByUsername(request.email());
-
-        // 3. Generate JWT
         final String token = jwtService.generateToken(userDetails);
-
-        // 4. Get the Role (e.g., "ROLE_ADMIN" or "ROLE_CLIENT")
         String role = userDetails.getAuthorities().iterator().next().getAuthority();
-
-        // 5. Send token AND role
         return ResponseEntity.ok(new AuthResponse(token, role));
     }
 }

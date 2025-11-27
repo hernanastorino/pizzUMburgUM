@@ -31,7 +31,7 @@ public class ReportController {
     }
 
     @GetMapping("/bps")
-    @PreAuthorize("hasAuthority('adminRole')") // Protegemos el endpoint
+    @PreAuthorize("hasAuthority('adminRole')")
     public ResponseEntity<Map<String, Long>> getEmployeeCount() {
         long countAdmins = userService.countEmployees();
         long countUsers = userService.countUsers();

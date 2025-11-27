@@ -60,11 +60,9 @@ public class AddressService {
                         !old.getName().equals(newInfo.getName());
 
         if (coreChanges) {
-            // Apagar vieja
             old.setActive(false);
             addressRepository.save(old);
 
-            // Crear nueva
             Address fresh = Address.builder()
                     .user(old.getUser())
                     .active(true)
@@ -78,7 +76,6 @@ public class AddressService {
             return addressRepository.save(fresh);
         }
 
-        // Cambios menores → actualizar misma
         old.setIndications(newInfo.getIndications());
         return addressRepository.save(old);
     }

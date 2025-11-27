@@ -5,7 +5,7 @@ import lombok.*;
 import um.edu.uy.user.User;
 
 @Entity
-@Table(name = "Adress") // Usa el nombre de la tabla de tu MER (MER 4)
+@Table(name = "Address")
 @Getter
 @Setter
 @Builder

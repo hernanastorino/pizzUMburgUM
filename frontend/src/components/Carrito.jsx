@@ -7,25 +7,24 @@ import styles from "../styles/Carrito.module.css";
 const Carrito = () => {
     const navigate = useNavigate();
 
-    // --- STATE MANAGEMENT ---
+    // estados
     const [cartItems, setCartItems] = useState([]);
     const [orderId, setOrderId] = useState(null);
     const [total, setTotal] = useState(0);
     const [loading, setLoading] = useState(true);
 
-    // User Data State
+    // estado de usuario
     const [addresses, setAddresses] = useState([]);
     const [payments, setPayments] = useState([]);
 
-    // Selection State
+    // estado de seleccion
     const [selectedDireccion, setSelectedDireccion] = useState(null);
     const [selectedMetodoPago, setSelectedMetodoPago] = useState(null);
 
-    // Modal State
+    // estado de modal
     const [showOrderModal, setShowOrderModal] = useState(false);
     const [numeroPedido, setNumeroPedido] = useState(null);
 
-    // --- INITIAL LOAD ---
     useEffect(() => {
         fetchCartAndUserData();
     }, []);
@@ -37,13 +36,11 @@ const Carrito = () => {
 
             if (!token || !email) { setLoading(false); return; }
 
-            // 1. Get User ID
             const userRes = await axios.get(`http://localhost:8080/api/users/${encodeURIComponent(email)}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             const userId = userRes.data.userId || userRes.data.id;
 
-            // 2. Load User Addresses & Payments (Parallel)
             const [addrRes, payRes] = await Promise.all([
                 axios.get(`http://localhost:8080/api/addresses/user/${userId}`, { headers: { Authorization: `Bearer ${token}` } }),
                 axios.get(`http://localhost:8080/api/payments/user/${userId}`, { headers: { Authorization: `Bearer ${token}` } })
@@ -52,11 +49,9 @@ const Carrito = () => {
             setAddresses(addrRes.data);
             setPayments(payRes.data);
 
-            // Auto-select first options if available
             if (addrRes.data.length > 0 && !selectedDireccion) setSelectedDireccion(addrRes.data[0]);
             if (payRes.data.length > 0 && !selectedMetodoPago) setSelectedMetodoPago(payRes.data[0]);
 
-            // 3. Get/Create Pending Order (Cart)
             const orderRes = await axios.post(
                 `http://localhost:8080/orders/start/user/${userId}`,
                 {},
@@ -67,10 +62,9 @@ const Carrito = () => {
             setOrderId(order.id);
             setTotal(order.total);
 
-            // 4. Process Items for Display
             const rawItems = [];
 
-            // --- A. CREATIONS (Pizzas & Burgers) ---
+            // creaciones
             const listaCreaciones = order.creations || order.itemsCreation || [];
             if (Array.isArray(listaCreaciones)) {
                 rawItems.push(...listaCreaciones.map(i => {
@@ -108,7 +102,7 @@ const Carrito = () => {
                 }));
             }
 
-            // --- B. BEVERAGES ---
+            // bebidas
             const listaBebidas = order.beverages || order.itemsBeverage || [];
             if (Array.isArray(listaBebidas)) {
                 rawItems.push(...listaBebidas.map(i => {
@@ -125,7 +119,7 @@ const Carrito = () => {
                 }));
             }
 
-            // --- C. SIDES ---
+            // acomps
             const listaSides = order.sides || order.itemsSide || [];
             if (Array.isArray(listaSides)) {
                 rawItems.push(...listaSides.map(i => {
@@ -142,7 +136,6 @@ const Carrito = () => {
                 }));
             }
 
-            // Sort to prevent jumping items
             rawItems.sort((a, b) => {
                 const typePriority = { 'creation': 1, 'beverage': 2, 'side': 3 };
                 if (typePriority[a.tipo] !== typePriority[b.tipo]) {
@@ -160,7 +153,6 @@ const Carrito = () => {
         }
     };
 
-    // --- ACTIONS ---
 
     const updateQuantity = async (item, delta) => {
         const newQuantity = item.cantidad + delta;
@@ -169,7 +161,6 @@ const Carrito = () => {
         try {
             const token = localStorage.getItem('token');
 
-            // Optimistic UI Update
             setCartItems(prev => prev.map(i =>
                 i.uniqueId === item.uniqueId ? { ...i, cantidad: newQuantity } : i
             ).filter(i => i.cantidad > 0));
@@ -183,7 +174,6 @@ const Carrito = () => {
                 headers: { Authorization: `Bearer ${token}` }
             });
 
-            // Reload to sync totals
             fetchCartAndUserData();
 
         } catch (error) {
@@ -234,8 +224,6 @@ const Carrito = () => {
         <div className={styles.pageContainer}>
             <div className={styles.mainContent}>
                 <div className={styles.carritoGrid}>
-
-                    {/* LEFT COLUMN: ITEMS */}
                     <div className={styles.leftColumn}>
                         <div className={styles.cardWrapper}>
                             <div className={styles.cardBorder}></div>
@@ -295,8 +283,6 @@ const Carrito = () => {
                             </div>
                         </div>
                     </div>
-
-                    {/* RIGHT COLUMN: CHECKOUT INFO */}
                     <div className={styles.rightColumn}>
                         <div className={styles.cardWrapper}>
                             <div className={styles.cardBorder}></div>

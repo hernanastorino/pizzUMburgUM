@@ -44,35 +44,46 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authz -> authz
-                        // 1. ACCESO PÚBLICO
-                        .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/h2-console/**").permitAll()
-                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+                        // Publico
+                        .requestMatchers("/api/auth/**").permitAll() // Login y Registro
+                        .requestMatchers("/h2-console/**").permitAll() // Consola BD
+                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll() // Docs
+
+                        // Catalogo
                         .requestMatchers(HttpMethod.GET, "/api/catalog/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/products/**").permitAll()
 
-                        // 2. CLIENTES (Y Admin para pruebas de flujo)
-                        .requestMatchers(HttpMethod.POST, "/api/products/pizzas").hasAnyAuthority("clientRole", "adminRole")
-                        .requestMatchers(HttpMethod.POST, "/api/products/burgers").hasAnyAuthority("clientRole", "adminRole")
 
+                        // Clientes
+                        .requestMatchers(HttpMethod.POST, "/api/products/pizzas").hasAuthority("clientRole")
+                        .requestMatchers(HttpMethod.POST, "/api/products/burgers").hasAuthority("clientRole")
+
+                        // Dirs y Pagos
                         .requestMatchers("/api/addresses/**").hasAuthority("clientRole")
                         .requestMatchers("/api/payments/**").hasAuthority("clientRole")
+
+                        // Favoritos
                         .requestMatchers("/users/{userId}/favorites/**").hasAuthority("clientRole")
 
-                        // 3. ADMINISTRADORES
+
+                        // Admins
                         .requestMatchers(HttpMethod.POST, "/api/products/**").hasAuthority("adminRole")
                         .requestMatchers(HttpMethod.PUT, "/api/products/**").hasAuthority("adminRole")
                         .requestMatchers(HttpMethod.DELETE, "/api/products/**").hasAuthority("adminRole")
+
+                        // Crear otro admin
                         .requestMatchers("/api/users/admin").hasAuthority("adminRole")
+
+                        // Ver pedidos
                         .requestMatchers(HttpMethod.GET, "/orders").hasAuthority("adminRole")
+
+                        // Avanzar estado de pedido
                         .requestMatchers(HttpMethod.POST, "/orders/{id}/advance").hasAuthority("adminRole")
 
-                        // 4. ZONA DE PEDIDOS Y CARRITO (Compartida)
-                        // CORRECCIÓN: Agregamos /api/orders/** para cubrir el ItemController
-                        .requestMatchers("/orders/**").hasAnyAuthority("clientRole", "adminRole")
-                        .requestMatchers("/api/orders/**").hasAnyAuthority("clientRole", "adminRole") // <--- NUEVA LÍNEA IMPORTANTE
+                        // Compartidos
+                        .requestMatchers("/orders/**").authenticated()
 
-                        // 5. PERFIL
+                        // Perfil de usuario
                         .requestMatchers("/api/users/**").authenticated()
 
                         .anyRequest().authenticated()
@@ -90,6 +101,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
+
         configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000", "http://127.0.0.1:3000"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "X-Requested-With"));
